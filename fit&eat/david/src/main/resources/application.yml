@@ -5,13 +5,14 @@ spring:
     name: david
   cloud:
     config:
+      label: master
       server:
         git:
-         uri: https://github.com/micezhao/fit-eat.git    # 配置git仓库的地址 
-         # git仓库地址下的相对地址，可以配置多个，用,分割。
-         search-paths: config
-         username: micezhao                                           # git仓库的账号
-         password: micezhao1017                                       # git仓库的密码
+         uri: https://github.com/micezhao/fit-eat.git
+         #uri: https://github.com/micezhao/config-center.git
+         searchPaths: config
+         username: micezhao
+         password: micezhao1017
   rabbitmq:
     host: 118.190.53.214
     port: 5682
