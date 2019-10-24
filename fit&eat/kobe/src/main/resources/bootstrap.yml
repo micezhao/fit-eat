@@ -1,0 +1,15 @@
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/   ## 注册中心eurka地址
+
+spring:
+   cloud:
+      config:
+         discovery:
+            enabled: true
+            serviceId: david
+         name: app
+         profile: dev
+         label: master
+            

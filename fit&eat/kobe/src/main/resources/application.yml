@@ -1,0 +1,29 @@
+server:
+  port: 8763
+    
+spring:
+   application:
+      name: kobe
+   datasource:
+      driverClassName: com.mysql.jdbc.Driver
+      url: jdbc:mysql://118.190.53.214:3306/demo?useUnicode=true&characterEncoding=utf-8
+      username: root
+      password: 891122
+   rabbitmq:
+      host: 118.190.53.214
+      port: 5682
+      virtual-host: /
+   redis:
+      database: 0
+      host: 118.190.53.214
+      port: 16379
+      password: 891122
+   mongo:
+      host: 118.190.53.214
+      port: 27817
+      dbName: fit-eat
+      username: zcmac
+      password: 891122
+       
+       
+   
