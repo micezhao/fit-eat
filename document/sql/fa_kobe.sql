@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50722
 File Encoding         : 65001
 
-Date: 2019-10-25 14:28:00
+Date: 2019-10-25 14:38:44
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -33,7 +33,7 @@ CREATE TABLE `china` (
 -- ----------------------------
 DROP TABLE IF EXISTS `customer_addr`;
 CREATE TABLE `customer_addr` (
-  `id` bigint(64) NOT NULL,
+  `id` bigint(64) unsigned NOT NULL AUTO_INCREMENT,
   `customer_id` bigint(64) DEFAULT NULL,
   `province_no` varchar(16) DEFAULT NULL COMMENT '省编码',
   `city_no` varchar(16) DEFAULT NULL COMMENT '市编码',
@@ -129,7 +129,7 @@ CREATE TABLE `customer_log` (
 -- ----------------------------
 DROP TABLE IF EXISTS `customer_score_trans`;
 CREATE TABLE `customer_score_trans` (
-  `id` bigint(64) NOT NULL,
+  `id` bigint(64) unsigned NOT NULL AUTO_INCREMENT,
   `customer_id` bigint(64) NOT NULL COMMENT '用户id',
   `trans_type` varchar(8) DEFAULT NULL COMMENT '积分变更类型 add 增加 sub 扣减',
   `trans_count` int(16) DEFAULT NULL COMMENT '积分变化数量',
