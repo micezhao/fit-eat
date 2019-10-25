@@ -18,3 +18,7 @@ fit&eat/david/.project
 fit&eat/david/target/classes/META-INF/maven/com.f.a/david/pom.properties
 fit&eat/jordan/.classpath
 fit&eat/jordan/.project
+*.properties
+fit&eat/jordan/target/classes/META-INF/maven/com.f.a/jordan/pom.properties
+*.properties
+fit&eat/jordan/target/classes/META-INF/maven/com.f.a/jordan/pom.properties
