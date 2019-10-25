@@ -1,24 +1,4 @@
 
 .DS_Store
-fit&eat/david/mvnw
-*.cmd
-fit&eat/jordan/mvnw
-fit&eat/.project
-*.prefs
-*.jar
-*.jar
-fit&eat/kobe/.mvn/
-*.jar
-fit&eat/kobe/src/main/.DS_Store
-fit&eat/david/.classpath
-fit&eat/david/.project
-*.md
-*.class
-*.MF
-fit&eat/david/target/classes/META-INF/maven/com.f.a/david/pom.properties
-fit&eat/jordan/.classpath
-fit&eat/jordan/.project
-*.properties
-fit&eat/jordan/target/classes/META-INF/maven/com.f.a/jordan/pom.properties
-*.properties
-fit&eat/jordan/target/classes/META-INF/maven/com.f.a/jordan/pom.properties
+*/target/
+*.classpath
