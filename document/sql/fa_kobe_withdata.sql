@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50722
 File Encoding         : 65001
 
-Date: 2019-10-25 10:53:14
+Date: 2019-10-25 14:28:27
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -3597,10 +3597,10 @@ CREATE TABLE `customer_addr` (
   `province_no` varchar(16) DEFAULT NULL COMMENT '省编码',
   `city_no` varchar(16) DEFAULT NULL COMMENT '市编码',
   `distrc_no` varchar(16) DEFAULT NULL COMMENT '区编码',
-  `use_default` char(2) DEFAULT NULL COMMENT '是否选择为默认收货地址',
   `addr_detail` varchar(1024) DEFAULT NULL COMMENT '详细收货地址',
   `connector_mobile` varchar(32) DEFAULT NULL COMMENT '收货人手机号码',
   `connector_name` varchar(32) DEFAULT NULL COMMENT '收货人姓名',
+  `use_default` char(2) DEFAULT NULL COMMENT '是否选择为默认收货地址 1 表示默认收获地址',
   `ext1` varchar(128) DEFAULT NULL,
   `ext2` varchar(128) DEFAULT NULL,
   `ext3` varchar(128) DEFAULT NULL,
@@ -3625,8 +3625,6 @@ CREATE TABLE `customer_baseinfo` (
   `realname` varchar(32) DEFAULT NULL COMMENT '真实姓名',
   `birthday` varchar(32) DEFAULT NULL COMMENT '出生日期',
   `age` int(8) DEFAULT NULL COMMENT '年龄',
-  `height` varchar(16) DEFAULT NULL COMMENT '身高',
-  `weight` varchar(16) DEFAULT NULL COMMENT '体重',
   `nickname` varchar(32) DEFAULT NULL COMMENT '昵称',
   `headimg` varchar(512) DEFAULT NULL COMMENT '头像',
   `sorce` int(16) DEFAULT NULL COMMENT '积分',
@@ -3636,7 +3634,7 @@ CREATE TABLE `customer_baseinfo` (
   `ext3` varchar(128) DEFAULT NULL,
   `ext4` varchar(128) DEFAULT NULL,
   `ext5` varchar(128) DEFAULT NULL,
-  `dr` int(2) DEFAULT NULL COMMENT '用户是否可用 0 不可用 1可用',
+  `dr` char(2) DEFAULT NULL COMMENT '用户是否可用 0 不可用 1可用',
   `cdt` datetime DEFAULT NULL,
   `mdt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -3664,7 +3662,7 @@ CREATE TABLE `customer_credential` (
   `ext3` varchar(128) DEFAULT NULL,
   `ext4` varchar(128) DEFAULT NULL,
   `ext5` varchar(128) DEFAULT NULL,
-  `dr` int(2) DEFAULT NULL COMMENT '用户是否可用 0 不可用 1可用',
+  `dr` char(2) DEFAULT NULL COMMENT '用户是否可用 0 不可用 1可用',
   `cdt` datetime DEFAULT NULL,
   `mdt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -3710,7 +3708,7 @@ CREATE TABLE `customer_score_trans` (
   `customer_id` bigint(64) NOT NULL COMMENT '用户id',
   `trans_type` varchar(8) DEFAULT NULL COMMENT '积分变更类型 add 增加 sub 扣减',
   `trans_count` int(16) DEFAULT NULL COMMENT '积分变化数量',
-  `custom_score` int(16) DEFAULT NULL COMMENT '用户当前积分',
+  `customer_score` int(16) DEFAULT NULL COMMENT '用户当前积分',
   `ext1` varchar(128) DEFAULT NULL,
   `ext2` varchar(128) DEFAULT NULL,
   `ext3` varchar(128) DEFAULT NULL,
