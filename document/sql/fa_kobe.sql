@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50722
 File Encoding         : 65001
 
-Date: 2019-10-25 10:08:09
+Date: 2019-10-25 10:22:22
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -42,13 +42,13 @@ CREATE TABLE `custom_addr` (
   `addr_detail` varchar(1024) DEFAULT NULL COMMENT '详细收货地址',
   `connector_mobile` varchar(32) DEFAULT NULL COMMENT '收货人手机号码',
   `connector_name` varchar(32) DEFAULT NULL COMMENT '收货人姓名',
-  `cdt` datetime DEFAULT NULL,
-  `mdt` datetime DEFAULT NULL,
   `ext1` varchar(128) DEFAULT NULL,
   `ext2` varchar(128) DEFAULT NULL,
   `ext3` varchar(128) DEFAULT NULL,
   `ext4` varchar(128) DEFAULT NULL,
   `ext5` varchar(128) DEFAULT NULL,
+  `cdt` datetime DEFAULT NULL,
+  `mdt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -68,13 +68,14 @@ CREATE TABLE `custom_baseinfo` (
   `headimg` varchar(512) DEFAULT NULL COMMENT '头像',
   `sorce` int(16) DEFAULT NULL COMMENT '积分',
   `mobile` varchar(32) DEFAULT NULL COMMENT '手机号码',
-  `cdt` datetime DEFAULT NULL,
-  `mdt` datetime DEFAULT NULL,
+  `status` int(2) DEFAULT NULL COMMENT '用户是否可用0 不可用 1可用',
   `ext1` varchar(128) DEFAULT NULL,
   `ext2` varchar(128) DEFAULT NULL,
   `ext3` varchar(128) DEFAULT NULL,
   `ext4` varchar(128) DEFAULT NULL,
   `ext5` varchar(128) DEFAULT NULL,
+  `cdt` datetime DEFAULT NULL,
+  `mdt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -88,17 +89,17 @@ CREATE TABLE `custom_credential` (
   `mobile` varchar(32) DEFAULT NULL COMMENT '绑定手机号',
   `wx_openid` varchar(64) DEFAULT NULL COMMENT '微信openid',
   `ali_openid` varchar(64) DEFAULT NULL COMMENT '支付宝生活号openid',
-  `status` char(255) DEFAULT NULL COMMENT '状态 1可用 0不可用',
+  `status` int(2) DEFAULT NULL COMMENT '状态 0不可用 1可用',
   `username` varchar(64) DEFAULT NULL COMMENT '用户名',
   `password` varchar(64) DEFAULT NULL COMMENT '密码',
   `email` varchar(64) DEFAULT NULL COMMENT '电子邮箱',
-  `cdt` datetime DEFAULT NULL,
-  `mdt` datetime DEFAULT NULL,
   `ext1` varchar(128) DEFAULT NULL,
   `ext2` varchar(128) DEFAULT NULL,
   `ext3` varchar(128) DEFAULT NULL,
   `ext4` varchar(128) DEFAULT NULL,
   `ext5` varchar(128) DEFAULT NULL,
+  `cdt` datetime DEFAULT NULL,
+  `mdt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -115,13 +116,13 @@ CREATE TABLE `custom_log` (
   `auth_type` int(4) DEFAULT NULL COMMENT '完成操作的凭证类型 1. 微信 2 支付宝 3用户名密码',
   `token` varchar(128) DEFAULT NULL COMMENT '访问令牌',
   `token_expire_time` datetime DEFAULT NULL COMMENT '访问令牌过期时间',
-  `cdt` datetime DEFAULT NULL,
-  `mdt` datetime DEFAULT NULL,
   `ext1` varchar(128) DEFAULT NULL,
   `ext2` varchar(128) DEFAULT NULL,
   `ext3` varchar(128) DEFAULT NULL,
   `ext4` varchar(128) DEFAULT NULL,
   `ext5` varchar(128) DEFAULT NULL,
+  `cdt` datetime DEFAULT NULL,
+  `mdt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -134,13 +135,13 @@ CREATE TABLE `custom_score_trans` (
   `custom_id` bigint(64) NOT NULL COMMENT '用户id',
   `trans_type` int(4) DEFAULT NULL COMMENT '积分变更类型 1 增加 2扣减',
   `trans_count` int(16) DEFAULT NULL COMMENT '积分变化数量',
-  `score` int(16) DEFAULT NULL COMMENT '用户当前积分',
-  `cdt` datetime DEFAULT NULL,
-  `mdt` datetime DEFAULT NULL,
+  `custom_score` int(16) DEFAULT NULL COMMENT '用户当前积分',
   `ext1` varchar(128) DEFAULT NULL,
   `ext2` varchar(128) DEFAULT NULL,
   `ext3` varchar(128) DEFAULT NULL,
   `ext4` varchar(128) DEFAULT NULL,
   `ext5` varchar(128) DEFAULT NULL,
+  `cdt` datetime DEFAULT NULL,
+  `mdt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
