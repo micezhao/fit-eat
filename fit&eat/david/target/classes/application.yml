@@ -1,0 +1,30 @@
+server:
+  port: 8762
+spring:
+  application:
+    name: david
+  cloud:
+    config:
+      server:
+        git:
+         #uri: https://github.com/micezhao/spring-cloud-demo.git    # 配置git仓库的地址
+         uri: https://github.com/micezhao/config-fit.git
+         # git仓库地址下的相对地址，可以配置多个，用,分割。
+         #search-paths: 
+         username: micezhao                                           # git仓库的账号
+         password: micezhao1017                                       # git仓库的密码
+  rabbitmq:
+    host: 118.190.53.214
+    port: 5682
+    #username: micezhao
+    #password: micezhao1017
+    virtual-host: /
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/   ## 注册中心eurka地址
+
+management:
+  security:
+    enabled: false

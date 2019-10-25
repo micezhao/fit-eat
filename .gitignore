@@ -9,3 +9,12 @@ fit&eat/.project
 *.jar
 fit&eat/kobe/.mvn/
 *.jar
+fit&eat/kobe/src/main/.DS_Store
+fit&eat/david/.classpath
+fit&eat/david/.project
+*.md
+*.class
+*.MF
+fit&eat/david/target/classes/META-INF/maven/com.f.a/david/pom.properties
+fit&eat/jordan/.classpath
+fit&eat/jordan/.project
