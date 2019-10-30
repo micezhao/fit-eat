@@ -122,7 +122,7 @@ fit-eat 开发过程的问题记录和经验总结
     1.11 最后使用EurekaHttpClient接口的AbstractJerseyEurekaHttpClient实现类中的register方法，向ip:port/eureka/apps/{id} 发送请求，发送的内容就是InstanceInfo
 
     至此：eureka server/client 的启动与注册流程就执行完毕
-    同时，为了维护server/client之间的关系，client端将由一个定时任务 scheduleTask定时向sever发送心跳，来维持连接
+    同时，为了维护server/client之间的关系，client端将由一个定时任务 scheduleTask定时向sever发送心跳，来维持连接，而在server由Lookup类来轮训当前处于注册列表中的服务
     
 
 
