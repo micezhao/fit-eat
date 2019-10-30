@@ -19,8 +19,6 @@ public class CustomerCredentialManager implements BaseManager<CustomerCredential
 
 	@Override
 	public CustomerCredential queryById(Long id) {
-		CustomerCredentialExample customerCredentialExample = new CustomerCredentialExample();
-		customerCredentialExample.createCriteria().andIdEqualTo(id);
 		CustomerCredential customerCredential = customerCredentialMapper.selectByPrimaryKey(id);
 		return customerCredential;
 	}
