@@ -86,5 +86,44 @@ fit-eat 开发过程的问题记录和经验总结
         3.5 此时，就需要采用hostname的方式来注册客户端。同时在消费者所在系统改写host地址，将生产者的hostname与生产者的ip地址，在消费者本机进行绑定。
         3.6 这样一来，相当于在消费者本机进行了dns的解析。
 
+第二周（2019/10/28 - 2019/11/01）
+已完成的任务：
+1、研究eureka的服务注册流程：
+    ********【服务端启动和接受注册的流程】*********
+    1.1 eureka-server的启动流程
+        1.1.1 EurekaServerInitializerConfiguration 负责提供初始化eureka-server容器的初始化，
+              这个类实现了 SmartLifecycle extends Lifecycle 的start()方法，用来在spring启动时加载eureka启动项
+        1.1.2 在strat（）方法中完成如下事项：
+                    ｜—— eurekaServerBootstrap.contextInitialized (EurekaServerInitializerConfiguration.this.servletContext）将eureka-server初始化到spring的上下文中
+        1.1.3 publish(new EurekaRegistryAvailableEvent(getEurekaServerConfig())); 发布服务端可用时间
+        1.1.4 EurekaServerInitializerConfiguration.this.running = true; 将EurekaServer的状态设置为运行状态；
+        1.1.5 publish(new EurekaServerStartedEvent(getEurekaServerConfig())); 发布服务端启动事件
+    1.2 EurekaServer启动后，将向外提供一个接受注册的方法:ApplicationResource.addInstance ,客户端可通过发送请求到 ip:port/eureka/apps/{id} 完成将client注册到EurekaServer中
+    1.3 在ApplicationResource.addInstance方法中通过执行PeerAwareInstanceRegistry.registry(info, "true".equals(isReplication));，将完成服务注册的逻辑
+        【info是InstanceInfo对象的实例，info由client端提供】
+    1.4 registry方法最后落脚到AbstractInstanceRegistry类中的registry方法中，在AbstractInstanceRegistry.registry方法中，
+        最后将这个info写入到 ConcurrentHashMap<String, Map<String, Lease<InstanceInfo>>> 中，完成服务的注册步骤。
+        这个map维护的是 serviceId 与这个serviceId对应的InstanceInfo的租约信息【Lease】的映射关系。
+    1.5 Lease【租约】对象中存放了 InstanceInfo ,evictionTimestamp[失效时间],registrationTimestamp【注册时间】,serviceUpTimestamp【启动时间】等信息
     
+    ********【客户端启动和接受注册的流程】*********
+    1.6 eureka-client的启动流程
+        1.6.1 在client端由EurekaAutoServiceRegistration 作为启动入口，与服务端一样，实现了Lifecycle的start（）方法，在启动时将eureka-client初始化到spring的上下文中
+        1.6.2 在strat（）方法中，通过调用EurekaServiceRegistry.register方法来实现向服务端注册的执行逻辑；
+    1.7 在调用EurekaServiceRegistry.register的过程中，
+                    ｜——首先会通过ApplicationInfoManager【应用管理其】将客户端信息转化为InstanceInfo
+                    ｜——此时，client还未完成启动过程，InstanceInfo的初始状态为starting
+                    ｜——在启动完成后，会将InstanceInfo设置为up
+    1.8 当Instanceinfo的状态为up后，会触发ApplicationInfoManager.StatusChangeListener监听器发起notify通知
+    1.9 通知的内容将交给InstanceInfoReplicator.run（）方法中去执行
+                    ｜——首先刷新这个instanceInfo的相关状态
+                    ｜——调用discoveryClient.register()方法，准备开始进行注册
+    1.10 在discoveryClient.register() 方法中 执行 httpResponse = eurekaTransport.registrationClient.register(instanceInfo); 向eureka-server进行注册
+    1.11 最后使用EurekaHttpClient接口的AbstractJerseyEurekaHttpClient实现类中的register方法，向ip:port/eureka/apps/{id} 发送请求，发送的内容就是InstanceInfo
+
+    至此：eureka server/client 的启动与注册流程就执行完毕
+    同时，为了维护server/client之间的关系，client端将由一个定时任务 scheduleTask定时向sever发送心跳，来维持连接
+    
+
+
     
