@@ -59,12 +59,12 @@ class KobeApplicationTests {
 	
 	@Test
 	void queryByBiz() {
-		CustomerCredential queryByBiz = customerCredentialManager.queryByBiz(1L);
+		CustomerCredential customerCredential = customerCredentialManager.queryByBiz(1L);
 	}
 	
 	@Test
 	void queryById() {
-		CustomerCredential queryByBiz = customerCredentialManager.queryByBiz(1L);
+		CustomerCredential customerCredential = customerCredentialManager.queryByBiz(1L);
 	}
 	
 	@Test
