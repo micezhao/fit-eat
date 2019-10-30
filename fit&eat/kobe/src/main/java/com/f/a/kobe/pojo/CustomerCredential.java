@@ -20,7 +20,7 @@ public class CustomerCredential implements Serializable {
      *
      * @mbg.generated
      */
-    private String customerId;
+    private Long customerId;
 
     /**
      *
@@ -188,7 +188,7 @@ public class CustomerCredential implements Serializable {
      *
      * @mbg.generated
      */
-    public String getCustomerId() {
+    public Long getCustomerId() {
         return customerId;
     }
 
@@ -200,8 +200,8 @@ public class CustomerCredential implements Serializable {
      *
      * @mbg.generated
      */
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId == null ? null : customerId.trim();
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
     }
 
     /**
