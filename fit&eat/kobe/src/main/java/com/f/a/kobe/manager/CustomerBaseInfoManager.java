@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.f.a.kobe.exceptions.ErrCodeEnum;
 import com.f.a.kobe.manager.aop.ToMongoDB;
 import com.f.a.kobe.mapper.CustomerBaseInfoMapper;
 import com.f.a.kobe.pojo.CustomerBaseInfo;
@@ -33,6 +34,8 @@ public class CustomerBaseInfoManager implements BaseManager<CustomerBaseInfo> {
 		List<CustomerBaseInfo> customerBaseInfoList = customerBaseInfoMapper.selectByExample(customerBaseInfoExample);
 		if(0 < customerBaseInfoList.size()) {
 			return customerBaseInfoList.get(0);
+		}else if(customerBaseInfoList.size() > 1){
+			throw new RuntimeException(ErrCodeEnum.REDUPICATE_RECORD.getErrMsg());
 		}
 		return null;
 	}

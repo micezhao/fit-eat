@@ -4,7 +4,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import com.f.a.kobe.exceptions.ErrCodeEnum;
 import com.f.a.kobe.mapper.CustomerCredentialMapper;
@@ -13,7 +13,7 @@ import com.f.a.kobe.pojo.CustomerCredentialExample;
 import com.f.a.kobe.pojo.CustomerCredentialExample.Criteria;
 import com.f.a.kobe.util.QueryParamTransUtil;
 
-@Service
+@Component
 public class CustomerCredentialManager implements BaseManager<CustomerCredential> {
 
 	@Autowired
