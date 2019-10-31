@@ -25,10 +25,7 @@ public class SyncToMongoDB {
 		String declareName =  joinPoint.getSignature().getDeclaringType().getSimpleName();
 		String clazzName = extractClassName(declareName);
 		Object args[] = joinPoint.getArgs();
-		// 获取传入目标方法的参数
-		for (int i = 0; i < args.length; i++) {
-			System.out.println("第" + (i + 1) + "个参数为:" + args[i]);
-		}
+
 		switch (methodName) {
 		case "insert":
 			syncInsertToMongoDB(args,clazzName);
