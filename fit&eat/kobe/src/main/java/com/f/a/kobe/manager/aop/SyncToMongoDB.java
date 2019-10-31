@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
 @Aspect
@@ -43,12 +45,13 @@ public class SyncToMongoDB {
 	}
 
 	private void syncUpdateToMongoDB(Object[] args, String clazzName ) {
-		// TODO Auto-generated method stub
 		
 	}
 
+	@SuppressWarnings("static-access")
 	private void syncDeleteToMongoDB(Object[] args,String clazzName) {
-	
+		Query query = new Query(new Criteria().where("id").is(Long.parseLong((String)args[0])));
+		mongoTemplate.remove(query, clazzName);
 	}
 
 	private void syncInsertToMongoDB(Object[] args,String clazzName) throws ClassNotFoundException {

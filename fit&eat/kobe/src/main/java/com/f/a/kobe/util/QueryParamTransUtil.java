@@ -4,14 +4,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Date;
 
-import com.f.a.kobe.pojo.CustomerCredential;
-
-public class DataUtil {
+public class QueryParamTransUtil {
 
 	public static <T, R> T formConditionalToCriteria(T criteria, R conditional) {
 		// 1 遍历conditional满足条件的属性
 		// 找到所有get方法
-		Method[] methods = CustomerCredential.class.getMethods();
+		Method[] methods = conditional.getClass().getMethods();
 		Method[] criteriaMethods = criteria.getClass().getMethods();
 		for (Method method : methods) {
 			String methodName = method.getName();

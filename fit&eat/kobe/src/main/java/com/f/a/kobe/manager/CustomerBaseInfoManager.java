@@ -1,5 +1,6 @@
 package com.f.a.kobe.manager;
 
+import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,7 @@ import com.f.a.kobe.mapper.CustomerBaseInfoMapper;
 import com.f.a.kobe.pojo.CustomerBaseInfo;
 import com.f.a.kobe.pojo.CustomerBaseInfoExample;
 import com.f.a.kobe.pojo.CustomerBaseInfoExample.Criteria;
-import com.f.a.kobe.util.DataUtil;
+import com.f.a.kobe.util.QueryParamTransUtil;
 
 @Component
 public class CustomerBaseInfoManager implements BaseManager<CustomerBaseInfo> {
@@ -40,7 +41,7 @@ public class CustomerBaseInfoManager implements BaseManager<CustomerBaseInfo> {
 	public List<CustomerBaseInfo> listByConditional(CustomerBaseInfo conditional) {
 		CustomerBaseInfoExample customerBaseInfoExample = new CustomerBaseInfoExample();
 		Criteria criteria = customerBaseInfoExample.createCriteria();
-		criteria = DataUtil.formConditionalToCriteria(criteria, conditional);
+		criteria = QueryParamTransUtil.formConditionalToCriteria(criteria, conditional);
 		List<CustomerBaseInfo> customerBaseInfoList = customerBaseInfoMapper.selectByExample(customerBaseInfoExample);
 		return customerBaseInfoList;
 	}
@@ -48,11 +49,13 @@ public class CustomerBaseInfoManager implements BaseManager<CustomerBaseInfo> {
 	@ToMongoDB
 	@Override
 	public int insert(CustomerBaseInfo t) {
+		t.setCdt(Calendar.getInstance().getTime());
 		return customerBaseInfoMapper.insertSelective(t);
 	}
 
 	@Override
 	public int update(CustomerBaseInfo t) {
+		t.setMdt(Calendar.getInstance().getTime());
 		return customerBaseInfoMapper.updateByPrimaryKeySelective(t);
 	}
 
