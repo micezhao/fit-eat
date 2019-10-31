@@ -10,17 +10,17 @@ public class QueryParamTransUtil {
 	public static <T, R> T formConditionalToCriteria(T criteria, R conditional) {
 		// 1 遍历conditional满足条件的属性
 		// 找到所有get方法
-		Method[] methods = conditional.getClass().getMethods();
+		Method[] conditionalMethodArrays = conditional.getClass().getMethods();
 		Method[] criteriaMethods = criteria.getClass().getMethods();
-		for (Method method : methods) {
-			String methodName = method.getName();
+		for (Method conditionMethod : conditionalMethodArrays) {
+			String methodName = conditionMethod.getName();
 			if (methodName.contains("get")) {
 				try {
 					for (Method criteriaMethod : criteriaMethods) {
-						String name = criteriaMethod.getName();
-						String criteriaMethodName = MessageFormat.format("and{0}EqualTo", methodName.substring(3));
-						if (name.equalsIgnoreCase(criteriaMethodName)) {
-							Object param = method.invoke(conditional, null);
+						String criteriaMethodName = criteriaMethod.getName();
+						String criteriaTargetMethodName = MessageFormat.format("and{0}EqualTo", methodName.substring(3));
+						if (criteriaMethodName.equalsIgnoreCase(criteriaTargetMethodName)) {
+							Object param = conditionMethod.invoke(conditional, null);
 							if (param instanceof String) {
 								String paramStr = (String) param;
 								criteriaMethod.invoke(criteria, paramStr);
