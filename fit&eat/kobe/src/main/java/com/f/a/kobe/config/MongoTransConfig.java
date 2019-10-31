@@ -44,8 +44,8 @@ public class MongoTransConfig {
 	}
 	@Bean //配置连接工厂
 	public MongoDbFactory mongoDbFactory() throws Exception {
-		return new SimpleMongoClientDbFactory(PREFIX+mongoConfigProperites.getUsername()+":"+mongoConfigProperites.getPassword()+"@"+mongoConfigProperites.getHost()+":"+mongoConfigProperites.getPort()+"/"+mongoConfigProperites.getDbName());
-		
+//		return new SimpleMongoClientDbFactory(PREFIX+mongoConfigProperites.getUsername()+":"+mongoConfigProperites.getPassword()+"@"+mongoConfigProperites.getHost()+":"+mongoConfigProperites.getPort()+"/"+mongoConfigProperites.getDbName());
+		return new SimpleMongoClientDbFactory(PREFIX+mongoConfigProperites.getUrl());
 	}
 	@Bean //将程序配置为一个mongodb的客户端
 	public MongoClient mongoClient() {

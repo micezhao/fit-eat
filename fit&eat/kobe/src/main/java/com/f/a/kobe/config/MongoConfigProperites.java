@@ -25,4 +25,6 @@ public class MongoConfigProperites {
 	private String username;
 	
 	private String password;
+	
+	private String url;
 }
