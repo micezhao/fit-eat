@@ -29,7 +29,8 @@ public class CustomerScoreTransManager implements BaseManager<CustomerScoreTrans
 		Long customerId = (Long) bizId;
 		CustomerScoreTransExample customerScoreTransExample = new CustomerScoreTransExample();
 		customerScoreTransExample.createCriteria().andCustomerIdEqualTo(customerId);
-		List<CustomerScoreTrans> customerScoreTransList = customerScoreTransMapper.selectByExample(customerScoreTransExample);
+		List<CustomerScoreTrans> customerScoreTransList = customerScoreTransMapper
+				.selectByExample(customerScoreTransExample);
 		if (0 < customerScoreTransList.size()) {
 			return customerScoreTransList.get(0);
 		} else if (1 < customerScoreTransList.size()) {
@@ -43,7 +44,8 @@ public class CustomerScoreTransManager implements BaseManager<CustomerScoreTrans
 		CustomerScoreTransExample customerScoreTransExample = new CustomerScoreTransExample();
 		Criteria criteria = customerScoreTransExample.createCriteria();
 		criteria = QueryParamTransUtil.formConditionalToCriteria(criteria, conditional);
-		List<CustomerScoreTrans> customerScoreTransList = customerScoreTransMapper.selectByExample(customerScoreTransExample);
+		List<CustomerScoreTrans> customerScoreTransList = customerScoreTransMapper
+				.selectByExample(customerScoreTransExample);
 		return customerScoreTransList;
 	}
 
