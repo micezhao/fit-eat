@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.f.a.kobe.exceptions.ErrCodeEnum;
+import com.f.a.kobe.manager.aop.ToMongoDB;
 import com.f.a.kobe.mapper.CustomerLogMapper;
 import com.f.a.kobe.pojo.CustomerLog;
 import com.f.a.kobe.pojo.CustomerLogExample;
@@ -46,19 +47,22 @@ public class CustomerLogManager implements BaseManager<CustomerLog> {
 		List<CustomerLog> customerLogList = customerLogMapper.selectByExample(customerLogExample);
 		return customerLogList;
 	}
-
+	
+	@ToMongoDB
 	@Override
 	public int insert(CustomerLog t) {
 		t.setCdt(Calendar.getInstance().getTime());
 		return customerLogMapper.insertSelective(t);
 	}
-
+	
+	@ToMongoDB
 	@Override
 	public int update(CustomerLog t) {
 		t.setMdt(Calendar.getInstance().getTime());
 		return customerLogMapper.updateByPrimaryKeySelective(t);
 	}
-
+	
+	@ToMongoDB
 	@Override
 	public int delete(Long id) {
 		return customerLogMapper.deleteByPrimaryKey(id);

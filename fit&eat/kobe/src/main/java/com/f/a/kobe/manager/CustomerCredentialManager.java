@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.f.a.kobe.exceptions.ErrCodeEnum;
+import com.f.a.kobe.manager.aop.ToMongoDB;
 import com.f.a.kobe.mapper.CustomerCredentialMapper;
 import com.f.a.kobe.pojo.CustomerCredential;
 import com.f.a.kobe.pojo.CustomerCredentialExample;
@@ -49,19 +50,22 @@ public class CustomerCredentialManager implements BaseManager<CustomerCredential
 				.selectByExample(customerCredentialExample);
 		return customerCredentialList;
 	}
-
+	
+	@ToMongoDB
 	@Override
 	public int insert(CustomerCredential customerCredential) {
 		customerCredential.setCdt(Calendar.getInstance().getTime());
 		return customerCredentialMapper.insertSelective(customerCredential);
 	}
-
+	
+	@ToMongoDB
 	@Override
 	public int update(CustomerCredential customerCredential) {
 		customerCredential.setMdt(Calendar.getInstance().getTime());
 		return customerCredentialMapper.updateByPrimaryKeySelective(customerCredential);
 	}
 
+	@ToMongoDB
 	@Override
 	public int delete(Long id) {
 		return customerCredentialMapper.deleteByPrimaryKey(id);
