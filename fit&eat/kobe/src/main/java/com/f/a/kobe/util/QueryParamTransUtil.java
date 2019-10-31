@@ -2,6 +2,7 @@ package com.f.a.kobe.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.MessageFormat;
 import java.util.Date;
 
 public class QueryParamTransUtil {
@@ -17,7 +18,8 @@ public class QueryParamTransUtil {
 				try {
 					for (Method criteriaMethod : criteriaMethods) {
 						String name = criteriaMethod.getName();
-						if (name.equalsIgnoreCase("and" + methodName.substring(3) + "EqualTo")) {
+						String criteriaMethodName = MessageFormat.format("and{0}EqualTo", methodName.substring(3));
+						if (name.equalsIgnoreCase(criteriaMethodName)) {
 							Object param = method.invoke(conditional, null);
 							if (param instanceof String) {
 								String paramStr = (String) param;
