@@ -1,15 +1,17 @@
 package com.f.a.kobe.manager;
 
+import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.f.a.kobe.exceptions.ErrCodeEnum;
 import com.f.a.kobe.mapper.CustomerCredentialMapper;
 import com.f.a.kobe.pojo.CustomerCredential;
 import com.f.a.kobe.pojo.CustomerCredentialExample;
 import com.f.a.kobe.pojo.CustomerCredentialExample.Criteria;
-import com.f.a.kobe.util.DataUtil;
+import com.f.a.kobe.util.QueryParamTransUtil;
 
 @Service
 public class CustomerCredentialManager implements BaseManager<CustomerCredential> {
@@ -25,13 +27,15 @@ public class CustomerCredentialManager implements BaseManager<CustomerCredential
 
 	@Override
 	public CustomerCredential queryByBiz(Object bizId) {
-		Long userid = (Long) bizId;
+		Long userId = (Long) bizId;
 		CustomerCredentialExample customerCredentialExample = new CustomerCredentialExample();
-		customerCredentialExample.createCriteria().andCustomerIdEqualTo(userid);
+		customerCredentialExample.createCriteria().andCustomerIdEqualTo(userId);
 		List<CustomerCredential> customerCredentialList = customerCredentialMapper
 				.selectByExample(customerCredentialExample);
 		if (0 < customerCredentialList.size()) {
 			return customerCredentialList.get(0);
+		}else if(customerCredentialList.size() > 1){
+			throw new RuntimeException(ErrCodeEnum.REDUPICATE_RECORD.getErrMsg());
 		}
 		return null;
 	}
@@ -40,7 +44,7 @@ public class CustomerCredentialManager implements BaseManager<CustomerCredential
 	public List<CustomerCredential> listByConditional(CustomerCredential conditional) {
 		CustomerCredentialExample customerCredentialExample = new CustomerCredentialExample();
 		Criteria criteria = customerCredentialExample.createCriteria();
-		criteria = DataUtil.formConditionalToCriteria(criteria, conditional);
+		criteria = QueryParamTransUtil.formConditionalToCriteria(criteria, conditional);
 		List<CustomerCredential> customerCredentialList = customerCredentialMapper
 				.selectByExample(customerCredentialExample);
 		return customerCredentialList;
@@ -48,11 +52,13 @@ public class CustomerCredentialManager implements BaseManager<CustomerCredential
 
 	@Override
 	public int insert(CustomerCredential customerCredential) {
+		customerCredential.setCdt(Calendar.getInstance().getTime());
 		return customerCredentialMapper.insertSelective(customerCredential);
 	}
 
 	@Override
 	public int update(CustomerCredential customerCredential) {
+		customerCredential.setMdt(Calendar.getInstance().getTime());
 		return customerCredentialMapper.updateByPrimaryKeySelective(customerCredential);
 	}
 
