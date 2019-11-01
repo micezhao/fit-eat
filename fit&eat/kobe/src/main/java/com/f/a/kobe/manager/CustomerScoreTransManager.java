@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.f.a.kobe.exceptions.ErrCodeEnum;
+import com.f.a.kobe.manager.aop.ToMongoDB;
 import com.f.a.kobe.mapper.CustomerScoreTransMapper;
 import com.f.a.kobe.pojo.CustomerScoreTrans;
 import com.f.a.kobe.pojo.CustomerScoreTransExample;
@@ -48,19 +49,22 @@ public class CustomerScoreTransManager implements BaseManager<CustomerScoreTrans
 				.selectByExample(customerScoreTransExample);
 		return customerScoreTransList;
 	}
-
+	
+	@ToMongoDB
 	@Override
 	public int insert(CustomerScoreTrans t) {
 		t.setCdt(Calendar.getInstance().getTime());
 		return customerScoreTransMapper.insertSelective(t);
 	}
-
+	
+	@ToMongoDB
 	@Override
 	public int update(CustomerScoreTrans t) {
 		t.setMdt(Calendar.getInstance().getTime());
 		return customerScoreTransMapper.updateByPrimaryKeySelective(t);
 	}
-
+	
+	@ToMongoDB
 	@Override
 	public int delete(Long id) {
 		return customerScoreTransMapper.deleteByPrimaryKey(id);

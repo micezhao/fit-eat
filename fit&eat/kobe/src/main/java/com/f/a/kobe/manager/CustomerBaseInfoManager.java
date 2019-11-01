@@ -55,13 +55,15 @@ public class CustomerBaseInfoManager implements BaseManager<CustomerBaseInfo> {
 		t.setCdt(Calendar.getInstance().getTime());
 		return customerBaseInfoMapper.insertSelective(t);
 	}
-
+	
+	@ToMongoDB
 	@Override
 	public int update(CustomerBaseInfo t) {
 		t.setMdt(Calendar.getInstance().getTime());
 		return customerBaseInfoMapper.updateByPrimaryKeySelective(t);
 	}
-
+	
+	@ToMongoDB
 	@Override
 	public int delete(Long id) {
 		return customerBaseInfoMapper.deleteByPrimaryKey(id);
