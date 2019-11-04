@@ -1,5 +1,6 @@
 package com.f.a.kobe;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import com.f.a.kobe.KobeApplication;
 import com.f.a.kobe.manager.CustomerCredentialManager;
 import com.f.a.kobe.pojo.CustomerCredential;
 import com.f.a.kobe.util.IdWorker;
+import com.f.a.kobe.util.SequenceFactory;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)	
@@ -23,6 +25,9 @@ class KobeApplicationManagerTests {
 
 	@Autowired
 	CustomerCredentialManager customerCredentialManager;
+	
+	@Autowired
+	SequenceFactory sequenceFactory;
 	
 	@Autowired
 	IdWorker idWorker;
@@ -41,20 +46,33 @@ class KobeApplicationManagerTests {
 	
 	@Test
 	void add() {
-		for(int i = 0;i<100;i++) {
+		for(int i = 100;i<200;i++) {
 			CustomerCredential customerCredential = new CustomerCredential();
-			customerCredential.setUsername("kobe"+1);
+			customerCredential.setUsername("kobe"+i);
 			customerCredential.setAliOpenid("798dasd7kobe"+i+"sa98d");
 			customerCredential.setCdt(new Date());
-			customerCredential.setCustomerId(idWorker.nextId());
+			customerCredential.setCustomerId(sequenceFactory.generate(""+i));
 			customerCredential.setDr("1");
 			customerCredential.setEmail("kobe"+i+"henniub@nb.com");
 			customerCredential.setMdt(new Date());
-			customerCredential.setMobile("18977993355");
+			customerCredential.setMobile("18977993"+i);
 			customerCredential.setWxOpenid("898kobe"+i+"asd");
 			customerCredential.setPassword("3399kobe"+i);
 			customerCredentialManager.insert(customerCredential);
 		}
+	}
+	
+	@Test
+	void testSequenceFactory() {
+		System.out.println("--testSequenceFactory-- start");
+		long timeInMillis = Calendar.getInstance().getTimeInMillis();
+		for(int i = 0;i<100;i++) {
+			long generate = sequenceFactory.incrementHash(i+"","6379",1L);
+			System.out.println(generate);
+		}
+		long endtimeInMillis = Calendar.getInstance().getTimeInMillis();
+		System.out.println(endtimeInMillis - timeInMillis);
+		System.out.println("--testSequenceFactory-- end");
 	}
 	
 	@Test
