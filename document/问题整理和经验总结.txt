@@ -124,6 +124,43 @@ fit-eat 开发过程的问题记录和经验总结
     至此：eureka server/client 的启动与注册流程就执行完毕
     同时，为了维护server/client之间的关系，client端将由一个定时任务 scheduleTask定时向sever发送心跳，来维持连接，而在server由Lookup类来轮训当前处于注册列表中的服务
     
+2、通过自定义注解+aop的方式实现将mysql数据同步到mongodb的操作
+    2.1 关于mongodb的数据库系统的权限控制和连接管理
+    2.2 关于对java提供的注解的深入学习
+        java中的注解分为元注解与注解（包括：java提供的注解和自定义注解），其中元注解是有java语言提供的，作用是描述或限定自定义注解的注解
+        常用的元注解有：
+        @Target：用于限定注解的作用位置，例如：@Target({ElementType.METHOD,ElementType.PARAMETER,ElementType.FIELD}
+        @Retention:声明注解的保留期，常用：@Retention(RetentionPolicy.RUNTIME)，表示在运行期间jvm可以通过反射获得该注解的相关信息
+        @Document:说明被修饰的注解是否需要包含Javadoc中
+        @Inherited:描述这个注解可以被继承，假设注解 @AnnoTest被元注解@Inherited修饰，类A 被@AnnoTest修饰，类B继承了A，那么B也被@AnnoTest修饰
+        java的提供的注解有：
+        @Override，表示当前的方法定义将覆盖超类中的方法。
+        @Deprecated，使用了注解为它的元素编译器将发出警告，因为注解@Deprecated是不赞成使用的代码，被弃用的代码。
+        @SuppressWarnings,关闭不当编辑器警告信息。
+        自定义注解：
+        自定义注解是一个特殊的接口，声明的方法是@Interface ，在自定义注解接口中可以定义接口中的方法及其默认值 
+        @Target(ElementType.METHOD)
+        @Retention(RetentionPolicy.RUNTIME)
+        public @interface UseCases{
+            public String id();
+            public String description() default "no description";
+        }
+        在运行时可以通过java的反射来获得这个注解的相关信息，
+		Annotation[] annotations01 = Class.getAnnotations(); 
+    2.3 关于springboot的自动化配置：
+        
 
+3、设计模式（一）：
+    3.1 装饰器模式：结构型模式
+        装饰器模式践行了设计模式大原则中的开闭原则（即：对扩展开发，对修改关闭），其作用在于在不改变原有功能的前提下，通过装饰器对功能提供扩展
+        实现装饰器的条件：
+        准备过程：
+        1、baseClass = > method_1,method_2,...,method_n
+        2、decorateClass =>protected arg baseClass , constructor(baseClass),@Override method_1( extendtion method)
+        调用方式：
+        DecorateClass decorateClass = new DecorateClass(baseClass); // 通过装饰器类对基类进行包装
+        decorateClass.method_1() => 此时执行的是被扩展的method_1 的结果 
+        装饰器本身最好是一个abstract类，方便被同类型但需要个性化扩展方法的类继承并重写装饰的方法
+    3.2 策略模式：
 
     

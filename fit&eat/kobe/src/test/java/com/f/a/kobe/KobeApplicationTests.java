@@ -23,11 +23,11 @@ class KobeApplicationTests {
 	@Test
 	void test1() {
 		CustomerBaseInfo info = new CustomerBaseInfo();
-		info.setId(98765L);
-		info.setAge(22);
-		info.setCustomerId(12343434L);
-		info.setRealname("test");
-		info.setMobile("1234567");
+		info.setId(432323L);
+		info.setAge(12);
+		info.setCustomerId(1234335234L);
+		info.setRealname("test2");
+		info.setMobile("123456dfdf7");
 		infoManager.insert(info);
 	}
 	

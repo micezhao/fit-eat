@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 @Target({ElementType.METHOD}) //基于Spring AOP的注解只能作用在方法上
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Component
 public @interface ToMongoDB {
-
+	
 }
