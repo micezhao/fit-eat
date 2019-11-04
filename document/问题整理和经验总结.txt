@@ -103,6 +103,7 @@ fit-eat 开发过程的问题记录和经验总结
         【info是InstanceInfo对象的实例，info由client端提供】
     1.4 registry方法最后落脚到AbstractInstanceRegistry类中的registry方法中，在AbstractInstanceRegistry.registry方法中，
         最后将这个info写入到 ConcurrentHashMap<String, Map<String, Lease<InstanceInfo>>> 中，完成服务的注册步骤。
+        【2019-11-04 提问：最外层的key存的是什么】
         这个map维护的是 serviceId 与这个serviceId对应的InstanceInfo的租约信息【Lease】的映射关系。
     1.5 Lease【租约】对象中存放了 InstanceInfo ,evictionTimestamp[失效时间],registrationTimestamp【注册时间】,serviceUpTimestamp【启动时间】等信息
     
@@ -111,7 +112,7 @@ fit-eat 开发过程的问题记录和经验总结
         1.6.1 在client端由EurekaAutoServiceRegistration 作为启动入口，与服务端一样，实现了Lifecycle的start（）方法，在启动时将eureka-client初始化到spring的上下文中
         1.6.2 在strat（）方法中，通过调用EurekaServiceRegistry.register方法来实现向服务端注册的执行逻辑；
     1.7 在调用EurekaServiceRegistry.register的过程中，
-                    ｜——首先会通过ApplicationInfoManager【应用管理其】将客户端信息转化为InstanceInfo
+                    ｜——首先会通过ApplicationInfoManager【应用管理器】将客户端信息转化为InstanceInfo
                     ｜——此时，client还未完成启动过程，InstanceInfo的初始状态为starting
                     ｜——在启动完成后，会将InstanceInfo设置为up
     1.8 当Instanceinfo的状态为up后，会触发ApplicationInfoManager.StatusChangeListener监听器发起notify通知
@@ -146,9 +147,67 @@ fit-eat 开发过程的问题记录和经验总结
             public String description() default "no description";
         }
         在运行时可以通过java的反射来获得这个注解的相关信息，
-		Annotation[] annotations01 = Class.getAnnotations(); 
-    2.3 关于springboot的自动化配置：
-        
+		Annotation[] annotations01 = Class.getAnnotations();
+    2.3 将自定义注解作用结合AOP实现功能的扩展（这也是一种装饰器模式）
+        2.3.1 自定义一个注解 例如：@ToMongoDB
+        2.3.2 准备一个Aspect类
+        2.3.3 指定 @Before/@After/@Around 通知注解的value属性为自定义注解 @After(value = "@annotation(ToMongoDB)") 
+        2.3.4 在切面的方法中，编写程序逻辑，即可
+    2.4 关于springboot的自动化配置：
+        自动化配置可以说是springboot框架中最重要的一个功能之一，在了解springboot的自动化配置功能(spring-boot-autoconfigure.jar)之前，首先要了解springboot可以自动化的配置哪些内容
+        2.4.1 在spring-boot-autoconfigure.jar的/MATA-INF 维护两个文件 spring.factories 和 spring-autoconfigure-metadata.properties 两个文件
+              spring.factories:声明了可以被自动化配置的组件/模块/功能列表
+              spring-autoconfigure-metadata.properties:维护了各组件/模块/功能列表的代码入口
+        那么为什么需要这个功能呢？
+        这就要从spring的历史说起，spring框架具有面向接口编程的特点，这个特点使得spring框架本身具有极强的兼容性和扩展能力。
+        当开发者需要在项目中使用到某个中间件时（例如：jdbc，mq，cache）时，只需要编写一个专门的xml配置文件将这个组件与spring框架对接起来，也就是：将Spring框架提供的对应的接口与组件的实现进行匹配
+        以向spring框架中集成一个消息中间为例：https://blog.csdn.net/isea533/article/details/84545484
+        试想：如果一个工程需要配置诸多中间件时，且在一个多工程聚合的项目中，这种xml配置文件就需要耗费大量的维护成本。
+        因此springboot提高了自动化配置的功能，是基于”约定优于配置“的原则，将这些可能会用到的，并且Spring已经提供了实现了的组件进行同一的管理。
+        让开发人员只需通过配置文件来声明一些【如连接信息】个性化程度很高的配置项参数，就可以实现中间的集成。这样以来，极大的简化了工程项目的集成难度，让开发者可以更多的将经历投入在业务开发中。
+        那Springboot是如何完成自动化配置的呢？
+        2.4.2.1 自动配置的入口：main中的SpringApplication.run(xxApplication.Class,args)方法 => args是来自springboot项目通过命令启动时的启动参数，例如 java -jar my-spring-boot.jar --spring.profiles.active=prod 其中 --spring.profiles.active=prod就时args的一部分
+        2.4.2.2 自动化配置是通过注解@SpringBootApplication 来进行，@SpringBootApplication -> @Target(ElementType.TYPE) 这个注解作用与类上
+        2.4.2.3 可以被自动配置的组件：@SpringBootApplication - >import @EnableAutoConfiguration -> @Import(AutoConfigurationImportSelector.class)
+                AutoConfigurationImportSelector.class -> 
+                    selectImports -> (
+                        getAutoConfigurationEntry - (
+                            getAutoConfigurationEntry -> (
+                                getCandidateConfigurations -- （ // 获得候选人
+                                    SpringFactoriesLoader.loadFactoryNames(
+                                      -> loadSpringFactories( // FACTORIES_RESOURCE_LOCATION = "META-INF/spring.factories";
+                                          classLoader.getResources(FACTORIES_RESOURCE_LOCATION) : 
+					                      ClassLoader.getSystemResources(FACTORIES_RESOURCE_LOCATION));
+                                        ) 读取完成后，将需要被自动加载的内容存储在一个 LinkedMultiValueMap<>()中;
+                                    ）
+                                )
+                            )
+                        )
+                    ) == >> 执行完成后，封装成 AutoConfigurationEntry.class --> AutoConfigurationEntry(Collection<String> configurations, Collection<String> exclusions) 
+        2.4.2.4 哪些组件将会被加载 @SpringBootApplication - > @ComponentScan 扫描整个项目中的bean，
+                 当工程中引用了spring.factories中的某个组件后，将会被扫描到从而成为一个在项目启动过程总需要被加载的组件
+        2.4.2.5 项目启动，开始加载 SpringApplication.class --> 
+                run(
+                     getRunListeners(
+                         getSpringFactoriesInstances(
+                             createSpringFactoriesInstances( //并将他们创建成一个 java的实例 
+                                 SpringFactoriesLoader.loadFactoryNames() // 从"META-INF/spring.factories" 中获取要加载的配置
+                             )
+                         )
+                     )
+                     prepareContext(
+                         listeners.contextPrepared(context); //将这些监听器的实例放入转为上下文
+                     )
+                     ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
+		             beanFactory.registerSingleton("springApplicationArguments", applicationArguments); // 将上下文中的内容变成一个singleton bean
+                     listeners.contextLoaded(context); // 启动被监听的监视器
+                )
+        2.4.2.6 项目启动的过程中，诸多被加载的组件也需要同步开始运行，而这些组件大多需要进行一些额外的配置，例如数据库的连接信息，消息中间的服务端地址
+                这些额外的配置通过spring-autoconfigure-metadata.properties文件中指定的组件代码入口上的@EnableConfigurationProperties(xxxProperties.class)
+                xxxProperties.class来读取额外的配置信息
+
+
+       
 
 3、设计模式（一）：
     3.1 装饰器模式：结构型模式
@@ -162,5 +221,6 @@ fit-eat 开发过程的问题记录和经验总结
         decorateClass.method_1() => 此时执行的是被扩展的method_1 的结果 
         装饰器本身最好是一个abstract类，方便被同类型但需要个性化扩展方法的类继承并重写装饰的方法
     3.2 策略模式：
+
 
     
