@@ -15,7 +15,7 @@ import com.f.a.kobe.KobeApplication;
 import com.f.a.kobe.manager.CustomerCredentialManager;
 import com.f.a.kobe.pojo.CustomerCredential;
 import com.f.a.kobe.util.IdWorker;
-import com.f.a.kobe.util.SequenceFactory;
+//import com.f.a.kobe.util.SequenceFactory;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)	
@@ -26,8 +26,8 @@ class KobeApplicationManagerTests {
 	@Autowired
 	CustomerCredentialManager customerCredentialManager;
 	
-	@Autowired
-	SequenceFactory sequenceFactory;
+	//@Autowired
+	//SequenceFactory sequenceFactory;
 	
 	@Autowired
 	IdWorker idWorker;
@@ -51,7 +51,7 @@ class KobeApplicationManagerTests {
 			customerCredential.setUsername("kobe"+i);
 			customerCredential.setAliOpenid("798dasd7kobe"+i+"sa98d");
 			customerCredential.setCdt(new Date());
-			customerCredential.setCustomerId(sequenceFactory.generate(""+i));
+			//customerCredential.setCustomerId(sequenceFactory.generate(""+i));
 			customerCredential.setDr("1");
 			customerCredential.setEmail("kobe"+i+"henniub@nb.com");
 			customerCredential.setMdt(new Date());
@@ -67,8 +67,8 @@ class KobeApplicationManagerTests {
 		System.out.println("--testSequenceFactory-- start");
 		long timeInMillis = Calendar.getInstance().getTimeInMillis();
 		for(int i = 0;i<100;i++) {
-			long generate = sequenceFactory.incrementHash(i+"","6379",1L);
-			System.out.println(generate);
+			//long generate = sequenceFactory.incrementHash(i+"","6379",1L);
+			//System.out.println(generate);
 		}
 		long endtimeInMillis = Calendar.getInstance().getTimeInMillis();
 		System.out.println(endtimeInMillis - timeInMillis);
