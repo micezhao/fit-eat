@@ -1,5 +1,6 @@
 package com.f.a.kobe.ctrl;
 
+import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpSession;
@@ -9,7 +10,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.alibaba.fastjson.JSON;
+import com.f.a.kobe.pojo.CustomerCredential;
+import com.f.a.kobe.pojo.View.UserAgent;
+import com.f.a.kobe.pojo.request.LoginRequest;
 
 @RestController
 public class KobeCtrl {
@@ -31,15 +39,37 @@ public class KobeCtrl {
 		return buffer.toString();
 	}
 
-	@GetMapping("/uid")
-	public String testUid(HttpSession session) {
-		UUID uuid = (UUID) session.getAttribute("uuid");
-		if (uuid == null) {
-			uuid = UUID.randomUUID();
-			session.setAttribute("uuid", uuid);
+	@GetMapping("/user")
+	public String getUser(HttpSession session) {
+		UserAgent useAgent = (UserAgent) session.getAttribute("userDetail");
+		if (useAgent == null) {
+			return "请先访问localhost:8763/login 登陆本系统：";
 		}
-		return session.getId() + ":[UUID]" + uuid;
+		return JSON.toJSONString(useAgent);
+	}
+	
+	@PostMapping("/login")
+	public String login(HttpSession session,@RequestBody LoginRequest loginRequest,UserAgent userAgent) {
+		
+		if(StringUtils.equals("micezhao", loginRequest.getWxOpenid()) && StringUtils.equals("wx", loginRequest.getLoginType())) {
+			userAgent = new UserAgent();
+			userAgent.setAge(29);
+			userAgent.setWxOpenid("micezhao");
+			userAgent.setCustomerId(123456L);
+			userAgent.setNickname("肿眼的熊");
+			session.setAttribute("userDetail", userAgent);
+		}
+		return JSON.toJSONString(userAgent);
 	}
 	
 	
+	@PostMapping("/buy")
+	public String buy(HttpSession session) {
+		Object object = session.getAttribute("userDetail");
+		UserAgent userAgent = JSON.parseObject(JSON.toJSONString(object), UserAgent.class);
+		if (userAgent == null) {
+			return "请先访问localhost:8763/login 登陆本系统：";
+		}
+		return userAgent.getNickname() + "恭喜您！兑换成功";
+	}
 }

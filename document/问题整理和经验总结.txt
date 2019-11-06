@@ -240,5 +240,11 @@ fit-eat 开发过程的问题记录和经验总结
         最初这些会话信息是存放在网络服务器中（例如：tomcat），会话信息只能在当前tomcat中流转。
         但是，随着互联网技术的发展和微服务架构被广泛使用后，每个微服务都独享资源，那么会话就需要在这个微服务集中共享。因此，可以将某些具有存储功能的中间当作session容器
         例如：redis，mongodb，sql数据库
-    1.4 spring session:
+    1.4 spring session:是一套有spring提供的实现session管理的接口
+        使用 spring-session-redis来管理session
+        1.4.1 引入依赖
+        1.4.2 进行配置：redis的连接配置，springsession的属性配置
+                     【未解决指定session的redis db】
+        1.4.3 配置session的序列化策略：com.f.a.kobe.config.SessionConfig
+        
 
