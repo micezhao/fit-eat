@@ -10,7 +10,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.f.a.kobe.manager.CustomerCredentialManager;
+import com.f.a.kobe.pojo.China;
 import com.f.a.kobe.pojo.CustomerCredential;
+import com.f.a.kobe.service.CustomerCredentialService;
+import com.f.a.kobe.service.DistrictInfoService;
 import com.f.a.kobe.util.IdWorker;
 
 
@@ -22,9 +25,24 @@ class KobeApplicationManagerTests {
 	@Autowired
 	CustomerCredentialManager customerCredentialManager;
 	
+	@Autowired
+	CustomerCredentialService customerCredentialService;
+	
+	@Autowired
+	DistrictInfoService districtInfoService;
+	
+	@Test
+	void testDistrictInfoService() {
+		List<China> listDistrictByPid = districtInfoService.listDistrictByPid(0);
+		System.out.println(listDistrictByPid);
+	}
 	/*
 	 * @Autowired SequenceFactory sequenceFactory;
 	 */
+	@Test
+	void testCustomerCredentialService() {
+		customerCredentialService.getSessionKeyAndOpenid("H7hsK");
+	}
 	
 	@Autowired
 	IdWorker idWorker;
