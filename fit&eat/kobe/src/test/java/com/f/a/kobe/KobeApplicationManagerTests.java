@@ -1,6 +1,7 @@
 package com.f.a.kobe;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +17,7 @@ import com.f.a.kobe.pojo.CustomerCredential;
 import com.f.a.kobe.service.CustomerAddrService;
 import com.f.a.kobe.service.CustomerCredentialService;
 import com.f.a.kobe.service.DistrictInfoService;
+import com.f.a.kobe.service.aop.UserHandler;
 import com.f.a.kobe.util.IdWorker;
 
 
