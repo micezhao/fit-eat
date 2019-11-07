@@ -1,14 +1,17 @@
 package com.f.a.kobe.service.aop;
 
+import org.springframework.stereotype.Component;
+
 import com.f.a.kobe.pojo.CustomerAddr;
 import com.f.a.kobe.util.CombinedParam;
 import com.f.a.kobe.util.CombinedParamBuilder;
 import com.f.a.kobe.util.CombinedParamCheckUtil;
 
-public class InsertAddrParamCheckor implements ParamCheckor{
+@Component
+public class  CustomerAddrParamCheckor implements ParamCheckHandler{
 
 	@Override
-	public boolean check(Object obj) {
+	public boolean commonCheck(Object obj) {
 		CustomerAddr customerAddr = (CustomerAddr)obj;
 		customerAddr.setConnectorMobile("15827310817");
 		String connectorMobile = customerAddr.getConnectorMobile();
@@ -25,6 +28,18 @@ public class InsertAddrParamCheckor implements ParamCheckor{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return false;
+	}
+
+	@Override
+	public boolean insertCheck(Object t) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean updateCheck(Object t) {
+		// TODO Auto-generated method stub
 		return false;
 	}
 
