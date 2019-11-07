@@ -242,7 +242,11 @@ fit-eat 开发过程的问题记录和经验总结
         例如：redis，mongodb，sql数据库
     1.4 session是怎么生成的？
         session是有服务端控制的会话技术，因此session也是来自于后端
-        session产生的流程：
+        session产生的流程：客户端发起请求 访问 httpServletReqeust接口并调用其get.session(ture)方法，
+        如果是客户端的第一次请求,那么就会为本次会话创建一个session信息，可以用来存放客户端与服务端交互过程中需要用到的相关信息，并且生成一个sessionId返回给客户端，sessionid是客户端维护与服务端会话的重要唯一标示
+        sessionId -> session
+        如果客户端已经访问过服务端，那么就通过sessionId获取已存在的session信息
+        session完全由服务端控制，一个session信息的创建，修改，删除都是在服务端进行。因此假定一个浏览器关闭了，是不会删除session信息。除非打开另一个浏览器时，这样就服务器就会将其认定为另一个客户端，sessionId将重新生成
     1.4 spring session:是一套有spring提供的实现session管理的接口
         使用 spring-session-redis来管理session
         1.4.1 引入依赖

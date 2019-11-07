@@ -1,29 +1,48 @@
 package com.f.a.kobe.service.aop;
 
+import java.util.Locale;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Aspect
 @Component
 public class ParamCheckAop {
-
+	
+	// 注入选择器接口实现的集合
+	@Autowired
+	protected Map<String,ParamCheckHandler> checkHandlerMap;
+	
+	private static final String SUFFIX = "ParamCheckor";
+	
+	// 选择参数校验器
+	private  ParamCheckHandler getCheckHandler(String subject) {
+		ParamCheckHandler handler= checkHandlerMap.get(subject);
+		if(handler == null) {
+			throw new RuntimeException("can not find paramCheckHandler for this subject named :"+subject);
+		}
+		return handler;
+		
+	}
+	
 	@Before(value = "@annotation(ParamCheck)")
 	public void dofore(JoinPoint joinPoint) throws ClassNotFoundException {
-		String methodName = joinPoint.getSignature().getName();
-		StringBuffer bizName = new StringBuffer(methodName.substring(0, 1).toUpperCase()).append(methodName.substring(1));
-		String name = this.getClass().getName();
-		String substring = name.substring(0, name.lastIndexOf("."));
-		StringBuffer bizNameWithPathBuf = new StringBuffer(substring).append(".").append(bizName.toString()).append("ParamCheckor");
-		String bizNameWithPath = bizNameWithPathBuf.toString();
-		try {
-			ParamCheckUtil p = new ParamCheckUtil((ParamCheckor)Class.forName(bizNameWithPath).newInstance());
-			p.check(joinPoint.getArgs()[0]);
-		} catch (InstantiationException | IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			//未找到指定的检查类
-			e.printStackTrace();
-		} 
+	
+		String clazzName = joinPoint.getSignature().getDeclaringType().getSimpleName();
+		getCheckHandler(extractHandlerName(clazzName)).commonCheck(joinPoint.getArgs()[0]); 
 	}
+	
+	// 抽取校验器的beanName
+	public String extractHandlerName(String clazzName) {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(clazzName.substring(0,1).toLowerCase(Locale.ENGLISH))
+		.append(clazzName.substring(1,clazzName.length()));
+		return buffer.toString().replace("Service", SUFFIX);
+	}
+	
 }
