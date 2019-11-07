@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
 import com.f.a.kobe.pojo.CustomerCredential;
-import com.f.a.kobe.pojo.View.UserAgent;
 import com.f.a.kobe.pojo.request.LoginRequest;
+import com.f.a.kobe.pojo.view.UserAgent;
 
 @RestController
 public class KobeCtrl {
