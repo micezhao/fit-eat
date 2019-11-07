@@ -29,9 +29,8 @@ public class CombinedParamCheckUtil {
 				if(invoke != null && !methodName.contains("Class")) {
 					String methodCheck = methodName+"Check";
 					
-					Method method2 = CombinedParamCheckUtil.class.getMethod("getPhoneCheck",Object.class);
+					Method method2 = CombinedParamCheckUtil.class.getMethod(methodName+"Check",Object.class);
 					boolean invoke2 = (boolean)method2.invoke(this, invoke);
-					//boolean invoke2 = (boolean)this.getClass().getMethod(methodName+"Check", (Class<?>[]) invoke).invoke(this,invoke);
 				}
 			}
 		}
