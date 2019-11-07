@@ -45,7 +45,7 @@ CREATE TABLE `customer_addr` (
   `addr_detail` varchar(1024) DEFAULT NULL COMMENT '详细收货地址',
   `connector_mobile` varchar(32) DEFAULT NULL COMMENT '收货人手机号码',
   `connector_name` varchar(32) DEFAULT NULL COMMENT '收货人姓名',
-  `default` char(2) DEFAULT NULL COMMENT '是否选择为默认收货地址 1 表示默认收获地址',
+  `use_default` char(2) DEFAULT NULL COMMENT '是否选择为默认收货地址 1 表示默认收获地址',
   `ext1` varchar(128) DEFAULT NULL,
   `ext2` varchar(128) DEFAULT NULL,
   `ext3` varchar(128) DEFAULT NULL,
