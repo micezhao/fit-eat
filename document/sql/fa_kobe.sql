@@ -34,14 +34,18 @@ CREATE TABLE `china` (
 DROP TABLE IF EXISTS `customer_addr`;
 CREATE TABLE `customer_addr` (
   `id` bigint(64) unsigned NOT NULL AUTO_INCREMENT,
-  `customer_id` bigint(64) DEFAULT NULL,
+  `addr_id` bigint(64) unsigned NOT NULL '地址编码',
+  `customer_id` bigint(64) DEFAULT NULL '用户id',
   `province_no` varchar(16) DEFAULT NULL COMMENT '省编码',
+  `province_name` varchar(512) DEFAULT NULL COMMENT '省名',
   `city_no` varchar(16) DEFAULT NULL COMMENT '市编码',
+  `city_name` varchar(512) DEFAULT NULL COMMENT '市名',
   `distrc_no` varchar(16) DEFAULT NULL COMMENT '区编码',
+  `distrc_name` varchar(512) DEFAULT NULL COMMENT '区名',
   `addr_detail` varchar(1024) DEFAULT NULL COMMENT '详细收货地址',
   `connector_mobile` varchar(32) DEFAULT NULL COMMENT '收货人手机号码',
   `connector_name` varchar(32) DEFAULT NULL COMMENT '收货人姓名',
-  `use_default` char(2) DEFAULT NULL COMMENT '是否选择为默认收货地址 1 表示默认收获地址',
+  `default` char(2) DEFAULT NULL COMMENT '是否选择为默认收货地址 1 表示默认收获地址',
   `ext1` varchar(128) DEFAULT NULL,
   `ext2` varchar(128) DEFAULT NULL,
   `ext3` varchar(128) DEFAULT NULL,
@@ -83,7 +87,7 @@ CREATE TABLE `customer_baseinfo` (
 DROP TABLE IF EXISTS `customer_credential`;
 CREATE TABLE `customer_credential` (
   `id` bigint(64) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键id',
-  `customer_id` varchar(32) NOT NULL,
+  `customer_id` varchar(32) NOT NULL '用户id',
   `mobile` varchar(32) DEFAULT NULL COMMENT '绑定手机号',
   `wx_openid` varchar(64) DEFAULT NULL COMMENT '微信openid',
   `ali_openid` varchar(64) DEFAULT NULL COMMENT '支付宝生活号openid',
@@ -130,6 +134,7 @@ CREATE TABLE `customer_log` (
 DROP TABLE IF EXISTS `customer_score_trans`;
 CREATE TABLE `customer_score_trans` (
   `id` bigint(64) unsigned NOT NULL AUTO_INCREMENT,
+  `trans_no` bigint(64) unsigned NOT COMMENT '积分变化流水号' ,
   `customer_id` bigint(64) NOT NULL COMMENT '用户id',
   `trans_type` varchar(8) DEFAULT NULL COMMENT '积分变更类型 add 增加 sub 扣减',
   `trans_count` int(16) DEFAULT NULL COMMENT '积分变化数量',
