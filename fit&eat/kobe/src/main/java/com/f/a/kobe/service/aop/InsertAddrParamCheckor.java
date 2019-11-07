@@ -1,0 +1,32 @@
+package com.f.a.kobe.service.aop;
+
+import com.f.a.kobe.pojo.CustomerAddr;
+import com.f.a.kobe.util.CombinedParam;
+import com.f.a.kobe.util.CombinedParamBuilder;
+import com.f.a.kobe.util.CombinedParamCheckUtil;
+
+public class InsertAddrParamCheckor implements ParamCheckor{
+
+	@Override
+	public boolean check(Object obj) {
+		CustomerAddr customerAddr = (CustomerAddr)obj;
+		customerAddr.setConnectorMobile("15827310817");
+		String connectorMobile = customerAddr.getConnectorMobile();
+		String addrDetail = customerAddr.getAddrDetail();
+		String connectorName = customerAddr.getConnectorName();
+		CombinedParamCheckUtil.checkEmpty(connectorMobile, "connectorMobile", "联系人电话不得为空");
+		CombinedParamCheckUtil.checkEmpty(addrDetail, "addrDetail", "联系人详细地址不得为空");
+		CombinedParamCheckUtil.checkEmpty(connectorName, "connectorName", "联系人姓名不得为空");
+		CombinedParam combinedParam = new CombinedParamBuilder().setPhone(customerAddr.getConnectorMobile()).build();
+		CombinedParamCheckUtil cutil = new CombinedParamCheckUtil();
+		cutil.setCombinedParam(combinedParam);
+		try {
+			cutil.check();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+
+}
