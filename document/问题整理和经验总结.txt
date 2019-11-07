@@ -240,6 +240,9 @@ fit-eat 开发过程的问题记录和经验总结
         最初这些会话信息是存放在网络服务器中（例如：tomcat），会话信息只能在当前tomcat中流转。
         但是，随着互联网技术的发展和微服务架构被广泛使用后，每个微服务都独享资源，那么会话就需要在这个微服务集中共享。因此，可以将某些具有存储功能的中间当作session容器
         例如：redis，mongodb，sql数据库
+    1.4 session是怎么生成的？
+        session是有服务端控制的会话技术，因此session也是来自于后端
+        session产生的流程：
     1.4 spring session:是一套有spring提供的实现session管理的接口
         使用 spring-session-redis来管理session
         1.4.1 引入依赖
