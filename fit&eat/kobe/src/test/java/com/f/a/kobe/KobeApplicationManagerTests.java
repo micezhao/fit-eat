@@ -17,6 +17,7 @@ import com.f.a.kobe.pojo.CustomerCredential;
 import com.f.a.kobe.service.CustomerAddrService;
 import com.f.a.kobe.service.CustomerCredentialService;
 import com.f.a.kobe.service.DistrictInfoService;
+import com.f.a.kobe.service.RegionService;
 import com.f.a.kobe.util.IdWorker;
 
 
@@ -36,6 +37,17 @@ class KobeApplicationManagerTests {
 	
 	@Autowired
 	CustomerAddrService customerAddrService;
+	
+	@Autowired
+	RegionService regionService;
+	
+	@Test
+	void testRegionService() {
+		//regionService.listRegionByPId(331100);
+		//regionService.sycnRegion2Redis();
+//		regionService.sycnRegion2Redis2();
+		regionService.getSycnRegion2Redis2();
+	}
 	
 	@Test
 	void testCustomerAddrService() {
