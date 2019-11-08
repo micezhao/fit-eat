@@ -39,7 +39,7 @@ public class RegionService {
 		    public List<China> doInRedis(RedisConnection connection) throws DataAccessException {
 		        for (China item : regionChina) {
 		            connection.hSet( "region".getBytes(),
-		            		item.getId().toString().getBytes(),
+		            		item.getPid().toString().getBytes(),
 		            		JSON.toJSONString(item).getBytes());
 		        }
 		       return null;
