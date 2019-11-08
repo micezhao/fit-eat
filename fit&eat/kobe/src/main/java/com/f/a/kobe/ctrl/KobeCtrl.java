@@ -27,7 +27,6 @@ public class KobeCtrl {
 	
 	private final static  Logger logger = LoggerFactory.getLogger(KobeCtrl.class);
 	
-	
 	@Autowired
 	@Qualifier("regionRedisTemplate")
 	private RedisTemplate<String, Object> regionRedisTemplate;
@@ -42,7 +41,12 @@ public class KobeCtrl {
 		map.put("city", "beijin");
 		regionRedisTemplate.opsForHash().put("region", "1234", map);
 		return "aaa";
+	}
+	
+	@GetMapping("/kobe/syncChina")
+	public String region_sync() {
 		
+		return "aaa";
 	}
 	
 	@GetMapping("/kobe/getapp")
