@@ -63,16 +63,74 @@ public class RegionService {
 		return true;
 	}
 	
-	public boolean sycnRegion2Redis1() {
-		List<China> all = regionManager.getAllRegion();
+	public void syn() {
+		Map<String, List<China>> hashes = new HashMap<>();
+		List<China> allRegion = regionManager.getAllRegion();
+		List<China> provList = new ArrayList<>();
+		List<China> cityList = new ArrayList<>();
+		List<China> discList = new ArrayList<>();
 		
-		
-		Map<String,China> map= new HashMap<String,China>();
-		for (China item : all) {
-			map.put(String.valueOf(item.getPid())+"_"+String.valueOf(item.getId()), item);
+		for(China china : allRegion) {
+			if(china.getPid() == 0 && china.getId() != 0) {
+				provList.add(china);
+			}
 		}
-		regionRedisTemplate.opsForHash().putAll("china", map);
-		return true;
+		
+		hashes.put("0", provList);
+		regionRedisTemplate.opsForHash().putAll("region1",hashes);
+		
+		for(China prov : provList) {
+			for(China china : allRegion) {
+				if(china.getPid() == prov.getId()) {
+					cityList.add(china);
+				}
+			}
+			hashes.put(String.valueOf(prov.getId()), provList);
+			regionRedisTemplate.opsForHash().putAll("region1",hashes);
+		}
+		
+		for(China city : cityList) {
+			for(China china : allRegion) {
+				if(china.getPid() == city.getId()) {
+					discList.add(china);
+				}
+			}
+			hashes.put(String.valueOf(city.getId()), discList);
+			regionRedisTemplate.opsForHash().putAll("region1",hashes);
+		}
+	}
+	
+	public void sycnRegion2Redis2(Integer pid) {
+		List<China> list = regionIsNull(pid);
+		if(list != null && list.size() > 0) {
+			put(pid,list);
+			for(China china : list) {
+				if(china.getId() == 0) {
+					continue;
+				}
+				sycnRegion2Redis2(china.getId());
+			}
+		}
+		return ;
+	}
+
+	private void put(Integer pid,List<China> list) {
+		Map<String, List<China>> hashes = new HashMap<>();
+		hashes.put(String.valueOf(pid), list);
+		regionRedisTemplate.opsForHash().putAll("region1",hashes);
+	}
+
+	private List<China> regionIsNull(Integer i) {
+		return regionManager.getRegionByPid(i);
+	}
+
+	public List<China> getSycnRegion2Redis2(Integer pid) {
+		Object object = regionRedisTemplate.opsForHash().get("province1", "430000");
+		 return (List<China>)regionRedisTemplate.opsForHash().get("region1",String.valueOf(pid));
+	}
+	
+	public List<China> listRegionByPId(Integer pid) {
+		return regionManager.getRegionByPid(pid);
 	}
 
 	public China getReginByKey(String key,String hashKey){
