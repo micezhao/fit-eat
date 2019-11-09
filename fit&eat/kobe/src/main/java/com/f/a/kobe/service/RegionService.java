@@ -84,6 +84,7 @@ public class RegionService {
 	}
 
 	public List<China> getSycnRegion2Redis2(Integer pid) {
+		Object object = regionRedisTemplate.opsForHash().get("province1", "430000");
 		 return (List<China>)regionRedisTemplate.opsForHash().get("region1",String.valueOf(pid));
 	}
 	

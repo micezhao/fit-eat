@@ -43,7 +43,7 @@ class KobeApplicationManagerTests {
 	
 	@Test
 	void testRegionService() {
-		regionService.sycnRegion2Redis2(0);
+		regionService.sycnRegion2Redis2(420000);
 	}
 	
 	@Test
