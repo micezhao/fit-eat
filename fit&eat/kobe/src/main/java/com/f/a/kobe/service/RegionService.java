@@ -59,15 +59,32 @@ public class RegionService {
 		return true;
 	}
 	
-	public void sycnRegion2Redis2() {
-		List<China> regionByPid = regionManager.getRegionByPid(0);
+	public void sycnRegion2Redis2(Integer pid) {
+		List<China> list = regionIsNull(pid);
+		if(list != null && list.size() > 0) {
+			put(pid,list);
+			for(China china : list) {
+				if(china.getId() == 0) {
+					continue;
+				}
+				sycnRegion2Redis2(china.getId());
+			}
+		}
+		return ;
+	}
+
+	private void put(Integer pid,List<China> list) {
 		Map<String, List<China>> hashes = new HashMap<>();
-		hashes.put("0", regionByPid);
+		hashes.put(String.valueOf(pid), list);
 		regionRedisTemplate.opsForHash().putAll("region1",hashes);
 	}
-	
-	public void getSycnRegion2Redis2() {
-		List<China> chinaList = (List<China>)regionRedisTemplate.opsForHash().get("region1","0");
+
+	private List<China> regionIsNull(Integer i) {
+		return regionManager.getRegionByPid(i);
+	}
+
+	public List<China> getSycnRegion2Redis2(Integer pid) {
+		 return (List<China>)regionRedisTemplate.opsForHash().get("region1",String.valueOf(pid));
 	}
 	
 	public List<China> listRegionByPId(Integer pid) {
