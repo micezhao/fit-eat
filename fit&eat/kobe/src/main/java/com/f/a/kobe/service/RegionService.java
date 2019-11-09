@@ -59,6 +59,43 @@ public class RegionService {
 		return true;
 	}
 	
+	public void syn() {
+		Map<String, List<China>> hashes = new HashMap<>();
+		List<China> allRegion = regionManager.getAllRegion();
+		List<China> provList = new ArrayList<>();
+		List<China> cityList = new ArrayList<>();
+		List<China> discList = new ArrayList<>();
+		
+		for(China china : allRegion) {
+			if(china.getPid() == 0 && china.getId() != 0) {
+				provList.add(china);
+			}
+		}
+		
+		hashes.put("0", provList);
+		regionRedisTemplate.opsForHash().putAll("region1",hashes);
+		
+		for(China prov : provList) {
+			for(China china : allRegion) {
+				if(china.getPid() == prov.getId()) {
+					cityList.add(china);
+				}
+			}
+			hashes.put(String.valueOf(prov.getId()), provList);
+			regionRedisTemplate.opsForHash().putAll("region1",hashes);
+		}
+		
+		for(China city : cityList) {
+			for(China china : allRegion) {
+				if(china.getPid() == city.getId()) {
+					discList.add(china);
+				}
+			}
+			hashes.put(String.valueOf(city.getId()), discList);
+			regionRedisTemplate.opsForHash().putAll("region1",hashes);
+		}
+	}
+	
 	public void sycnRegion2Redis2(Integer pid) {
 		List<China> list = regionIsNull(pid);
 		if(list != null && list.size() > 0) {
