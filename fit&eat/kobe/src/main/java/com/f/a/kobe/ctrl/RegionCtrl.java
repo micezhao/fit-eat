@@ -4,10 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.f.a.kobe.pojo.China;
 import com.f.a.kobe.service.RegionService;
 
 
@@ -29,5 +31,11 @@ public class RegionCtrl {
 		return new ResponseEntity<Object>(HttpStatus.OK);
 	}
 	
+	@GetMapping("/{key}/{hashKey}")
+	@ResponseBody
+	public ResponseEntity<Object> region(@PathVariable("key")String key,@PathVariable("hashKey")String hashKey) {
+		China region = regionService.getReginByKey(key, hashKey);
+		return new ResponseEntity<Object>(region,HttpStatus.OK);
+	}
 	
 }

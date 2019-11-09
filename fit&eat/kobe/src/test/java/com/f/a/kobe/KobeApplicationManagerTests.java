@@ -46,7 +46,6 @@ class KobeApplicationManagerTests {
 		//regionService.listRegionByPId(331100);
 		//regionService.sycnRegion2Redis();
 //		regionService.sycnRegion2Redis2();
-		regionService.getSycnRegion2Redis2();
 	}
 	
 	@Test

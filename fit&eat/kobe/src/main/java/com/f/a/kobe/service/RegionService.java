@@ -9,12 +9,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.connection.StringRedisConnection;
+import org.springframework.data.redis.connection.lettuce.LettuceConnection;
+import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
 import com.f.a.kobe.manager.RegionManager;
 import com.f.a.kobe.pojo.China;
 
@@ -38,18 +42,18 @@ public class RegionService {
 	 * 批量同步地址信息
 	 */
 	public boolean sycnRegion2Redis() {
-		List<China> regionChina = regionManager.getAllRegion();
-		List<China> regionByPid = regionManager.getRegionByPid(0);
+		List<China> provinceList = regionManager.getRegionByPid(0); //获得省
+		
+		Map<byte[], byte[]> map = new HashMap<byte[], byte[]>();
 		List<Object> result = regionRedisTemplate.executePipelined(new RedisCallback<List<China>>() {
 			@Override
 			public List<China> doInRedis(RedisConnection connection) throws DataAccessException {
-				/*
-				 * for (China item : regionChina) { connection.hSet( "region".getBytes(),
-				 * item.getPid().toString().getBytes(), JSON.toJSONString(item).getBytes()); }
-				 */
-				Map<byte[], byte[]> hashes = new HashMap<byte[], byte[]>();
-				hashes.put("0".getBytes(), JSON.toJSONString(regionByPid).getBytes());
-				connection.hMSet("region".getBytes(), hashes);
+				 RedisSerializer<String> serializer = regionRedisTemplate.getStringSerializer();
+				for (China province : provinceList) {
+					connection.hSet(serializer.serialize("province"),
+							serializer.serialize(String.valueOf(province.getPid())), 
+							serializer.serialize(JSON.toJSONString(province)));
+				}
 				return null;
 			}
 		});
@@ -59,23 +63,24 @@ public class RegionService {
 		return true;
 	}
 	
-	public void sycnRegion2Redis2() {
-		List<China> regionByPid = regionManager.getRegionByPid(0);
-		Map<String, List<China>> hashes = new HashMap<>();
-		hashes.put("0", regionByPid);
-		regionRedisTemplate.opsForHash().putAll("region1",hashes);
-	}
-	
-	public void getSycnRegion2Redis2() {
-		List<China> chinaList = (List<China>)regionRedisTemplate.opsForHash().get("region1","0");
-	}
-	
-	public List<China> listRegionByPId(Integer pid) {
-		return regionManager.getRegionByPid(pid);
+	public boolean sycnRegion2Redis1() {
+		List<China> all = regionManager.getAllRegion();
+		
+		
+		Map<String,China> map= new HashMap<String,China>();
+		for (China item : all) {
+			map.put(String.valueOf(item.getPid())+"_"+String.valueOf(item.getId()), item);
+		}
+		regionRedisTemplate.opsForHash().putAll("china", map);
+		return true;
 	}
 
-	public China getRegionById(Integer id) {
-		return regionManager.getRegionById(id);
+	public China getReginByKey(String key,String hashKey){
+		 Object obj= regionRedisTemplate.opsForHash().get("region1","371701");
+		 return (China)obj;
+		
 	}
+	
+	
 
 }

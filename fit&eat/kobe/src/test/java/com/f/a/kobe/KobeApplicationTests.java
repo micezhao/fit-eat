@@ -23,7 +23,7 @@ class KobeApplicationTests {
 	@Test
 	void test1() {
 		CustomerBaseInfo info = new CustomerBaseInfo();
-		info.setId(432323L);
+		info.setId(5555L);
 		info.setAge(12);
 		info.setCustomerId(1234335234L);
 		info.setRealname("test2");
