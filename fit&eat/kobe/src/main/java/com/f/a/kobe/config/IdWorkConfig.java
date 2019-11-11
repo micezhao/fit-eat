@@ -9,7 +9,7 @@ import com.f.a.kobe.util.IdWorker;
 public class IdWorkConfig {
 
 	@Bean
-	public IdWorker idWorker() {
+	public IdWorker idworker() {
 		return new IdWorker();
 	}
 

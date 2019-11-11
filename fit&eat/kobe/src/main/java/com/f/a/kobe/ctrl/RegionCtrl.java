@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
+import com.f.a.kobe.pojo.Areas;
 import com.f.a.kobe.pojo.China;
 import com.f.a.kobe.service.RegionService;
 
@@ -44,7 +45,7 @@ public class RegionCtrl {
 	@GetMapping("/{hashKey}")
 	@ResponseBody
 	public ResponseEntity<Object> region(@PathVariable("hashKey")String hashKey) {
-		List<China> list = regionService.getReginByKey(hashKey);
+		List<Areas> list = regionService.getReginByKey(hashKey);
 		return new ResponseEntity<Object>(list,HttpStatus.OK);
 	}
 	

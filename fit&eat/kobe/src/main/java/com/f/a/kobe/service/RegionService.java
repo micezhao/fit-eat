@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
 import com.f.a.kobe.manager.RegionManager;
 import com.f.a.kobe.pojo.Areas;
 import com.f.a.kobe.pojo.China;
@@ -91,19 +92,17 @@ public class RegionService {
 			allCityList = new ArrayList<>(); 
 			hashes = new HashMap<>();
 		}
-		
-		
 	}
 	
+	public List<Areas> getReginByKey(String hashKey){ 
+		Object obj= regionRedisTemplate.opsForHash().get(KEY,hashKey);
+		return JSON.parseArray(JSON.toJSONString(obj), Areas.class);
+	}
+		 
 	public List<Areas> listByPid(String pid){
 		return null;
 	}
 
-
-	public List<China> getReginByKey(String hashKey) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	/**
 	 * 批量同步地址信息
