@@ -38,7 +38,7 @@ public class RegionService {
 	@Autowired
 	private RegionManager regionManager;
 	
-	private static final String KEY = "region1";
+	private static final String KEY = "region";
 
 	/**
 	 * 批量同步地址信息
@@ -77,7 +77,7 @@ public class RegionService {
 			}
 		}
 		hashes.put("0", provList);
-		regionRedisTemplate.opsForHash().putAll("region1",hashes);
+		regionRedisTemplate.opsForHash().putAll(KEY,hashes);
 		for(China prov : provList) {
 			for(China china : allRegion) {
 				if(china.getPid() == prov.getId()) {
@@ -85,7 +85,7 @@ public class RegionService {
 				}
 			}
 			hashes.put(String.valueOf(prov.getId()), provList);
-			regionRedisTemplate.opsForHash().putAll("region1",hashes);
+			regionRedisTemplate.opsForHash().putAll(KEY,hashes);
 		}
 		for(China city : cityList) {
 			for(China china : allRegion) {
@@ -94,7 +94,7 @@ public class RegionService {
 				}
 			}
 			hashes.put(String.valueOf(city.getId()), discList);
-			regionRedisTemplate.opsForHash().putAll("region1",hashes);
+			regionRedisTemplate.opsForHash().putAll(KEY,hashes);
 		}
 	}
 		
