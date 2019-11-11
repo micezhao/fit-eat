@@ -73,6 +73,9 @@ public class RegionService {
 		List<China> cityList = new ArrayList<>();
 		List<China> allCityList = new ArrayList<>();
 		List<China> discList = new ArrayList<>();
+		List<China> allDiscList = new ArrayList<>();
+		
+		List<China> countyList = new ArrayList<>();
 		
 		for(China china : allRegion) {
 			if(china.getPid() != null && china.getId() != null)
@@ -93,8 +96,11 @@ public class RegionService {
 					}
 				}
 			}
-			hashes.put(String.valueOf(prov.getId()), cityList);
-			regionRedisTemplate.opsForHash().putAll(KEY,hashes);
+			if(cityList.size()>0) {
+				hashes.put(String.valueOf(prov.getId()), cityList);
+				regionRedisTemplate.opsForHash().putAll(KEY,hashes);
+			}
+			
 			hashes = new HashMap<>();
 			cityList = new ArrayList<>();
 		}
@@ -104,13 +110,35 @@ public class RegionService {
 				if(china.getPid() != null) {
 					if(china.getPid().equals(city.getId())) {
 						discList.add(china);
+						allDiscList.add(china);
 					}
 				}
 			}
-			hashes.put(String.valueOf(city.getId()), discList);
-			regionRedisTemplate.opsForHash().putAll(KEY,hashes);
+			if(discList.size()>0) {
+				hashes.put(String.valueOf(city.getId()), discList);
+				regionRedisTemplate.opsForHash().putAll(KEY,hashes);
+			}
+			
 			hashes = new HashMap<>();
 			discList = new ArrayList<>();
+		}
+		
+		
+		for(China district : allDiscList) {
+			for(China china : allRegion) {
+				if(china.getPid() != null) {
+					if(china.getPid().equals(district.getId())) {
+						countyList.add(china);
+					}
+				}
+			}
+			if(countyList.size()>0) {
+				hashes.put(String.valueOf(district.getId()), countyList);
+				regionRedisTemplate.opsForHash().putAll(KEY,hashes);
+			}
+			
+			hashes = new HashMap<>();
+			countyList = new ArrayList<>();
 		}
 	}
 	
@@ -123,7 +151,5 @@ public class RegionService {
 		 Object obj= regionRedisTemplate.opsForHash().get(KEY,hashKey);
 		 return  JSON.parseArray(JSON.toJSONString(obj), China.class);
 	}
-	
-	
 
 }
