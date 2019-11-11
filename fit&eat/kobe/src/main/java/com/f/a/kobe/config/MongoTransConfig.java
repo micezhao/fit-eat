@@ -16,7 +16,6 @@ import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
-import com.mongodb.MongoClientOptions.Builder;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 

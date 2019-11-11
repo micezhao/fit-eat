@@ -2,7 +2,6 @@ package com.f.a.kobe.ctrl;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
 import com.f.a.kobe.pojo.Areas;
-import com.f.a.kobe.pojo.China;
 import com.f.a.kobe.service.RegionService;
 
 

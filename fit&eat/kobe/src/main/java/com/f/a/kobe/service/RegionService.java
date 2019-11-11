@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
 import com.f.a.kobe.manager.RegionManager;
 import com.f.a.kobe.pojo.Areas;
-import com.f.a.kobe.pojo.China;
 
 /**
  * 中国地理位置信息服务类
@@ -60,6 +59,9 @@ public class RegionService {
 		List<Areas>	allCityList = new ArrayList<>(); 
 		List<Areas> discList = new ArrayList<>();
 		List<Areas> allDiscList = new ArrayList<>();
+		List<Areas> countyList = new ArrayList<>();
+		List<Areas> allCountyList = new ArrayList<>();
+		
 		
 		//获得所有省
 		provList = regionManager.getRegionByLevel("1");
@@ -68,29 +70,46 @@ public class RegionService {
 		hashes = new HashMap<>();
 		
 		cityList = regionManager.getRegionByLevel("2");
-		for(Areas areas : provList) {
+		for(Areas prov : provList) {
 			for(Areas city : cityList) {
-				if(city.getParentid().equals(areas.getId())) {
+				if(city.getParentid().equals(prov.getId())) {
 					allCityList.add(city);
 				}
 			}
-			hashes.put(areas.getId(), allCityList);
+			hashes.put(prov.getId(), allCityList);
 			regionRedisTemplate.opsForHash().putAll(KEY,hashes);
 			allCityList = new ArrayList<>(); 
 			hashes = new HashMap<>();
 		}
 		
 		discList = regionManager.getRegionByLevel("3");
-		for(Areas areas : cityList) {
+		for(Areas city : cityList) {
 			for(Areas dist : discList) {
-				if(dist.getParentid().equals(areas.getId())) {
+				if(dist.getParentid().equals(city.getId())) {
 					allDiscList.add(dist);
 				}
 			}
-			hashes.put(areas.getId(), allDiscList);
+			hashes.put(city.getId(), allDiscList);
 			regionRedisTemplate.opsForHash().putAll(KEY,hashes);
-			allCityList = new ArrayList<>(); 
+			allDiscList = new ArrayList<>(); 
 			hashes = new HashMap<>();
+		}
+		
+		countyList = regionManager.getRegionByLevel("4");
+		for(Areas disc : discList) {
+			for(Areas county : countyList) {
+				if(county.getParentid().equals(disc.getId())) {
+					allCountyList.add(county);
+				}
+			}
+			
+			if(allCountyList.size()>0) {
+				hashes.put(disc.getId(), allCountyList);
+				regionRedisTemplate.opsForHash().putAll(KEY,hashes);
+				allCountyList = new ArrayList<>(); 
+				hashes = new HashMap<>();
+			}
+			
 		}
 	}
 	
