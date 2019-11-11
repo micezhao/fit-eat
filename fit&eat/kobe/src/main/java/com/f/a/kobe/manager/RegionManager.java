@@ -5,31 +5,37 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.f.a.kobe.mapper.ChinaMapper;
-import com.f.a.kobe.pojo.China;
-import com.f.a.kobe.pojo.ChinaExample;
+import com.f.a.kobe.mapper.AreasMapper;
+import com.f.a.kobe.pojo.Areas;
+import com.f.a.kobe.pojo.AreasExample;
 
 @Service
 public class RegionManager  {
 
 	@Autowired
-	private ChinaMapper mapper;
+	private AreasMapper mapper;
 	
-	public List<China> getAllRegion(){
-		ChinaExample example = new ChinaExample();
+	public List<Areas> getAllRegion(){
+		AreasExample example = new AreasExample();
 		return mapper.selectByExample(example);
 	}
 	
-	public List<China> getRegionByPid(Integer pid){
-		ChinaExample example = new ChinaExample();
-		example.createCriteria().andPidEqualTo(pid);
+	public List<Areas> getRegionByPid(String pid){
+		AreasExample example = new AreasExample();
+		example.createCriteria().andParentidEqualTo(pid);
 		return mapper.selectByExample(example);
 	}
 	
-	public China getRegionById(Integer id) {
-		ChinaExample example = new ChinaExample();
+	public Areas getRegionById(String id) {
+		AreasExample example = new AreasExample();
 		example.createCriteria().andIdEqualTo(id);
 		return mapper.selectByExample(example).get(0);
+	}
+
+	public List<Areas> getRegionByLevel(String level) {
+		AreasExample example = new AreasExample();
+		example.createCriteria().andLevelEqualTo(level);
+		return mapper.selectByExample(example);
 	}
 	
 
