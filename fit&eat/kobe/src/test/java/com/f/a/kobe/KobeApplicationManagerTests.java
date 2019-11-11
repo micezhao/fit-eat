@@ -43,13 +43,13 @@ class KobeApplicationManagerTests {
 	
 	@Test
 	void testRegionService() {
-		regionService.sycnRegion2Redis2(420000);
+		//regionService.sycnRegion2Redis2(420000);
 	}
 	
 	@Test
 	void testGetRegionService() {
-		List<China> sycnRegion2Redis2 = regionService.getSycnRegion2Redis2(420000);
-		System.out.println(sycnRegion2Redis2);
+		//List<China> sycnRegion2Redis2 = regionService.getSycnRegion2Redis2(420000);
+		//System.out.println(sycnRegion2Redis2);
 	}
 	
 	@Test

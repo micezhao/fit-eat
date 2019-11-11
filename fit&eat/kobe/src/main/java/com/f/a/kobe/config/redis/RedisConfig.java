@@ -20,6 +20,8 @@ import org.springframework.data.redis.connection.lettuce.LettuceClientConfigurat
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
 
@@ -62,7 +64,14 @@ public class RedisConfig extends CachingConfigurerSupport {
 		LettuceConnectionFactory lettuceConnectionFactory = createLettuceConnectionFactory(regionDatabase,
 				redisProperties.getHost(), redisProperties.getPort(),redisProperties.getPassword() , maxIdle, minIdle, maxActive, maxWait, timeOut, shutdown);
 		regionRedisTemplate.setConnectionFactory(lettuceConnectionFactory);
-		regionRedisTemplate.setDefaultSerializer(new FastJsonRedisSerializer<>(Object.class));
+		regionRedisTemplate.setKeySerializer(new StringRedisSerializer()); //key的序列化策略
+		regionRedisTemplate.setValueSerializer(new FastJsonRedisSerializer<>(Object.class)); //value 的序列化策略
+		
+		// 设置hash key & value的序列化策略
+		regionRedisTemplate.setHashKeySerializer(new StringRedisSerializer());
+		regionRedisTemplate.setHashValueSerializer(new FastJsonRedisSerializer<>(Object.class));
+		
+		//regionRedisTemplate.setDefaultSerializer(new FastJsonRedisSerializer<>(Object.class));
 		regionRedisTemplate.afterPropertiesSet();
 		return regionRedisTemplate;
 	}
@@ -98,21 +107,5 @@ public class RedisConfig extends CachingConfigurerSupport {
 
 		return lettuceConnectionFactory;
 	}
-
-//	/**
-//	 * 设置 redis 数据默认过期时间 设置@cacheable 序列化方式
-//	 * 
-//	 * @return
-//	 */
-//	@Bean
-//	public RedisCacheConfiguration redisCacheConfiguration() {
-//		FastJsonRedisSerializer<Object> fastJsonRedisSerializer = new FastJsonRedisSerializer<>(Object.class);
-//		RedisCacheConfiguration configuration = RedisCacheConfiguration.defaultCacheConfig();
-//		configuration = configuration
-//				.serializeValuesWith(
-//						RedisSerializationContext.SerializationPair.fromSerializer(fastJsonRedisSerializer))
-//				.entryTtl(Duration.ofDays(30));
-//		return configuration;
-//	}
 
 }
