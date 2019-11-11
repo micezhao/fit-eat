@@ -253,6 +253,26 @@ fit-eat 开发过程的问题记录和经验总结
         1.4.2 进行配置：redis的连接配置，springsession的属性配置
                      【未解决指定session的redis db】
         1.4.3 配置session的序列化策略：com.f.a.kobe.config.SessionConfig
+2、关于redis的序列化策略的问题：
+    redis序列化的规则，在数据存取过程中的数据格式的约定。
+    在通过redistemplate向redis存取数据时，首先会经过一个raw(xxx)的办法，这个方法的作用就是将被操作的按照指定的方式进行序列化或反序列化
+    指定序列化的方式是在redistemplate初始化的时候进行
+    redistemplate的初始化有两种方式：1、使用模式的redisTemplate，(springboot自动化配置中提供的方案)
+                                  2、使用自定义的redisTemplate，在此时指定key/value的序列化：
+        【例如：】
+        regionRedisTemplate.setKeySerializer(new StringRedisSerializer()); //key的序列化策略
+		regionRedisTemplate.setValueSerializer(new FastJsonRedisSerializer<>(Object.class)); //value 的序列化策略
+		
+		// 设置hash key & value的序列化策略
+		regionRedisTemplate.setHashKeySerializer(new StringRedisSerializer());
+		regionRedisTemplate.setHashValueSerializer(new FastJsonRedisSerializer<>(Object.class));
+		
+		//regionRedisTemplate.setDefaultSerializer(new FastJsonRedisSerializer<>(Object.class));
+		regionRedisTemplate.afterPropertiesSet(); // 这一步是让自定义的序列化策略生效
+
+    【注意：】在redis-cli中对数据进行查询时，也是要遵循存入数据时的序列化策略的
+            如果在存数据时，当前的key未使用new StringRedisSerializer()策略，那么直接使用get key 是会返回 nil，
+            原因就是redis-cli get key的默认是string类型的，但是存入的数据又未被StringRedisSerializer，因此是找不到对应数据类型的key导致
         
         
 
