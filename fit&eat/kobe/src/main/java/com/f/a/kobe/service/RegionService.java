@@ -31,6 +31,26 @@ public class RegionService {
 	private RegionManager regionManager;
 	
 	private static final String KEY = "region";
+
+	/**
+	 * @deprecated
+	 * 批量同步地址信息
+	 */
+	/*
+	 * public boolean sycnRegion2Redis() { List<China> provinceList =
+	 * regionManager.getRegionByPid(0); //获得省
+	 * 
+	 * Map<byte[], byte[]> map = new HashMap<byte[], byte[]>(); List<Object> result
+	 * = regionRedisTemplate.executePipelined(new RedisCallback<List<China>>() {
+	 * 
+	 * @Override public List<China> doInRedis(RedisConnection connection) throws
+	 * DataAccessException { RedisSerializer<String> serializer =
+	 * regionRedisTemplate.getStringSerializer(); for (China province :
+	 * provinceList) { connection.hSet(serializer.serialize("province"),
+	 * serializer.serialize(String.valueOf(province.getPid())),
+	 * serializer.serialize(JSON.toJSONString(province))); } return null; } }); if
+	 * (result == null) { return false; } return true; }
+	 */
 	
 	public void syn() {
 		Map<String, List<Areas>> hashes = new HashMap<>();
@@ -79,10 +99,6 @@ public class RegionService {
 		return null;
 	}
 
-	public void sycnRegion2Redis() {
-		// TODO Auto-generated method stub
-		
-	}
 
 	public List<China> getReginByKey(String hashKey) {
 		// TODO Auto-generated method stub
