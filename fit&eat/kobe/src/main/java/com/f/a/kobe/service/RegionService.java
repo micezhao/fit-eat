@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
@@ -71,33 +72,79 @@ public class RegionService {
 		List<China> allRegion = regionManager.getAllRegion();
 		List<China> provList = new ArrayList<>();
 		List<China> cityList = new ArrayList<>();
+		List<China> allCityList = new ArrayList<>();
 		List<China> discList = new ArrayList<>();
+		List<China> allDiscList = new ArrayList<>();
+		
+		List<China> countyList = new ArrayList<>();
+		
 		for(China china : allRegion) {
-			if(china.getPid() == 0 && china.getId() != 0) {
+			if(china.getPid() != null && china.getId() != null)
+			if(china.getPid().equals(new Integer(0)) && !china.getId().equals(new Integer(0))) {
 				provList.add(china);
 			}
 		}
+			
 		hashes.put("0", provList);
 		regionRedisTemplate.opsForHash().putAll(KEY,hashes);
+		hashes = new HashMap<>();
 		for(China prov : provList) {
 			for(China china : allRegion) {
-				if(china.getPid() == prov.getId()) {
-					cityList.add(china);
+				if(china.getPid() != null) {
+					if(china.getPid().equals(prov.getId())) {
+						cityList.add(china);
+						allCityList.add(china);
+					}
 				}
 			}
-			hashes.put(String.valueOf(prov.getId()), provList);
-			regionRedisTemplate.opsForHash().putAll(KEY,hashes);
-		}
-		for(China city : cityList) {
-			for(China china : allRegion) {
-				if(china.getPid() == city.getId()) {
-					discList.add(china);
-				}
+			if(cityList.size()>0) {
+				hashes.put(String.valueOf(prov.getId()), cityList);
+				regionRedisTemplate.opsForHash().putAll(KEY,hashes);
 			}
-			hashes.put(String.valueOf(city.getId()), discList);
-			regionRedisTemplate.opsForHash().putAll(KEY,hashes);
+			
+			hashes = new HashMap<>();
+			cityList = new ArrayList<>();
 		}
 		
+		for(China city : allCityList) {
+			for(China china : allRegion) {
+				if(china.getPid() != null) {
+					if(china.getPid().equals(city.getId())) {
+						discList.add(china);
+						allDiscList.add(china);
+					}
+				}
+			}
+			if(discList.size()>0) {
+				hashes.put(String.valueOf(city.getId()), discList);
+				regionRedisTemplate.opsForHash().putAll(KEY,hashes);
+			}
+			
+			hashes = new HashMap<>();
+			discList = new ArrayList<>();
+		}
+		
+		
+		for(China district : allDiscList) {
+			for(China china : allRegion) {
+				if(china.getPid() != null) {
+					if(china.getPid().equals(district.getId())) {
+						countyList.add(china);
+					}
+				}
+			}
+			if(countyList.size()>0) {
+				hashes.put(String.valueOf(district.getId()), countyList);
+				regionRedisTemplate.opsForHash().putAll(KEY,hashes);
+			}
+			
+			hashes = new HashMap<>();
+			countyList = new ArrayList<>();
+		}
+	}
+	
+	public List<China> listRegionByPId(Integer pid) {
+		return regionManager.getRegionByPid(pid);
 	}
 	
 	//从redis中查询指定的key
@@ -105,7 +152,5 @@ public class RegionService {
 		 Object obj= regionRedisTemplate.opsForHash().get(KEY,hashKey);
 		 return  JSON.parseArray(JSON.toJSONString(obj), China.class);
 	}
-	
-	
 
 }
