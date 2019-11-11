@@ -1,21 +1,21 @@
 package com.f.a.kobe.exceptions;
 
-public class InvaildException extends Exception {
+public class InvaildException extends RuntimeException {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -5314902931767614069L;
 	
-	private ErrCodeEnum errCode;
+	private String errCode;
 	
 	private String errMsg;
-	
-	public ErrCodeEnum getErrCode() {
+
+	public String getErrCode() {
 		return errCode;
 	}
 
-	public void setErrCode(ErrCodeEnum errCode) {
+	public void setErrCode(String errCode) {
 		this.errCode = errCode;
 	}
 
@@ -27,9 +27,11 @@ public class InvaildException extends Exception {
 		this.errMsg = errMsg;
 	}
 
-	public InvaildException(ErrCodeEnum errCode,String errMsg) {
-		super(errMsg);
+	public InvaildException(String errCode, String errMsg) {
+		super();
 		this.errCode = errCode;
-		
+		this.errMsg = errMsg;
 	}
+	
+	
 }

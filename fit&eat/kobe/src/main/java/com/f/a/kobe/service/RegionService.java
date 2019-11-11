@@ -41,6 +41,7 @@ public class RegionService {
 	private static final String KEY = "region";
 
 	/**
+	 * @deprecated
 	 * 批量同步地址信息
 	 */
 	public boolean sycnRegion2Redis() {
@@ -96,10 +97,7 @@ public class RegionService {
 			hashes.put(String.valueOf(city.getId()), discList);
 			regionRedisTemplate.opsForHash().putAll(KEY,hashes);
 		}
-	}
 		
-	public List<China> listRegionByPId(Integer pid) {
-		return regionManager.getRegionByPid(pid);
 	}
 	
 	//从redis中查询指定的key
