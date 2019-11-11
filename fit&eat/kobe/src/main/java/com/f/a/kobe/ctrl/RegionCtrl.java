@@ -2,6 +2,7 @@ package com.f.a.kobe.ctrl;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -36,7 +37,7 @@ public class RegionCtrl {
 	@GetMapping("/batchSync")
 	@ResponseBody
 	public ResponseEntity<Object> sync() {
-		regionService.sycnRegion2Redis();
+		regionService.syn();
 		return new ResponseEntity<Object>(HttpStatus.OK);
 	}
 	

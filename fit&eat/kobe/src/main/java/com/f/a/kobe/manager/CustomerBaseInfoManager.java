@@ -49,24 +49,25 @@ public class CustomerBaseInfoManager implements BaseManager<CustomerBaseInfo> {
 		return customerBaseInfoList;
 	}
 
-	@ToMongoDB
+//	@ToMongoDB
 	@Override
 	public int insert(CustomerBaseInfo t) {
 		t.setCdt(Calendar.getInstance().getTime());
 		return customerBaseInfoMapper.insertSelective(t);
 	}
 	
-	@ToMongoDB
+//	@ToMongoDB
 	@Override
 	public int update(CustomerBaseInfo t) {
 		t.setMdt(Calendar.getInstance().getTime());
 		return customerBaseInfoMapper.updateByPrimaryKeySelective(t);
 	}
 	
-	@ToMongoDB
+//	@ToMongoDB
 	@Override
 	public int delete(Long id) {
 		return customerBaseInfoMapper.deleteByPrimaryKey(id);
 	}
+	
 
 }
