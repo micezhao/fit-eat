@@ -1,6 +1,7 @@
 package com.f.a.kobe.ctrl;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -36,7 +37,12 @@ public class RegionCtrl {
 	@GetMapping("/batchSync")
 	@ResponseBody
 	public ResponseEntity<Object> sync() {
-		regionService.syn();
+		try {
+			regionService.syn();
+		} catch (InterruptedException | ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return new ResponseEntity<Object>(HttpStatus.OK);
 	}
 	
