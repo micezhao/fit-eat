@@ -4,8 +4,9 @@ public enum ErrCodeEnum {
 	
 	QUERY_PARAM_INVAILD("9001","查询参数验证异常"),
 	REDUPICATE_RECORD("9002","存在重复的记录"),
-	INPUT_PARAM_INVAILD("9003","输入参数异常");
-	
+	INPUT_PARAM_INVAILD("9003","输入参数异常"),
+	WX_AUTH_INVAILD("9004","微信授权异常"),
+	AUTH_INSERTFAil_INVAILD("9005","添加授权用户异常");
 	
 	private String errCode;
 	private String errMsg;
