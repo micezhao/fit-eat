@@ -16,7 +16,7 @@ public abstract class CustomerCredentialService {
 		
 	//新增授权用户
 	public abstract void insertCustomerCredential(CustomerCredential customerCredential);
-		
+
 	//新增授权用户的基本信息
 	public abstract void insertCustomerBaseInfoWithCustomerCredential(CustomerBaseInfo customerBaseInfo,CustomerCredential customerCredential);
 	

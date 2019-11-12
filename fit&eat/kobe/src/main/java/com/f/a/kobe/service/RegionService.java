@@ -37,7 +37,7 @@ public class RegionService {
 	
 	private static final String KEY = "region";
 	
-	private static final int DISTRICTTASKNUM = 1500;
+	private static final int DISTRICTTASKNUM = 150;
 	
 	@Autowired
 	ThreadPoolTaskExecutor threadPoolTaskExecutor;
@@ -76,17 +76,13 @@ public class RegionService {
 		}
 		
 		discList = regionManager.getRegionByLevel("3");
-		for(Areas city : cityList) {
-			for(Areas dist : discList) {
-				if(dist.getParentid().equals(city.getId())) {
-					allDiscList.add(dist);
-				}
-			}
-			hashes.put(city.getId(), allDiscList);
-			regionRedisTemplate.opsForHash().putAll(KEY,hashes);
-			allDiscList = new ArrayList<>(); 
-			hashes = new HashMap<>();
-		}
+		/*
+		 * for(Areas city : cityList) { for(Areas dist : discList) {
+		 * if(dist.getParentid().equals(city.getId())) { allDiscList.add(dist); } }
+		 * hashes.put(city.getId(), allDiscList);
+		 * regionRedisTemplate.opsForHash().putAll(KEY,hashes); allDiscList = new
+		 * ArrayList<>(); hashes = new HashMap<>(); }
+		 */
 		
 		countyList = regionManager.getRegionByLevel("4");
 		/*
@@ -99,8 +95,14 @@ public class RegionService {
 		 * 
 		 * }
 		 */
-		
+		//extracted(provList, cityList);
+		extracted(cityList, discList);
 		//判断有多少个区
+		extracted(discList, countyList);
+	}
+
+	private void extracted(List<Areas> discList, List<Areas> countyList)
+			throws InterruptedException, ExecutionException {
 		List<Future<Boolean>> futureList = new ArrayList<Future<Boolean>>();
 		if (discList.size() == 0) {
 			return;
@@ -116,7 +118,12 @@ public class RegionService {
 			if (i == 1) {
 				tempList.addAll(discList.subList(n * DISTRICTTASKNUM, i * DISTRICTTASKNUM));
 			} else {
-				tempList.addAll(discList.subList(n * DISTRICTTASKNUM + 1, i * DISTRICTTASKNUM));
+				if(i != threadNum) {
+					tempList.addAll(discList.subList(n * DISTRICTTASKNUM + 1, i * DISTRICTTASKNUM));
+				}
+				else {
+					tempList.addAll(discList.subList(n * DISTRICTTASKNUM + 1, discList.size()));
+				}
 			}
 			Future<Boolean> f = task(discList,countyList);
 			futureList.add(f);
@@ -160,10 +167,12 @@ public class RegionService {
 						allList.add(sArea);
 					}
 				}
-				hashes.put(pArea.getId(), allList);
-				regionRedisTemplate.opsForHash().putAll(KEY,hashes);
-				allList = new ArrayList<>(); 
-				hashes = new HashMap<>();
+				if(allList.size() > 0) {
+					hashes.put(pArea.getId(), allList);
+					regionRedisTemplate.opsForHash().putAll(KEY,hashes);
+					allList = new ArrayList<>(); 
+					hashes = new HashMap<>();
+				}
 			}
 		}
 	}
