@@ -99,7 +99,12 @@ public class CustomerBaseInfoService {
 			if (i == 1) {
 				tempList.addAll(list.subList(n * 500, i * 500));
 			} else {
-				tempList.addAll(list.subList(n * 500 + 1, i * 500));
+				if(i == threadNum) {
+					tempList.addAll(list.subList(n * 500+1,list.size() ));
+					logger.info("末班车开起来～～～～嘟嘟嘟～～～");
+				}else {
+					tempList.addAll(list.subList(n * 500 + 1, i * 500));
+				}
 			}
 			Future<Boolean> f = task(tempList);
 			futureList.add(f);
