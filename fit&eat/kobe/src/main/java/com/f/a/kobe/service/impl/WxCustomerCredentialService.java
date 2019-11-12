@@ -95,12 +95,10 @@ public class WxCustomerCredentialService extends CustomerCredentialService {
 		customerBaseInfoManager.insert(customerBaseInfo);
 	}
 
-	@Override
 	public void updateCustomerCredential(CustomerCredential customerCredential) {
 		customerCredentialManager.update(customerCredential);
 	}
 
-	@Override
 	public void registerCustomerBaseInfo(CustomerBaseInfo customerBaseInfo, CustomerCredential customerCredential,
 			Object object) {
 		WxAuthRegistryBean wxAuthRegistryBean = (WxAuthRegistryBean) object;
@@ -120,7 +118,6 @@ public class WxCustomerCredentialService extends CustomerCredentialService {
 		customerBaseInfoManager.update(customerBaseInfo);
 	}
 
-	@Override
 	public List<CustomerCredential> listCustomerCredential(CustomerCredential conditional) {
 		return customerCredentialManager.listByConditional(conditional);
 	}
@@ -176,6 +173,12 @@ public class WxCustomerCredentialService extends CustomerCredentialService {
 	public WxAuthInfoBean getSessionKeyAndOpenidByEncryptedStr(String sessionId) {
 		WxAuthInfoBean wxAuthInfoBean = (WxAuthInfoBean) redisTemplate.opsForHash().get(hashKey, sessionId);
 		return wxAuthInfoBean;
+	}
+
+	@Override
+	protected CustomerCredential queryCustomerCredential(String authCode) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -2,8 +2,12 @@ package com.f.a.kobe.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.f.a.kobe.exceptions.ErrCodeEnum;
+import com.f.a.kobe.exceptions.InvaildException;
+import com.f.a.kobe.manager.CustomerCredentialManager;
 import com.f.a.kobe.pojo.CustomerBaseInfo;
 import com.f.a.kobe.pojo.CustomerCredential;
 
@@ -11,21 +15,38 @@ import com.f.a.kobe.pojo.CustomerCredential;
 @Service
 public abstract class CustomerCredentialService {
 	
+	@Autowired
+	private CustomerCredentialManager manager;
+	
 	//获取授权信息，根据code获取存储字符串
-	public abstract String getAuthStringByCode(String code);
+	protected abstract String getAuthStringByCode(String code);
 		
 	//新增授权用户
-	public abstract void insertCustomerCredential(CustomerCredential customerCredential);
+	//public abstract void insertCustomerCredential(CustomerCredential customerCredential);
 
 	//新增授权用户的基本信息
 	public abstract void insertCustomerBaseInfoWithCustomerCredential(CustomerBaseInfo customerBaseInfo,CustomerCredential customerCredential);
 	
-	//修改授权用户
-	public abstract void updateCustomerCredential(CustomerCredential customerCredential);
+	public  void insertCustomerCredential(CustomerCredential customerCredential) {
+		manager.insert(customerCredential);
+	}
 	
-	//绑定手机号完成注册
-	public abstract void registerCustomerBaseInfo(CustomerBaseInfo customerBaseInfo,CustomerCredential customerCredential, Object obj);
+	protected abstract  CustomerCredential queryCustomerCredential(String authCode) ;
 	
-	//查询用户授权信息列表
-	public abstract List<CustomerCredential> listCustomerCredential(CustomerCredential conditional);
+	//判断用户是否存在
+	public boolean  existsed(CustomerCredential customerCredential) {
+		 List<CustomerCredential> list= manager.listByConditional(customerCredential);
+		 if(list.isEmpty()) {
+			 return false;
+		 }
+		 if(list.size() > 1) {
+			 throw new InvaildException(ErrCodeEnum.REDUPICATE_RECORD.getErrCode(),"用户凭证"+ErrCodeEnum.REDUPICATE_RECORD.getErrMsg());
+		 }
+		 return true;
+	}
+	
+	
+	
+		
+	
 }
