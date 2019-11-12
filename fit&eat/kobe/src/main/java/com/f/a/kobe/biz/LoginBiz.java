@@ -5,6 +5,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.f.a.kobe.pojo.CustomerCredential;
 import com.f.a.kobe.service.CustomerCredentialService;
 
 @Service
@@ -29,11 +30,30 @@ public class LoginBiz {
 	 * @param loginType 登陆类型
 	 * @return
 	 */
-	public boolean userExistsed(String loginType) {
-		
+	public boolean userExistsed(String loginType,CustomerCredential customerCredential) {
 		return getServiceInstance(loginType).existsed(customerCredential);
 	}
-
 	
+	/**
+	 * 新增用户授权信息
+	 */
+	public void insertCustomerCredential(String loginType,CustomerCredential customerCredential) {
+		if(!userExistsed(loginType,customerCredential)) {
+			getServiceInstance(loginType).insertCustomerCredential(customerCredential);
+		}
+	}
 	
+	/**
+	 * 更新用户授权信息
+	 */
+	public void updateCustomerCredential(String loginType,CustomerCredential customerCredential) {
+		getServiceInstance(loginType).updateCustomerCredential(customerCredential);
+	}
+	
+	/**
+	 * 注册用户
+	 */
+	public void registerCustomerCredential(String loginType,CustomerCredential customerCredential,Object registerInfo) {
+		getServiceInstance(loginType).registerCustomerBaseInfo(customerCredential, registerInfo);
+	}
 }

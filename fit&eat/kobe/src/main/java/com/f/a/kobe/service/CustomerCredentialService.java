@@ -20,21 +20,24 @@ public abstract class CustomerCredentialService {
 	
 	//获取授权信息，根据code获取存储字符串
 	protected abstract String getAuthStringByCode(String code);
-		
-	//新增授权用户
-	//public abstract void insertCustomerCredential(CustomerCredential customerCredential);
+	
+	protected abstract CustomerCredential queryCustomerCredential(String authCode) ;
+	
+	public abstract void registerCustomerBaseInfo(CustomerCredential customerCredential,Object registerInfo);
 
 	//新增授权用户的基本信息
 	public abstract void insertCustomerBaseInfoWithCustomerCredential(CustomerBaseInfo customerBaseInfo,CustomerCredential customerCredential);
 	
-	public  void insertCustomerCredential(CustomerCredential customerCredential) {
+	public void insertCustomerCredential(CustomerCredential customerCredential) {
 		manager.insert(customerCredential);
 	}
 	
-	protected abstract  CustomerCredential queryCustomerCredential(String authCode) ;
+	public void updateCustomerCredential(CustomerCredential customerCredential) {
+		manager.update(customerCredential);
+	}
 	
 	//判断用户是否存在
-	public boolean  existsed(CustomerCredential customerCredential) {
+	public boolean existsed(CustomerCredential customerCredential) {
 		 List<CustomerCredential> list= manager.listByConditional(customerCredential);
 		 if(list.isEmpty()) {
 			 return false;

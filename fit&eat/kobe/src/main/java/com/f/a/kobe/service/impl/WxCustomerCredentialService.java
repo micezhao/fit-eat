@@ -99,8 +99,9 @@ public class WxCustomerCredentialService extends CustomerCredentialService {
 		customerCredentialManager.update(customerCredential);
 	}
 
-	public void registerCustomerBaseInfo(CustomerBaseInfo customerBaseInfo, CustomerCredential customerCredential,
+	public void registerCustomerBaseInfo( CustomerCredential customerCredential,
 			Object object) {
+		CustomerBaseInfo customerBaseInfo = customerBaseInfoManager.queryByBiz(customerCredential.getCustomerId());
 		WxAuthRegistryBean wxAuthRegistryBean = (WxAuthRegistryBean) object;
 		
 		String sessionId = wxAuthRegistryBean.getSessionId();

@@ -34,4 +34,10 @@ public class WxCredentialService extends CustomerCredentialService{
 		
 	}
 
+	@Override
+	public void registerCustomerBaseInfo(CustomerCredential customerCredential, Object registerInfo) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
