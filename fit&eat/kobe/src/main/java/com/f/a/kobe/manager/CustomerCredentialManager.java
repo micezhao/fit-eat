@@ -3,6 +3,7 @@ package com.f.a.kobe.manager;
 import java.util.Calendar;
 import java.util.List;
 
+import org.apache.commons.codec.binary.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +13,7 @@ import com.f.a.kobe.mapper.CustomerCredentialMapper;
 import com.f.a.kobe.pojo.CustomerCredential;
 import com.f.a.kobe.pojo.CustomerCredentialExample;
 import com.f.a.kobe.pojo.CustomerCredentialExample.Criteria;
+import com.f.a.kobe.pojo.LoginTypeEnum;
 import com.f.a.kobe.util.QueryParamTransUtil;
 
 @Component
@@ -40,7 +42,27 @@ public class CustomerCredentialManager implements BaseManager<CustomerCredential
 		}
 		return null;
 	}
-
+	
+	public CustomerCredential queryByAutCode(String authCode,String loginType) {
+		
+		CustomerCredentialExample customerCredentialExample = new CustomerCredentialExample();
+		 Criteria createCriteria = customerCredentialExample.createCriteria();
+		if(StringUtils.equals(loginType, LoginTypeEnum.ALI_PAY.getLoginTypeCode())) {
+			createCriteria.andAliOpenidEqualTo(loginType);
+		}
+		if(StringUtils.equals(loginType, LoginTypeEnum.WECHAT.getLoginTypeCode())) {
+			createCriteria.andWxOpenidEqualTo(authCode);
+		}
+		List<CustomerCredential> customerCredentialList = customerCredentialMapper
+				.selectByExample(customerCredentialExample);
+		if (0 < customerCredentialList.size()) {
+			return customerCredentialList.get(0);
+		}else if(customerCredentialList.size() > 1){
+			throw new RuntimeException(ErrCodeEnum.REDUPICATE_RECORD.getErrMsg());
+		}
+		return null;
+	}
+	
 	@Override
 	public List<CustomerCredential> listByConditional(CustomerCredential conditional) {
 		CustomerCredentialExample customerCredentialExample = new CustomerCredentialExample();
