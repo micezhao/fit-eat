@@ -7,7 +7,7 @@ import com.f.a.kobe.manager.CustomerCredentialManager;
 import com.f.a.kobe.pojo.CustomerCredential;
 import com.f.a.kobe.pojo.LoginTypeEnum;
 
-@Service
+@Service("wxCredentialService")
 public class WxCredentialService extends CustomerCredentialService{
 	
 	

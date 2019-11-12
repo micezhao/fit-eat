@@ -33,6 +33,7 @@ public class LoginBiz {
 		
 		return getServiceInstance(loginType).existsed(customerCredential);
 	}
+
 	
 	
 }
