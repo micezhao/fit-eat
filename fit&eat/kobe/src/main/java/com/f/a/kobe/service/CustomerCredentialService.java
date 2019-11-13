@@ -18,24 +18,6 @@ public abstract class CustomerCredentialService {
 	@Autowired
 	private CustomerCredentialManager manager;
 	
-	//获取授权信息，根据code获取存储字符串
-	protected abstract String getAuthStringByCode(String code);
-	
-	protected abstract CustomerCredential queryCustomerCredential(String authCode) ;
-	
-	public abstract void registerCustomerBaseInfo(CustomerCredential customerCredential,Object registerInfo);
-
-	//新增授权用户的基本信息
-	public abstract void insertCustomerBaseInfoWithCustomerCredential(CustomerBaseInfo customerBaseInfo,CustomerCredential customerCredential);
-	
-	public void insertCustomerCredential(CustomerCredential customerCredential) {
-		manager.insert(customerCredential);
-	}
-	
-	public void updateCustomerCredential(CustomerCredential customerCredential) {
-		manager.update(customerCredential);
-	}
-	
 	//判断用户是否存在
 	public boolean existsed(CustomerCredential customerCredential) {
 		 List<CustomerCredential> list= manager.listByConditional(customerCredential);
@@ -48,8 +30,40 @@ public abstract class CustomerCredentialService {
 		 return true;
 	}
 	
+	//原子服务
+	
+	//获取授权信息，根据code获取存储字符串
+	protected abstract String getAuthStringByCode(String code);
 	
 	
-		
+	protected abstract CustomerCredential queryCustomerCredential(String authCode) ;
+	
+	//查询授权用户
+	public CustomerCredential queryCustomerCredentialByConditional(CustomerCredential conditional) {
+		List<CustomerCredential> customerCredentialList = manager.listByConditional(conditional);
+		 if(customerCredentialList.isEmpty()) {
+			 throw new InvaildException(ErrCodeEnum.CUSTOMER_NOT_FOUND.getErrCode(),ErrCodeEnum.CUSTOMER_NOT_FOUND.getErrMsg());
+		 }
+		 if(customerCredentialList.size() > 1) {
+			 throw new InvaildException(ErrCodeEnum.REDUPICATE_RECORD.getErrCode(),"用户"+ErrCodeEnum.REDUPICATE_RECORD.getErrMsg());
+		 }
+		return customerCredentialList.get(0);
+	}
+	
+	//新增授权用户
+	public void insertCustomerCredential(CustomerCredential customerCredential) {
+		manager.insert(customerCredential);
+	}
+	
+	//更新授权用户
+	public void updateCustomerCredential(CustomerCredential customerCredential) {
+		manager.update(customerCredential);
+	}
+	
+	//合并授权用户
+	public void combineCustomerCredential(CustomerCredential source,CustomerCredential destine) {
+	}
+	
+	//
 	
 }

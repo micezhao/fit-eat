@@ -1,4 +1,4 @@
-package com.f.a.kobe.service.impl;
+package com.f.a.kobe.service.impl.wx;
 
 import lombok.Data;
 

@@ -34,26 +34,28 @@ public class LoginBiz {
 		return getServiceInstance(loginType).existsed(customerCredential);
 	}
 	
-	/**
-	 * 新增用户授权信息
-	 */
-	public void insertCustomerCredential(String loginType,CustomerCredential customerCredential) {
-		if(!userExistsed(loginType,customerCredential)) {
-			getServiceInstance(loginType).insertCustomerCredential(customerCredential);
-		}
-	}
+	//就登陆而言，分为第三方登录 与 用户名密码登陆
 	
-	/**
-	 * 更新用户授权信息
+	//login
+	/***
+	 * 校验登录类型与传递参数的合法性 -- @ParamCheck
+	 * 查找用户  -- 根据条件查找用户  根据code返回第三方用户基本信息 
+	 * 登陆成功记录登陆流水
 	 */
-	public void updateCustomerCredential(String loginType,CustomerCredential customerCredential) {
-		getServiceInstance(loginType).updateCustomerCredential(customerCredential);
-	}
 	
-	/**
-	 * 注册用户
+	//logout
+	/***
+	 * 清空session会话
+	 * 记录登出流水
 	 */
-	public void registerCustomerCredential(String loginType,CustomerCredential customerCredential,Object registerInfo) {
-		getServiceInstance(loginType).registerCustomerBaseInfo(customerCredential, registerInfo);
-	}
+	
+	//register
+	/**
+	 * 更新用户状态
+	 */
+	
+	//checkregister
+	/**
+	 * 根据手机号条件判断注册
+	 */
 }

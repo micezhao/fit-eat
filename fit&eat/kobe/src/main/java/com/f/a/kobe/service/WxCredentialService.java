@@ -27,17 +27,5 @@ public class WxCredentialService extends CustomerCredentialService{
 		return record;
 	}
 
-	@Override
-	public void insertCustomerBaseInfoWithCustomerCredential(CustomerBaseInfo customerBaseInfo,
-			CustomerCredential customerCredential) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void registerCustomerBaseInfo(CustomerCredential customerCredential, Object registerInfo) {
-		// TODO Auto-generated method stub
-		
-	}
 
 }
