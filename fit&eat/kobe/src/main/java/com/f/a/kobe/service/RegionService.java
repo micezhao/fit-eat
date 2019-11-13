@@ -119,10 +119,7 @@ public class RegionService {
 		List<Areas> cityList = new ArrayList<>(); 
 		List<Areas>	allCityList = new ArrayList<>(); 
 		List<Areas> discList = new ArrayList<>();
-		List<Areas> allDiscList = new ArrayList<>();
 		List<Areas> countyList = new ArrayList<>();
-		List<Areas> allCountyList = new ArrayList<>();
-		
 		
 		//获得所有省
 		provList = regionManager.getRegionByLevel("1");
@@ -144,28 +141,8 @@ public class RegionService {
 		}
 		
 		discList = regionManager.getRegionByLevel("3");
-		/*
-		 * for(Areas city : cityList) { for(Areas dist : discList) {
-		 * if(dist.getParentid().equals(city.getId())) { allDiscList.add(dist); } }
-		 * hashes.put(city.getId(), allDiscList);
-		 * regionRedisTemplate.opsForHash().putAll(KEY,hashes); allDiscList = new
-		 * ArrayList<>(); hashes = new HashMap<>(); }
-		 */
-		
 		countyList = regionManager.getRegionByLevel("4");
-		/*
-		 * countyList = regionManager.getRegionByLevel("4"); for(Areas disc : discList)
-		 * { for(Areas county : countyList) {
-		 * if(county.getParentid().equals(disc.getId())) { allCountyList.add(county); }
-		 * } if(allCountyList.size()>0) { hashes.put(disc.getId(), allCountyList);
-		 * regionRedisTemplate.opsForHash().putAll(KEY,hashes); allCountyList = new
-		 * ArrayList<>(); hashes = new HashMap<>(); }
-		 * 
-		 * }
-		 */
-		//extracted(provList, cityList);
 		extracted(cityList, discList);
-		//判断有多少个区
 		extracted(discList, countyList);
 	}
 
