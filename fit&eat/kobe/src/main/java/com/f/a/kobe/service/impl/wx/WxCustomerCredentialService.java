@@ -1,4 +1,4 @@
-package com.f.a.kobe.service.impl;
+package com.f.a.kobe.service.impl.wx;
 
 import java.security.AlgorithmParameters;
 import java.security.Security;
@@ -27,6 +27,7 @@ import com.f.a.kobe.manager.CustomerCredentialManager;
 import com.f.a.kobe.pojo.CustomerBaseInfo;
 import com.f.a.kobe.pojo.CustomerCredential;
 import com.f.a.kobe.pojo.DrEnum;
+import com.f.a.kobe.pojo.LoginTypeEnum;
 import com.f.a.kobe.service.CustomerCredentialService;
 import com.f.a.kobe.util.IdWorker;
 
@@ -84,15 +85,6 @@ public class WxCustomerCredentialService extends CustomerCredentialService {
 			throw new RuntimeException(ErrCodeEnum.WX_AUTH_INSERTFAil_INVAILD.getErrMsg());
 		}
 
-	}
-
-	@Override
-	public void insertCustomerBaseInfoWithCustomerCredential(CustomerBaseInfo customerBaseInfo,
-			CustomerCredential conditional) {
-		CustomerCredential customerCredential = customerCredentialManager.queryByBiz(conditional.getCustomerId());
-		customerBaseInfo.setMdt(Calendar.getInstance().getTime());
-		customerBaseInfo.setCustomerId(customerCredential.getCustomerId());
-		customerBaseInfoManager.insert(customerBaseInfo);
 	}
 
 	public void updateCustomerCredential(CustomerCredential customerCredential) {
@@ -178,8 +170,8 @@ public class WxCustomerCredentialService extends CustomerCredentialService {
 
 	@Override
 	protected CustomerCredential queryCustomerCredential(String authCode) {
-		// TODO Auto-generated method stub
-		return null;
+		CustomerCredential record = customerCredentialManager.queryByAutCode(authCode, LoginTypeEnum.WECHAT.getLoginTypeCode());
+		return record;
 	}
 
 }
