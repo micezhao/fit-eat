@@ -59,7 +59,7 @@ public class RegionService {
     	allList.addAll(provList);
     	allList.addAll(districtList);
     	allList.addAll(cityList);
-        List<Object> list = regionRedisTemplate.executePipelined(new RedisCallback<List<Areas>>() {
+        regionRedisTemplate.executePipelined(new RedisCallback<List<Areas>>() {
         	
 			@Override
 			public List<Areas> doInRedis(RedisConnection connection) throws DataAccessException {
@@ -77,6 +77,7 @@ public class RegionService {
     //根据传入的区域编码集合 按照级别返回具体的区域名称
     public String getAreaName(List<String> idList) {
     	List<Areas> areasList = new ArrayList<>();
+    	
     	//批量get数据
         List<Object> list = regionRedisTemplate.executePipelined(new RedisCallback<String>() {
             @Override
@@ -91,14 +92,15 @@ public class RegionService {
         for(Object object : list) {
         	Areas area = JSON.parseObject(JSON.toJSONString(object), Areas.class);
         	areasList.add(area);
-        	areasList.sort(new Comparator<Areas>() {
-				@Override
-				public int compare(Areas o1, Areas o2) {
-					return Integer.parseInt(o1.getLevel())-Integer.parseInt(o2.getLevel());
-				}
-        		
-        	});
         }
+        
+        areasList.sort(new Comparator<Areas>() {
+			@Override
+			public int compare(Areas o1, Areas o2) {
+				return Integer.parseInt(o1.getLevel())-Integer.parseInt(o2.getLevel());
+			}
+    		
+    	});
         StringBuffer stringBuffer = new StringBuffer();
         for(Areas area : areasList) {
         	stringBuffer.append(area.getAreaname());
