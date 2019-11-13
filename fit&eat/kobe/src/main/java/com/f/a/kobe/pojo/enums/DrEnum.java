@@ -1,4 +1,4 @@
-package com.f.a.kobe.pojo;
+package com.f.a.kobe.pojo.enums;
 
 import org.apache.commons.lang.StringUtils;
 

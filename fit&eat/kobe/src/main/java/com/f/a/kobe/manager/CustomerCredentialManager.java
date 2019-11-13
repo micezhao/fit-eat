@@ -13,7 +13,7 @@ import com.f.a.kobe.mapper.CustomerCredentialMapper;
 import com.f.a.kobe.pojo.CustomerCredential;
 import com.f.a.kobe.pojo.CustomerCredentialExample;
 import com.f.a.kobe.pojo.CustomerCredentialExample.Criteria;
-import com.f.a.kobe.pojo.LoginTypeEnum;
+import com.f.a.kobe.pojo.enums.LoginTypeEnum;
 import com.f.a.kobe.util.QueryParamTransUtil;
 
 @Component
