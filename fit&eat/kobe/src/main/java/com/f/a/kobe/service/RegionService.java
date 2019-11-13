@@ -1,6 +1,7 @@
 package com.f.a.kobe.service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,9 @@ import java.util.concurrent.Future;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
@@ -37,10 +41,73 @@ public class RegionService {
 	
 	private static final String KEY = "region";
 	
+	private static final String KEY1 = "region1";
+	
 	private static final int DISTRICTTASKNUM = 150;
 	
 	@Autowired
 	ThreadPoolTaskExecutor threadPoolTaskExecutor;
+	
+	//批量get数据
+
+
+    public void synAreas() {
+    	List<Areas> allList = new ArrayList<>();
+    	List<Areas> provList = regionManager.getRegionByLevel("1");
+    	List<Areas> cityList = regionManager.getRegionByLevel("2");
+    	List<Areas> districtList = regionManager.getRegionByLevel("3");
+    	List<Areas> countyList = regionManager.getRegionByLevel("4");
+    	allList.addAll(countyList);
+    	allList.addAll(provList);
+    	allList.addAll(districtList);
+    	allList.addAll(cityList);
+        List<Object> list = regionRedisTemplate.executePipelined(new RedisCallback<List<Areas>>() {
+        	
+			@Override
+			public List<Areas> doInRedis(RedisConnection connection) throws DataAccessException {
+				for (Areas area:allList) {
+                    connection.hSet(KEY1.getBytes(),area.getId().getBytes(),JSON.toJSONString(area).getBytes());
+                }
+				return null;
+			}
+        	
+        });
+    	
+    }
+    
+    //idList 要查询的地区编码
+    public void getProv(List<String> idList) {
+    	List<Areas> areasList = new ArrayList<>();
+    	//批量get数据
+        List<Object> list = regionRedisTemplate.executePipelined(new RedisCallback<String>() {
+            @Override
+            public String doInRedis(RedisConnection connection) throws DataAccessException {
+                for (String key : idList) {
+                    connection.hGet(KEY1.getBytes(),key.getBytes());
+                }
+                return null;
+            }
+        });
+        
+        for(Object object : list) {
+        	Areas area = JSON.parseObject(JSON.toJSONString(object), Areas.class);
+        	areasList.add(area);
+        	areasList.sort(new Comparator<Areas>() {
+				@Override
+				public int compare(Areas o1, Areas o2) {
+					return Integer.parseInt(o1.getLevel())-Integer.parseInt(o2.getLevel());
+				}
+        		
+        	});
+        }
+        StringBuffer stringBuffer = new StringBuffer();
+        for(Areas area : areasList) {
+        	stringBuffer.append(area.getAreaname());
+        }
+    	System.out.println(stringBuffer.toString());
+    }
+	
+	
 	/**
 	 * 
 	 * 批量同步地址信息

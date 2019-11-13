@@ -8,20 +8,18 @@ import com.f.a.kobe.pojo.CustomerBaseInfo;
 import com.f.a.kobe.pojo.CustomerCredential;
 import com.f.a.kobe.pojo.LoginTypeEnum;
 
-@Service("wxCredentialService")
-public class WxCredentialService extends CustomerCredentialService{
+@Service
+public class WxCredentialService{
 	
 	
 	@Autowired
 	private CustomerCredentialManager manager;
 	
-	@Override
 	protected String getAuthStringByCode(String code) {
 		// TODO Auto-generated method stub
 		return "";
 	}
 
-	@Override
 	protected CustomerCredential queryCustomerCredential(String authCode) {
 		CustomerCredential record = manager.queryByAutCode(authCode, LoginTypeEnum.WECHAT.getLoginTypeCode());
 		return record;
