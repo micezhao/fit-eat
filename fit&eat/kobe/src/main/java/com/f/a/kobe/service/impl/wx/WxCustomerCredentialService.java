@@ -26,8 +26,8 @@ import com.f.a.kobe.manager.CustomerBaseInfoManager;
 import com.f.a.kobe.manager.CustomerCredentialManager;
 import com.f.a.kobe.pojo.CustomerBaseInfo;
 import com.f.a.kobe.pojo.CustomerCredential;
-import com.f.a.kobe.pojo.DrEnum;
-import com.f.a.kobe.pojo.LoginTypeEnum;
+import com.f.a.kobe.pojo.enums.DrEnum;
+import com.f.a.kobe.pojo.enums.LoginTypeEnum;
 import com.f.a.kobe.service.CustomerCredentialService;
 import com.f.a.kobe.util.IdWorker;
 

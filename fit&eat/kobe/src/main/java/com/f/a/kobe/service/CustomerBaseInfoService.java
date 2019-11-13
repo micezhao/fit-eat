@@ -18,7 +18,7 @@ import com.f.a.kobe.exceptions.ErrCodeEnum;
 import com.f.a.kobe.exceptions.InvaildException;
 import com.f.a.kobe.manager.CustomerBaseInfoManager;
 import com.f.a.kobe.pojo.CustomerBaseInfo;
-import com.f.a.kobe.pojo.DrEnum;
+import com.f.a.kobe.pojo.enums.DrEnum;
 import com.f.a.kobe.util.IdWorker;
 
 @Service
