@@ -48,9 +48,7 @@ public class RegionService {
 	@Autowired
 	ThreadPoolTaskExecutor threadPoolTaskExecutor;
 	
-	//批量get数据
-
-
+	//批量导入所有区域数据 以区域编码为key 区域详情作为内容
     public void synAreas() {
     	List<Areas> allList = new ArrayList<>();
     	List<Areas> provList = regionManager.getRegionByLevel("1");
@@ -76,7 +74,8 @@ public class RegionService {
     }
     
     //idList 要查询的地区编码
-    public void getProv(List<String> idList) {
+    //根据传入的区域编码集合 按照级别返回具体的区域名称
+    public String getAreaName(List<String> idList) {
     	List<Areas> areasList = new ArrayList<>();
     	//批量get数据
         List<Object> list = regionRedisTemplate.executePipelined(new RedisCallback<String>() {
@@ -104,7 +103,7 @@ public class RegionService {
         for(Areas area : areasList) {
         	stringBuffer.append(area.getAreaname());
         }
-    	System.out.println(stringBuffer.toString());
+    	return stringBuffer.toString();
     }
 	
 	
