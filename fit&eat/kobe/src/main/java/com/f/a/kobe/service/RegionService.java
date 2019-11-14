@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
 import com.f.a.kobe.manager.RegionManager;
 import com.f.a.kobe.pojo.Areas;
-import com.f.a.kobe.pojo.CustomerBaseInfo;
 
 /**
  * 中国地理位置信息服务类
@@ -39,9 +38,9 @@ public class RegionService {
 	@Autowired
 	private RegionManager regionManager;
 	
-	private static final String KEY = "region";
+	private static final String KEY_REGION = "region";
 	
-	private static final String KEY1 = "areas";
+	private static final String KEY_AREA= "area";
 	
 	private static final int DISTRICTTASKNUM = 150;
 	
@@ -65,14 +64,19 @@ public class RegionService {
 			@Override
 			public List<Areas> doInRedis(RedisConnection connection) throws DataAccessException {
 				for (Areas area:allList) {
-                    connection.hSet(KEY1.getBytes(),area.getId().getBytes(),JSON.toJSONString(area).getBytes());
                     
+                    connection.hSet(KEY_AREA.getBytes(),area.getId().getBytes(),JSON.toJSONString(area).getBytes());
                 }
 				return null;
 			}
         	
         });
     	
+    }
+    
+    public String getAreaName(String areaKey) {
+    	Areas areas = (Areas) regionRedisTemplate.opsForHash().get(KEY_AREA, areaKey);
+    	return  areas.getAreaname();
     }
     
     //idList 要查询的地区编码
@@ -85,7 +89,7 @@ public class RegionService {
             @Override
             public String doInRedis(RedisConnection connection) throws DataAccessException {
                 for (String key : idList) {
-                    connection.hGet(KEY1.getBytes(),key.getBytes());
+                    connection.hGet(KEY_AREA.getBytes(),key.getBytes());
                 }
                 return null;
             }
@@ -126,7 +130,7 @@ public class RegionService {
 		//获得所有省
 		provList = regionManager.getRegionByLevel("1");
 		hashes.put("0", provList);
-		regionRedisTemplate.opsForHash().putAll(KEY,hashes);
+		regionRedisTemplate.opsForHash().putAll(KEY_REGION,hashes);
 		hashes = new HashMap<>();
 		
 		cityList = regionManager.getRegionByLevel("2");
@@ -137,7 +141,7 @@ public class RegionService {
 				}
 			}
 			hashes.put(prov.getId(), allCityList);
-			regionRedisTemplate.opsForHash().putAll(KEY,hashes);
+			regionRedisTemplate.opsForHash().putAll(KEY_REGION,hashes);
 			allCityList = new ArrayList<>(); 
 			hashes = new HashMap<>();
 		}
@@ -182,7 +186,7 @@ public class RegionService {
 	}
 	
 	public List<Areas> getReginByKey(String hashKey){ 
-		Object obj= regionRedisTemplate.opsForHash().get(KEY,hashKey);
+		Object obj= regionRedisTemplate.opsForHash().get(KEY_REGION,hashKey);
 		return JSON.parseArray(JSON.toJSONString(obj), Areas.class);
 	}
 	
@@ -216,7 +220,7 @@ public class RegionService {
 				}
 				if(allList.size() > 0) {
 					hashes.put(pArea.getId(), allList);
-					regionRedisTemplate.opsForHash().putAll(KEY,hashes);
+					regionRedisTemplate.opsForHash().putAll(KEY_REGION,hashes);
 					allList = new ArrayList<>(); 
 					hashes = new HashMap<>();
 				}
