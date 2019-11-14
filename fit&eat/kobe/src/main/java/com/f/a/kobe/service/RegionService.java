@@ -41,7 +41,7 @@ public class RegionService {
 	
 	private static final String KEY = "region";
 	
-	private static final String KEY1 = "region1";
+	private static final String KEY1 = "areas";
 	
 	private static final int DISTRICTTASKNUM = 150;
 	
@@ -59,12 +59,14 @@ public class RegionService {
     	allList.addAll(provList);
     	allList.addAll(districtList);
     	allList.addAll(cityList);
+    	//regionRedisTemplate.opsForHash().putAll(key, m);
         regionRedisTemplate.executePipelined(new RedisCallback<List<Areas>>() {
         	
 			@Override
 			public List<Areas> doInRedis(RedisConnection connection) throws DataAccessException {
 				for (Areas area:allList) {
                     connection.hSet(KEY1.getBytes(),area.getId().getBytes(),JSON.toJSONString(area).getBytes());
+                    
                 }
 				return null;
 			}
