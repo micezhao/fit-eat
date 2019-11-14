@@ -6,8 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.f.a.kobe.exceptions.ErrCodeEnum;
-import com.f.a.kobe.manager.aop.ToMongoDB;
+import com.f.a.kobe.exceptions.ErrEnum;
 import com.f.a.kobe.mapper.CustomerLogMapper;
 import com.f.a.kobe.pojo.CustomerLog;
 import com.f.a.kobe.pojo.CustomerLogExample;
@@ -34,7 +33,7 @@ public class CustomerLogManager implements BaseManager<CustomerLog> {
 		if (0 < customerLogList.size()) {
 			return customerLogList.get(0);
 		} else if (1 < customerLogList.size()) {
-			throw new RuntimeException(ErrCodeEnum.REDUPICATE_RECORD.getErrMsg());
+			throw new RuntimeException(ErrEnum.REDUPICATE_RECORD.getErrMsg());
 		}
 		return null;
 	}
@@ -48,21 +47,21 @@ public class CustomerLogManager implements BaseManager<CustomerLog> {
 		return customerLogList;
 	}
 	
-	@ToMongoDB
+	//@ToMongoDB
 	@Override
 	public int insert(CustomerLog t) {
 		t.setCdt(Calendar.getInstance().getTime());
 		return customerLogMapper.insertSelective(t);
 	}
 	
-	@ToMongoDB
+	//@ToMongoDB
 	@Override
 	public int update(CustomerLog t) {
 		t.setMdt(Calendar.getInstance().getTime());
 		return customerLogMapper.updateByPrimaryKeySelective(t);
 	}
 	
-	@ToMongoDB
+	//@ToMongoDB
 	@Override
 	public int delete(Long id) {
 		return customerLogMapper.deleteByPrimaryKey(id);

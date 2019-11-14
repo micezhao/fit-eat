@@ -21,7 +21,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.alibaba.fastjson.JSONObject;
 import com.f.a.kobe.config.credential.WeChatConfigProperties;
-import com.f.a.kobe.exceptions.ErrCodeEnum;
+import com.f.a.kobe.exceptions.ErrEnum;
 import com.f.a.kobe.manager.CustomerBaseInfoManager;
 import com.f.a.kobe.manager.CustomerCredentialManager;
 import com.f.a.kobe.pojo.CustomerBaseInfo;
@@ -64,7 +64,7 @@ public class WxCustomerCredentialService extends CustomerCredentialService {
 				weChatConfigProperties.getAppId(), weChatConfigProperties.getAppSecret(), code);
 		String result = restTemplate.getForObject(request2WxAuthUrl, String.class);
 		if (StringUtils.contains(result, weChatConfigProperties.getErrtag())) {
-			throw new RuntimeException(ErrCodeEnum.WX_AUTH_INVAILD.getErrMsg());
+			throw new RuntimeException(ErrEnum.WX_AUTH_INVAILD.getErrMsg());
 		}
 		String openid = "";
 		if (getCustomerCredentialByOpenid(openid) == null) {
@@ -82,7 +82,7 @@ public class WxCustomerCredentialService extends CustomerCredentialService {
 		customerCredential.setCdt(Calendar.getInstance().getTime());
 		int effectRows = customerCredentialManager.insert(customerCredential);
 		if (effectRows == 0) {
-			throw new RuntimeException(ErrCodeEnum.WX_AUTH_INSERTFAil_INVAILD.getErrMsg());
+			throw new RuntimeException(ErrEnum.WX_AUTH_INSERTFAil_INVAILD.getErrMsg());
 		}
 
 	}

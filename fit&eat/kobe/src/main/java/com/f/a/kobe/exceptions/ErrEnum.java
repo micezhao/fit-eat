@@ -1,6 +1,6 @@
 package com.f.a.kobe.exceptions;
 
-public enum ErrCodeEnum {
+public enum ErrEnum {
 	
 	QUERY_PARAM_INVAILD("9001","查询参数验证异常"),
 	REDUPICATE_RECORD("9002","存在重复的记录"),
@@ -29,7 +29,7 @@ public enum ErrCodeEnum {
 		this.errMsg = errMsg;
 	}
 
-	private ErrCodeEnum(String errCode, String errMsg) {
+	private ErrEnum(String errCode, String errMsg) {
 		this.errCode = errCode;
 		this.errMsg = errMsg;
 	}

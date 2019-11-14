@@ -6,7 +6,7 @@ import org.apache.commons.codec.binary.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.f.a.kobe.exceptions.ErrCodeEnum;
+import com.f.a.kobe.exceptions.ErrEnum;
 import com.f.a.kobe.exceptions.InvaildException;
 import com.f.a.kobe.manager.CustomerAddrManager;
 import com.f.a.kobe.pojo.CustomerAddr;
@@ -29,8 +29,8 @@ public class CustomerAddrService {
 		Long customerId=customerAddr.getCustomerId();
 		List<CustomerAddr> list = manager.listByCustomerId(customerId);
 		if(list.size() > 8) {
-			throw new InvaildException(ErrCodeEnum.OVER_LIMITS.getErrCode(),
-						"当前用户的收货地址"+ErrCodeEnum.OVER_LIMITS.getErrMsg());
+			throw new InvaildException(ErrEnum.OVER_LIMITS.getErrCode(),
+						"当前用户的收货地址"+ErrEnum.OVER_LIMITS.getErrMsg());
 		}
 		boolean hasDefault = false; 
 		for (CustomerAddr item : list) {

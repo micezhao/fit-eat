@@ -5,10 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.f.a.kobe.exceptions.ErrCodeEnum;
+import com.f.a.kobe.exceptions.ErrEnum;
 import com.f.a.kobe.exceptions.InvaildException;
 import com.f.a.kobe.manager.CustomerCredentialManager;
-import com.f.a.kobe.pojo.CustomerBaseInfo;
 import com.f.a.kobe.pojo.CustomerCredential;
 
 //改造为实现统一接口
@@ -25,7 +24,7 @@ public abstract class CustomerCredentialService {
 			 return false;
 		 }
 		 if(list.size() > 1) {
-			 throw new InvaildException(ErrCodeEnum.REDUPICATE_RECORD.getErrCode(),"用户凭证"+ErrCodeEnum.REDUPICATE_RECORD.getErrMsg());
+			 throw new InvaildException(ErrEnum.REDUPICATE_RECORD.getErrCode(),"用户凭证"+ErrEnum.REDUPICATE_RECORD.getErrMsg());
 		 }
 		 return true;
 	}
@@ -42,10 +41,10 @@ public abstract class CustomerCredentialService {
 	public CustomerCredential queryCustomerCredentialByConditional(CustomerCredential conditional) {
 		List<CustomerCredential> customerCredentialList = manager.listByConditional(conditional);
 		 if(customerCredentialList.isEmpty()) {
-			 throw new InvaildException(ErrCodeEnum.CUSTOMER_NOT_FOUND.getErrCode(),ErrCodeEnum.CUSTOMER_NOT_FOUND.getErrMsg());
+			 throw new InvaildException(ErrEnum.CUSTOMER_NOT_FOUND.getErrCode(),ErrEnum.CUSTOMER_NOT_FOUND.getErrMsg());
 		 }
 		 if(customerCredentialList.size() > 1) {
-			 throw new InvaildException(ErrCodeEnum.REDUPICATE_RECORD.getErrCode(),"用户"+ErrCodeEnum.REDUPICATE_RECORD.getErrMsg());
+			 throw new InvaildException(ErrEnum.REDUPICATE_RECORD.getErrCode(),"用户"+ErrEnum.REDUPICATE_RECORD.getErrMsg());
 		 }
 		return customerCredentialList.get(0);
 	}

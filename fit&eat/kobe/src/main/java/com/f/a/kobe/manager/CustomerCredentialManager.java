@@ -7,7 +7,7 @@ import org.apache.commons.codec.binary.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.f.a.kobe.exceptions.ErrCodeEnum;
+import com.f.a.kobe.exceptions.ErrEnum;
 import com.f.a.kobe.manager.aop.ToMongoDB;
 import com.f.a.kobe.mapper.CustomerCredentialMapper;
 import com.f.a.kobe.pojo.CustomerCredential;
@@ -38,7 +38,7 @@ public class CustomerCredentialManager implements BaseManager<CustomerCredential
 		if (0 < customerCredentialList.size()) {
 			return customerCredentialList.get(0);
 		}else if(customerCredentialList.size() > 1){
-			throw new RuntimeException(ErrCodeEnum.REDUPICATE_RECORD.getErrMsg());
+			throw new RuntimeException(ErrEnum.REDUPICATE_RECORD.getErrMsg());
 		}
 		return null;
 	}
@@ -58,7 +58,7 @@ public class CustomerCredentialManager implements BaseManager<CustomerCredential
 		if (0 < customerCredentialList.size()) {
 			return customerCredentialList.get(0);
 		}else if(customerCredentialList.size() > 1){
-			throw new RuntimeException(ErrCodeEnum.REDUPICATE_RECORD.getErrMsg());
+			throw new RuntimeException(ErrEnum.REDUPICATE_RECORD.getErrMsg());
 		}
 		return null;
 	}

@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
-import com.f.a.kobe.exceptions.ErrCodeEnum;
+import com.f.a.kobe.exceptions.ErrEnum;
 import com.f.a.kobe.exceptions.InvaildException;
 import com.f.a.kobe.manager.CustomerBaseInfoManager;
 import com.f.a.kobe.pojo.CustomerBaseInfo;
@@ -155,7 +155,7 @@ public class CustomerBaseInfoService {
 		String[] split = csny.split("-");
 		if (split.length != 3) {
 			// 给的出生年月不合法
-			throw new InvaildException(ErrCodeEnum.INPUT_PARAM_INVAILD.getErrCode(), "出生日期格式不正确");
+			throw new InvaildException(ErrEnum.INPUT_PARAM_INVAILD.getErrCode(), "出生日期格式不正确");
 		}
 		String birthMonth = split[1];
 		if (split[1].startsWith("0", 0)) {
@@ -173,7 +173,7 @@ public class CustomerBaseInfoService {
 		// 算出当前大概年龄
 		int age = year - Integer.parseInt(split[0]);
 		if (age < 0) {
-			throw new InvaildException(ErrCodeEnum.INPUT_PARAM_INVAILD.getErrCode(), "出生年份不能小于当前年份");
+			throw new InvaildException(ErrEnum.INPUT_PARAM_INVAILD.getErrCode(), "出生年份不能小于当前年份");
 		}
 		if (month - Integer.parseInt(birthMonth) > 0) {
 			// 过生日了

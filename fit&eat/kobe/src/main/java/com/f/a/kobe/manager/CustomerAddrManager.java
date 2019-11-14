@@ -6,8 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.f.a.kobe.exceptions.ErrCodeEnum;
-import com.f.a.kobe.manager.aop.ToMongoDB;
+import com.f.a.kobe.exceptions.ErrEnum;
 import com.f.a.kobe.mapper.CustomerAddrMapper;
 import com.f.a.kobe.pojo.CustomerAddr;
 import com.f.a.kobe.pojo.CustomerAddrExample;
@@ -41,7 +40,7 @@ public class CustomerAddrManager implements BaseManager<CustomerAddr> {
 		if (0 < customerAddrList.size()) {
 			return customerAddrList.get(0);
 		} else if (1 < customerAddrList.size()) {
-			throw new RuntimeException(ErrCodeEnum.REDUPICATE_RECORD.getErrMsg());
+			throw new RuntimeException(ErrEnum.REDUPICATE_RECORD.getErrMsg());
 		}
 		return null;
 	}
