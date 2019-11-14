@@ -45,6 +45,15 @@ public class CustomerAddrService {
 		}
 		
 		customerAddr.setAddrId(idWorker.nextId()); //生成一个序列号
+		String provinceName = regionService.getAreaName(customerAddr.getProvinceNo());
+		customerAddr.setProvinceName(provinceName);
+		String cityName = regionService.getAreaName(customerAddr.getCityNo());
+		customerAddr.setCityName(cityName);
+		String distrcName = regionService.getAreaName(customerAddr.getDistrcNo());
+		customerAddr.setDistrcName(distrcName);
+		StringBuffer areaDetailBuffer = new StringBuffer();
+		areaDetailBuffer.append(provinceName).append(cityName).append(distrcName).append(customerAddr.getAddrDetail());
+		customerAddr.setAddrDetail(areaDetailBuffer.toString());
 		manager.insert(customerAddr);
 	}
 	
