@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -38,17 +39,21 @@ public class RegionService {
 	@Autowired
 	private RegionManager regionManager;
 	
-	private static final String KEY_REGION = "region";
+	private static final String KEY_REGION = "region1";
 	
-	private static final String KEY_AREA= "area";
+	private static final String KEY_AREA= "area1";
 	
-	private static final int DISTRICTTASKNUM = 150;
+	private static final int DISTRICTTASKNUM = 20;
+	
+	private static final int CITYTASKNUM = 150;
 	
 	@Autowired
 	ThreadPoolTaskExecutor threadPoolTaskExecutor;
 	
+	private static ConcurrentHashMap<byte[],byte[]> totalHashes = new ConcurrentHashMap<>();
+	
 	//批量导入所有区域数据 以区域编码为key 区域详情作为内容
-    public void synAreas() {
+    public void synAreas() throws InterruptedException, ExecutionException {
     	List<Areas> allList = new ArrayList<>();
     	List<Areas> provList = regionManager.getRegionByLevel("1");
     	List<Areas> cityList = regionManager.getRegionByLevel("2");
@@ -58,15 +63,27 @@ public class RegionService {
     	allList.addAll(provList);
     	allList.addAll(districtList);
     	allList.addAll(cityList);
+    	
+    	totalHashes.put("0".getBytes(), JSON.toJSONString(provList).getBytes());
+    	extracted(provList, cityList);
+		//extracted(cityList, districtList);
+		//extracted(districtList, countyList);
     	//regionRedisTemplate.opsForHash().putAll(key, m);
+    	
+    	
+//    	List<Areas> allList = new ArrayList<>();
+//    	List<Areas> provList = regionManager.getRegionByLevel("1");
+//    	allList.addAll(provList);
+//    	ConcurrentHashMap<byte[],byte[]> partTotalHashes = new ConcurrentHashMap<>();
+//    	partTotalHashes.put("0".getBytes(),JSON.toJSONString(provList).getBytes());
         regionRedisTemplate.executePipelined(new RedisCallback<List<Areas>>() {
         	
 			@Override
 			public List<Areas> doInRedis(RedisConnection connection) throws DataAccessException {
-				for (Areas area:allList) {
-                    
-                    connection.hSet(KEY_AREA.getBytes(),area.getId().getBytes(),JSON.toJSONString(area).getBytes());
-                }
+//				for (Areas area:allList) {
+//                    connection.hSet(KEY_AREA.getBytes(),area.getId().getBytes(),JSON.toJSONString(area).getBytes());
+//                }
+				connection.hMSet(KEY_REGION.getBytes(), totalHashes);
 				return null;
 			}
         	
@@ -133,33 +150,38 @@ public class RegionService {
 		regionRedisTemplate.opsForHash().putAll(KEY_REGION,hashes);
 		hashes = new HashMap<>();
 		
-		cityList = regionManager.getRegionByLevel("2");
-		for(Areas prov : provList) {
-			for(Areas city : cityList) {
-				if(city.getParentid().equals(prov.getId())) {
-					allCityList.add(city);
-				}
-			}
-			hashes.put(prov.getId(), allCityList);
-			regionRedisTemplate.opsForHash().putAll(KEY_REGION,hashes);
-			allCityList = new ArrayList<>(); 
-			hashes = new HashMap<>();
-		}
 		
+		/*
+		 * for(Areas prov : provList) { for(Areas city : cityList) {
+		 * if(city.getParentid().equals(prov.getId())) { allCityList.add(city); } }
+		 * hashes.put(prov.getId(), allCityList);
+		 * regionRedisTemplate.opsForHash().putAll(KEY_REGION,hashes); allCityList = new
+		 * ArrayList<>(); hashes = new HashMap<>(); }
+		 */
+		cityList = regionManager.getRegionByLevel("2");
 		discList = regionManager.getRegionByLevel("3");
 		countyList = regionManager.getRegionByLevel("4");
+		extracted(provList, cityList);
 		extracted(cityList, discList);
 		extracted(discList, countyList);
 	}
 
 	private void extracted(List<Areas> discList, List<Areas> countyList)
 			throws InterruptedException, ExecutionException {
+		int dividNum = 0;
+		if(discList.size()<=500) {
+			dividNum = DISTRICTTASKNUM;
+		}else {
+			dividNum = CITYTASKNUM;
+		}
+		
 		List<Future<Boolean>> futureList = new ArrayList<Future<Boolean>>();
 		if (discList.size() == 0) {
 			return;
 		}
-		int threadNum = discList.size() / DISTRICTTASKNUM;
-		if (discList.size() % DISTRICTTASKNUM != 0) {
+		int threadNum = discList.size() / dividNum;
+		
+		if (discList.size() % dividNum != 0) {
 			threadNum = threadNum + 1;
 		}
 		List<Areas> tempList = null;
@@ -167,13 +189,13 @@ public class RegionService {
 		for (int i = 1; i <= threadNum; i++) {
 			tempList = new ArrayList<Areas>();
 			if (i == 1) {
-				tempList.addAll(discList.subList(n * DISTRICTTASKNUM, i * DISTRICTTASKNUM));
+				tempList.addAll(discList.subList(n * dividNum, i * dividNum));
 			} else {
 				if(i != threadNum) {
-					tempList.addAll(discList.subList(n * DISTRICTTASKNUM + 1, i * DISTRICTTASKNUM));
+					tempList.addAll(discList.subList(n * dividNum + 1, i * dividNum));
 				}
 				else {
-					tempList.addAll(discList.subList(n * DISTRICTTASKNUM + 1, discList.size()));
+					tempList.addAll(discList.subList(n * dividNum + 1, discList.size()));
 				}
 			}
 			Future<Boolean> f = task(discList,countyList);
@@ -190,6 +212,8 @@ public class RegionService {
 		return JSON.parseArray(JSON.toJSONString(obj), Areas.class);
 	}
 	
+	
+	
 	private class TaskHanler implements Callable<Boolean> {
 
 		private List<Areas> pAreas;
@@ -198,7 +222,7 @@ public class RegionService {
 		
 		private List<Areas> allList = new ArrayList<>();
 		
-		private Map<String,List<Areas>> hashes = new HashMap<>();
+		//private Map<String,List<Areas>> hashes = new HashMap<>();
 
 		public TaskHanler(List<Areas> pAreas, List<Areas> sAreas) {
 			this.pAreas = pAreas;
@@ -219,10 +243,11 @@ public class RegionService {
 					}
 				}
 				if(allList.size() > 0) {
-					hashes.put(pArea.getId(), allList);
-					regionRedisTemplate.opsForHash().putAll(KEY_REGION,hashes);
+					//hashes.put(pArea.getId(), allList);
+					//regionRedisTemplate.opsForHash().putAll(KEY_REGION,hashes);
+					totalHashes.put(pArea.getId().getBytes(), JSON.toJSONString(allList).getBytes());
 					allList = new ArrayList<>(); 
-					hashes = new HashMap<>();
+					//hashes = new HashMap<>();
 				}
 			}
 		}
