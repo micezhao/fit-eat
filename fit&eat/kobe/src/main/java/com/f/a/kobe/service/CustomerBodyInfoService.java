@@ -86,7 +86,6 @@ public class CustomerBodyInfoService {
 	}
 	
 	
-	
 	//检查当前用户是否已经在当日登记过体征信息的方法
 	public CustomerBodyInfo hasRegisted(Long customerId) {
 		CustomerBodyInfo conditional = new CustomerBodyInfo();
