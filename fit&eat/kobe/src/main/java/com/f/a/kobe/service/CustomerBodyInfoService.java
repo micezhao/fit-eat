@@ -15,6 +15,7 @@ import com.f.a.kobe.exceptions.ErrEnum;
 import com.f.a.kobe.exceptions.InvaildException;
 import com.f.a.kobe.manager.CustomerBodyInfoManager;
 import com.f.a.kobe.pojo.CustomerBodyInfo;
+import com.f.a.kobe.pojo.view.CustomerBodyInfoView;
 
 @Service
 public class CustomerBodyInfoService {
@@ -45,7 +46,7 @@ public class CustomerBodyInfoService {
 	 * 注册一条信息的体征记录
 	 * @param customerBodyInfo
 	 */
-	public void registBodyInfo(CustomerBodyInfo customerBodyInfo) {
+	public void registBodyInfo(CustomerBodyInfo customerBodyInfo,String gender) {
 		CustomerBodyInfo registedRecord = hasRegisted(customerBodyInfo.getCustomerId());
 		if(registedRecord != null) { //如果存在就先删除
 			delete(registedRecord);
@@ -57,7 +58,10 @@ public class CustomerBodyInfoService {
 			customerBodyInfo.setRecordId(recordId);
 			insert(customerBodyInfo);
 		}
-		
+		CustomerBodyInfoView view = new CustomerBodyInfoView().build(customerBodyInfo, gender);
+		// 使用 mongoTemplate.insert 方法，如果存在相同ID，则程序报错
+		// 使用 mongoTemplate.save 方法，如果存在相同ID，则修改原先的数据，需要遍历整个集合，效率低
+		mongoTemplate.insert(view, COLLECTION_NAME);
 	}
 	
 	private void insert(CustomerBodyInfo customerBodyInfo) {
@@ -72,8 +76,6 @@ public class CustomerBodyInfoService {
 		BigDecimal waistHipRatio = waistline.divide(hipline).setScale(2,BigDecimal.ROUND_HALF_UP);
 		customerBodyInfo.setWaistHipRatio(waistHipRatio.toString()); // 腰臀比
 		manager.insert(customerBodyInfo);
-		//mongoTemplate.insert(objectToSave, COLLECTION_NAME);
-		//TODO insert to mongo
 	}
 	
 	private void delete(CustomerBodyInfo customerBodyInfo) {
@@ -102,6 +104,13 @@ public class CustomerBodyInfoService {
 		}
 	}
 	
+	public List<CustomerBodyInfoView> listCustomerBodyInfoView(){
+		Query query = new Query();
+		// 封装查询条件
+		//query.addCriteria(criteriaDefinition);
+		mongoTemplate.find(query, CustomerBodyInfoView.class);
+		return null;
+	}
 	
 	
 
