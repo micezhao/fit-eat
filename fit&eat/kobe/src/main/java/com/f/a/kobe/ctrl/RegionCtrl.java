@@ -38,7 +38,7 @@ public class RegionCtrl {
 	@ResponseBody
 	public ResponseEntity<Object> sync() {
 		try {
-			regionService.syn();
+			regionService.synAreas();
 		} catch (InterruptedException | ExecutionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
