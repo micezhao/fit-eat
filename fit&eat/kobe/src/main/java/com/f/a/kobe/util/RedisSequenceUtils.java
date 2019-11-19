@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import org.springframework.stereotype.Component;
-import org.w3c.dom.css.Counter;
 
 /**
  * 通过redis的自增机制实现的生成有序的id
@@ -25,18 +24,15 @@ public class RedisSequenceUtils {
 	@Autowired
 	private RedisAtomicLong redisAtomicLong;
 
-//	private final static Long INIT_VALUE = 0L;
-
 	private final static int DEFALUT_LENGHT = 8;
 
-	private String key = new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime());
+	private String key = "scorce_squence";
 
-	private final String prefix = this.key;
+	private final String prefix = new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime());
 
 	@Bean
 	public RedisAtomicLong getRedisAtomicLong() {
 		// 不需要设置带有默认值的构造方法，因为如果设定了默认值，项目再次启动式都将重设当前计数器
-//		RedisAtomicLong counter = new RedisAtomicLong(key, redisTemplate.getConnectionFactory(), INIT_VALUE);
 		RedisAtomicLong counter = new RedisAtomicLong(key, redisTemplate.getConnectionFactory());
 		Calendar todayEnd = Calendar.getInstance();
 		todayEnd.set(Calendar.HOUR_OF_DAY, 23);
@@ -53,7 +49,7 @@ public class RedisSequenceUtils {
 	 * @param bizPrefix
 	 * @return
 	 */
-	public String getRedisSequence(String bizPrefix) {
+	public String getRedisSequence(String bizPrefix) { 
 		Long sequence = redisAtomicLong.incrementAndGet();
 		String seq = String.valueOf(sequence);
 		StringBuffer buffer = new StringBuffer(bizPrefix+prefix);

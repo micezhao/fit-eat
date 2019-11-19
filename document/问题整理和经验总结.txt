@@ -273,6 +273,36 @@ fit-eat 开发过程的问题记录和经验总结
     【注意：】在redis-cli中对数据进行查询时，也是要遵循存入数据时的序列化策略的
             如果在存数据时，当前的key未使用new StringRedisSerializer()策略，那么直接使用get key 是会返回 nil，
             原因就是redis-cli get key的默认是string类型的，但是存入的数据又未被StringRedisSerializer，因此是找不到对应数据类型的key导致
-        
+
+第三周(2019/11/11 - 2019/11/15)
+已完成的任务：
+1、用户基本信息原子服务开发
+2、用户地址原子服务开发
+3、用户体征信息服务开发
+4、向redis同步地址信息，从redis中获取地址信息功能开发
+5、【关于通过向redis同步地理位置信息的总结】
+
+第三周(2019/11/11 - 2019/11/15)
+已完成的任务：
+1、利用redis的atomicLong的自增特性来实现生成全局唯一有序id的功能
+  1.1 生成全局有序id的原理是利用redis的incr命令，对指定的key进行自增。并拼接也是规则生成。
+  1.2 使用spring-data-redis提供的 RedisAtomicLong.incrementAndGet() 进行
+  1.3 这个api底层通过execute(connection -> connection.incrBy(rawKey, delta), true) 调用 redis的 incr 命令对当前key进行自增。
+  1.4 如果 key 不存在，那么 key 的值会先被初始化为 0 ，然后再执行 INCR 操作。 
+  1.5 此层实现原理：
+      127.0.0.1:6379> set num 10
+      OK
+      127.0.0.1:6379> incr num
+      (integer) 11
+      127.0.0.1:6379> get num    # 数字值在 Redis 中以字符串的形式保存
+      "11"
+  1.6 java实现过程：利用
+      1.6.1 先声明一个基于RedisAtomicLong的计数器，通过RedisAtomicLong counter = new RedisAtomicLong(key, redisTemplate.getConnectionFactory());
+            的构造方法配置需要自增的key，redisconnection，以及过期时间
+      1.6.2 key是指计数器的名称(counter_name),如果不同的计数器需要不同的计数器来计算序列号，就各自声明即可。
+      1.6.3 【注意】：在声明时不要指定初始值，因为如果一旦指定，每当项目重写启动时，就会将这个key重设为初始值
+      1.6.4 key的过期时间的配置：通过counter.expireAt(todayEnd.getTime());配置这个计数器的归零的时刻
+            例如 todayEnd.getTime() = 每日的23:59:59:999 就是表示在这个时刻，将计数器key清空重新开始计数。
+      
         
 
