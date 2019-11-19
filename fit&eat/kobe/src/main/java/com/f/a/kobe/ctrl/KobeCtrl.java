@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSON;
 import com.f.a.kobe.pojo.request.LoginRequest;
 import com.f.a.kobe.pojo.view.UserAgent;
+import com.f.a.kobe.util.RedisSequenceUtils;
 
 @RestController
 public class KobeCtrl {
@@ -31,6 +32,8 @@ public class KobeCtrl {
 	@Qualifier("regionRedisTemplate")
 	private RedisTemplate<String, Object> regionRedisTemplate;
 	
+	@Autowired
+	private RedisSequenceUtils sequenceUtils;
 	
 	@Value("${appname}")
 	private String appname;
@@ -92,5 +95,10 @@ public class KobeCtrl {
 			return "请先访问localhost:8763/login 登陆本系统：";
 		}
 		return userAgent.getNickname() + "恭喜您！兑换成功";
+	}
+	
+	@GetMapping("/getSequence")
+	public String getSequence() {
+		 return sequenceUtils.getRedisSequence();
 	}
 }
