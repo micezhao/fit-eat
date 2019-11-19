@@ -46,11 +46,17 @@ public class RedisSequenceUtils {
 		counter.expireAt(todayEnd.getTime()); //设置当前的键在当日的23:59:59:999 时失效
 		return counter;
 	}
-
-	public String getRedisSequence() {
+	
+	
+	/**
+	 * 根据业务类型生成全局有序id
+	 * @param bizPrefix
+	 * @return
+	 */
+	public String getRedisSequence(String bizPrefix) {
 		Long sequence = redisAtomicLong.incrementAndGet();
 		String seq = String.valueOf(sequence);
-		StringBuffer buffer = new StringBuffer(prefix);
+		StringBuffer buffer = new StringBuffer(bizPrefix+prefix);
 		int rest = DEFALUT_LENGHT - String.valueOf(sequence).length();
 		if (rest > 0) {
 			for (int i = 0; i < rest; i++) {
