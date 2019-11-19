@@ -99,6 +99,6 @@ public class KobeCtrl {
 	
 	@GetMapping("/getSequence")
 	public String getSequence() {
-		 return sequenceUtils.getRedisSequence();
+		 return sequenceUtils.getRedisSequence("test");
 	}
 }
