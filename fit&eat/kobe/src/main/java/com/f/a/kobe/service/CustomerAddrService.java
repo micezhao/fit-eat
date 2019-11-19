@@ -1,5 +1,6 @@
 package com.f.a.kobe.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.codec.binary.StringUtils;
@@ -52,7 +53,12 @@ public class CustomerAddrService {
 		String distrcName = regionService.getAreaName(customerAddr.getDistrcNo());
 		customerAddr.setDistrcName(distrcName);
 		StringBuffer areaDetailBuffer = new StringBuffer();
-		areaDetailBuffer.append(provinceName).append(cityName).append(distrcName).append(customerAddr.getAddrDetail());
+		List<String> idList = new ArrayList<String>();
+		idList.add(customerAddr.getProvinceNo());
+		idList.add(customerAddr.getCityNo());
+		idList.add(customerAddr.getDistrcNo());
+		String areaBefore = regionService.getAreaName(idList);
+		areaDetailBuffer.append(areaBefore).append(customerAddr.getAddrDetail()); // 组合详细地址信息
 		customerAddr.setAddrDetail(areaDetailBuffer.toString());
 		manager.insert(customerAddr);
 	}
