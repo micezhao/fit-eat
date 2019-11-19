@@ -12,6 +12,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,20 +20,26 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.f.a.kobe.config.credential.WeChatConfigProperties;
 import com.f.a.kobe.exceptions.ErrEnum;
+import com.f.a.kobe.exceptions.InvaildException;
 import com.f.a.kobe.manager.CustomerBaseInfoManager;
 import com.f.a.kobe.manager.CustomerCredentialManager;
 import com.f.a.kobe.pojo.CustomerBaseInfo;
 import com.f.a.kobe.pojo.CustomerCredential;
+import com.f.a.kobe.pojo.bo.AuthResult;
 import com.f.a.kobe.pojo.enums.DrEnum;
 import com.f.a.kobe.pojo.enums.LoginTypeEnum;
 import com.f.a.kobe.service.CustomerCredentialService;
 import com.f.a.kobe.util.IdWorker;
+import com.f.a.kobe.util.RedisSequenceUtils;
 
 @Component
 public class WxCustomerCredentialService extends CustomerCredentialService {
+
+	private static final long KEY_EXPIRE = 1000L*60*60*24;
 
 	@Autowired
 	private WeChatConfigProperties weChatConfigProperties;
@@ -48,10 +55,10 @@ public class WxCustomerCredentialService extends CustomerCredentialService {
 
 	@Autowired
 	private CustomerBaseInfoManager customerBaseInfoManager;
-
+	
 	@Autowired
-	private IdWorker idworker;
-
+	private RedisSequenceUtils sequenceUtils;
+	
 	private static final String hashKey = "customerAuth";
 
 	private static final String AES_CBC = "AES/CBC/PKCS5Padding";
@@ -60,12 +67,7 @@ public class WxCustomerCredentialService extends CustomerCredentialService {
 
 	@Override
 	public String getAuthStringByCode(String code) {
-		String request2WxAuthUrl = MessageFormat.format(weChatConfigProperties.getUrlPattern(),
-				weChatConfigProperties.getAppId(), weChatConfigProperties.getAppSecret(), code);
-		String result = restTemplate.getForObject(request2WxAuthUrl, String.class);
-		if (StringUtils.contains(result, weChatConfigProperties.getErrtag())) {
-			throw new RuntimeException(ErrEnum.WX_AUTH_INVAILD.getErrMsg());
-		}
+		String result = requestWxAuthInfoByCode(code);
 		String openid = "";
 		if (getCustomerCredentialByOpenid(openid) == null) {
 			// 添加用户到授权信息表
@@ -75,17 +77,17 @@ public class WxCustomerCredentialService extends CustomerCredentialService {
 		return returnStr;
 	}
 
-	@Override
-	public void insertCustomerCredential(CustomerCredential customerCredential) {
-		customerCredential.setCustomerId(idworker.nextId());
-		customerCredential.setDr(DrEnum.AVAILABLE.getCode());
-		customerCredential.setCdt(Calendar.getInstance().getTime());
-		int effectRows = customerCredentialManager.insert(customerCredential);
-		if (effectRows == 0) {
-			throw new RuntimeException(ErrEnum.WX_AUTH_INSERTFAil_INVAILD.getErrMsg());
-		}
+	//@Override
+	//public void insertCustomerCredential(CustomerCredential customerCredential) {
+//		customerCredential.setCustomerId(idworker.nextId());
+//		customerCredential.setDr(DrEnum.AVAILABLE.getCode());
+//		customerCredential.setCdt(Calendar.getInstance().getTime());
+//		int effectRows = customerCredentialManager.insert(customerCredential);
+//		if (effectRows == 0) {
+//			throw new RuntimeException(ErrEnum.WX_AUTH_INSERTFAil_INVAILD.getErrMsg());
+//		}
 
-	}
+	//}
 
 	public void updateCustomerCredential(CustomerCredential customerCredential) {
 		customerCredentialManager.update(customerCredential);
@@ -172,6 +174,65 @@ public class WxCustomerCredentialService extends CustomerCredentialService {
 	protected CustomerCredential queryCustomerCredential(String authCode) {
 		CustomerCredential record = customerCredentialManager.queryByAutCode(authCode, LoginTypeEnum.WECHAT.getLoginTypeCode());
 		return record;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public AuthResult getAuthInfoByLoginRequest(Object requestAuth) {
+		String code = (String)requestAuth;
+		
+		String result = requestWxAuthInfoByCode1(code);
+		WxLoginSuccess wxLoginSuccess = (WxLoginSuccess) JSON.parse(result);
+		String session_key = wxLoginSuccess.session_key;
+		String md5Hex = DigestUtils.md5Hex(session_key);
+		redisTemplate.opsForValue().set(md5Hex, session_key, KEY_EXPIRE);
+		AuthResult wxAuthResult = new AuthResult();
+		wxAuthResult.setOpenid(wxLoginSuccess.openid);
+		wxAuthResult.setSessionKeyMD5(md5Hex);
+		return wxAuthResult;
+	}
+
+	private String requestWxAuthInfoByCode(String code) {
+		String request2WxAuthUrl = MessageFormat.format(weChatConfigProperties.getUrlPattern(),
+				weChatConfigProperties.getAppId(), weChatConfigProperties.getAppSecret(), code);
+		String result = restTemplate.getForObject(request2WxAuthUrl, String.class);
+		if (StringUtils.contains(result, weChatConfigProperties.getErrtag())) {
+			throw new RuntimeException(ErrEnum.WX_AUTH_INVAILD.getErrMsg());
+		}
+		return result;
+	}
+	
+	private String requestWxAuthInfoByCode1(String code) {
+		
+		String result = "{\"session_key\":\"KdAdSaaNNDAS8877JSADN+1==\",\"openid\":\"o2ndaJdsaJ3omdasmn-LU\"}";
+		return result;
+	}
+	
+	class WxLoginSuccess{
+		private String session_key;
+		
+		private String openid;
+
+	}
+
+	@Override
+	public boolean existsed(AuthResult authInfoByLoginRequest) {
+		CustomerCredential customerCredential = new CustomerCredential();
+		customerCredential.setWxOpenid(authInfoByLoginRequest.getOpenid());
+		 List<CustomerCredential> list= customerCredentialManager.listByConditional(customerCredential);
+		 if(list.isEmpty()) {
+			 return false;
+		 }
+		 if(list.size() > 1) {
+			 throw new InvaildException(ErrEnum.REDUPICATE_RECORD.getErrCode(),"用户凭证"+ErrEnum.REDUPICATE_RECORD.getErrMsg());
+		 }
+		 return true;
+	}
+
+	@Override
+	public void insertCustomerCredential(AuthResult authInfoByLoginRequest) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

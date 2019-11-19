@@ -9,6 +9,7 @@ import com.f.a.kobe.exceptions.ErrEnum;
 import com.f.a.kobe.exceptions.InvaildException;
 import com.f.a.kobe.manager.CustomerCredentialManager;
 import com.f.a.kobe.pojo.CustomerCredential;
+import com.f.a.kobe.pojo.bo.AuthResult;
 
 //改造为实现统一接口
 @Service
@@ -18,21 +19,23 @@ public abstract class CustomerCredentialService {
 	private CustomerCredentialManager manager;
 	
 	//判断用户是否存在
-	public boolean existsed(CustomerCredential customerCredential) {
-		 List<CustomerCredential> list= manager.listByConditional(customerCredential);
-		 if(list.isEmpty()) {
-			 return false;
-		 }
-		 if(list.size() > 1) {
-			 throw new InvaildException(ErrEnum.REDUPICATE_RECORD.getErrCode(),"用户凭证"+ErrEnum.REDUPICATE_RECORD.getErrMsg());
-		 }
-		 return true;
-	}
+//	public boolean existsed(AuthResult authInfoByLoginRequest) {
+//		 List<CustomerCredential> list= manager.listByConditional(authInfoByLoginRequest);
+//		 if(list.isEmpty()) {
+//			 return false;
+//		 }
+//		 if(list.size() > 1) {
+//			 throw new InvaildException(ErrEnum.REDUPICATE_RECORD.getErrCode(),"用户凭证"+ErrEnum.REDUPICATE_RECORD.getErrMsg());
+//		 }
+//		 return true;
+//	}
 	
 	//原子服务
 	
 	//获取授权信息，根据code获取存储字符串
 	protected abstract String getAuthStringByCode(String code);
+	
+	
 	
 	
 	protected abstract CustomerCredential queryCustomerCredential(String authCode) ;
@@ -49,10 +52,17 @@ public abstract class CustomerCredentialService {
 		return customerCredentialList.get(0);
 	}
 	
+	//用户认证
+	public abstract AuthResult getAuthInfoByLoginRequest(Object requestAuth);
+	
+	public abstract boolean existsed(AuthResult authInfoByLoginRequest);
+	
+	public abstract void insertCustomerCredential(AuthResult authInfoByLoginRequest);
+	
 	//新增授权用户
-	public void insertCustomerCredential(CustomerCredential customerCredential) {
-		manager.insert(customerCredential);
-	}
+//	public void insertCustomerCredential(AuthResult authInfoByLoginRequest) {
+//		manager.insert(authInfoByLoginRequest);
+//	}
 	
 	//更新授权用户
 	public void updateCustomerCredential(CustomerCredential customerCredential) {

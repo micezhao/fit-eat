@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.f.a.kobe.pojo.CustomerCredential;
+import com.f.a.kobe.pojo.bo.AuthResult;
 import com.f.a.kobe.service.CustomerCredentialService;
 
 @Service
@@ -30,7 +31,7 @@ public class LoginBiz {
 	 * @param loginType 登陆类型
 	 * @return
 	 */
-	public boolean userExistsed(String loginType,CustomerCredential customerCredential) {
+	public boolean userExistsed(String loginType,AuthResult customerCredential) {
 		return getServiceInstance(loginType).existsed(customerCredential);
 	}
 	
@@ -41,7 +42,20 @@ public class LoginBiz {
 	 * 校验登录类型与传递参数的合法性 -- @ParamCheck
 	 * 查找用户  -- 根据条件查找用户  根据code返回第三方用户基本信息 
 	 * 登陆成功记录登陆流水
+	 * 1.根据来源获取对应的实例
+	 * 
 	 */
+	public void login(Object request,String loginType) {
+		//1.根据来源获取对应的实例
+		CustomerCredentialService serviceInstance = getServiceInstance(loginType);
+		//2.获取返回字符串
+		//String requestStr = loginType.getClass().cast(request);
+		AuthResult authInfoByLoginRequest = serviceInstance.getAuthInfoByLoginRequest(request);
+		if(!serviceInstance.existsed(authInfoByLoginRequest)) {
+			serviceInstance.insertCustomerCredential(authInfoByLoginRequest);
+		}
+		//3.记流水
+	}
 	
 	//logout
 	/***
@@ -57,5 +71,10 @@ public class LoginBiz {
 	//checkregister
 	/**
 	 * 根据手机号条件判断注册
+	 */
+	
+	
+	/**
+	 * 忘记密码根据手机号找回，修改密码
 	 */
 }
