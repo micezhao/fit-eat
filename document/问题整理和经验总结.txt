@@ -304,6 +304,7 @@ fit-eat 开发过程的问题记录和经验总结
       1.6.4 key的过期时间的配置：通过counter.expireAt(todayEnd.getTime());配置这个计数器的归零的时刻
             例如 todayEnd.getTime() = 每日的23:59:59:999 就是表示在这个时刻，将计数器key清空重新开始计数。
       1.6.5 【此方法不适用于有[redis集群]的生成全局唯一有序id的场景】
-2、通过 WebMvcConfigurationSupport 进行mvc的配置，并结合自定义参数解析器HandlerMethodArgumentResolver
-   实现从session获取请求者信息并转换为当前的请求对象userAgent
+2、通过 WebMvcConfigurationSupport 进行mvc的配置，并结合自定义参数解析器HandlerMethodArgumentResolver实现从session获取请求者信息并转换为当前的请求对象userAgent
+   实现步骤如下：
+   2.1 new class WeConfig extends WebMvcConfigurationSupport 【WebMvcConfigurationSupport新版本spring 】
 
