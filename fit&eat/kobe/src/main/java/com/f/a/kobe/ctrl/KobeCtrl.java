@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
@@ -13,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -63,41 +66,26 @@ public class KobeCtrl {
 		return buffer.toString();
 	}
 
-	@GetMapping("/user")
-	public String getUser(HttpSession session) {
+	@GetMapping("kobe/user")
+	public ResponseEntity<? extends Object> getUser(HttpSession session) {
 		UserAgent useAgent = (UserAgent) session.getAttribute("userDetail");
 		if (useAgent == null) {
-			return "请先访问localhost:8763/login 登陆本系统：";
+			return new ResponseEntity<String>("请先访问localhost:8763/login 登陆本系统：",HttpStatus.NON_AUTHORITATIVE_INFORMATION);
 		}
-		return JSON.toJSONString(useAgent);
-	}
-	
-	@PostMapping("/login")
-	public String login(HttpSession session,@RequestBody LoginRequest loginRequest,UserAgent userAgent) {
-		
-		if(StringUtils.equals("micezhao", loginRequest.getWxOpenid()) && StringUtils.equals("wx", loginRequest.getLoginType())) {
-			userAgent = new UserAgent();
-			userAgent.setAge(29);
-			userAgent.setWxOpenid("micezhao");
-			userAgent.setCustomerId(123456L);
-			userAgent.setNickname("肿眼的熊");
-			session.setAttribute("userDetail", userAgent);
-		}
-		return JSON.toJSONString(userAgent);
+		return  new ResponseEntity<UserAgent>(useAgent,HttpStatus.OK);
 	}
 	
 	
-	@PostMapping("/buy")
-	public String buy(HttpSession session) {
-		Object object = session.getAttribute("userDetail");
-		UserAgent userAgent = JSON.parseObject(JSON.toJSONString(object), UserAgent.class);
+	@PostMapping("kobe/buy")
+	//public String buy(HttpSession session) {
+	public String buy(UserAgent userAgent) {
 		if (userAgent == null) {
 			return "请先访问localhost:8763/login 登陆本系统：";
 		}
 		return userAgent.getNickname() + "恭喜您！兑换成功";
 	}
 	
-	@GetMapping("/getSequence")
+	@GetMapping("kobe/getSequence")
 	public String getSequence() {
 		 return sequenceUtils.getRedisSequence("test");
 	}

@@ -1,7 +1,6 @@
 package com.f.a.kobe;
 
 import java.util.List;
-import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -11,12 +10,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.f.a.kobe.manager.CustomerCredentialManager;
-import com.f.a.kobe.pojo.China;
 import com.f.a.kobe.pojo.CustomerAddr;
 import com.f.a.kobe.pojo.CustomerCredential;
 import com.f.a.kobe.service.CustomerAddrService;
 import com.f.a.kobe.service.CustomerCredentialService;
-import com.f.a.kobe.service.DistrictInfoService;
 import com.f.a.kobe.service.RegionService;
 import com.f.a.kobe.util.IdWorker;
 
@@ -32,8 +29,6 @@ class KobeApplicationManagerTests {
 	@Autowired
 	CustomerCredentialService customerCredentialService;
 	
-	@Autowired
-	DistrictInfoService districtInfoService;
 	
 	@Autowired
 	CustomerAddrService customerAddrService;
@@ -41,10 +36,7 @@ class KobeApplicationManagerTests {
 	@Autowired
 	RegionService regionService;
 	
-	@Test
-	void testRegionService() {
-		regionService.syn();
-	}
+
 	
 	@Test
 	void testGetRegionService() {
@@ -57,18 +49,6 @@ class KobeApplicationManagerTests {
 		customerAddrService.insertAddr(new CustomerAddr());
 	}
 	
-	@Test
-	void testDistrictInfoService() {
-		List<China> listDistrictByPid = districtInfoService.listDistrictByPid(420100);
-		System.out.println(listDistrictByPid);
-	}
-	/*
-	 * @Autowired SequenceFactory sequenceFactory;
-	 */
-	@Test
-	void testCustomerCredentialService() {
-		customerCredentialService.getSessionKeyAndOpenid("H7hsK");
-	}
 	
 	@Autowired
 	IdWorker idWorker;
