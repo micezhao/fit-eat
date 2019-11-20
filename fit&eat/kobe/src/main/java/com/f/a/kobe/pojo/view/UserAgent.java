@@ -1,9 +1,12 @@
 package com.f.a.kobe.pojo.view;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
+@ToString
 public class UserAgent {
+	
 		// 用户编号
 	  	private Long customerId;
 	  	// 真是姓名
