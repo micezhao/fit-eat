@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.f.a.kobe.pojo.CustomerCredential;
 import com.f.a.kobe.pojo.bo.AuthResult;
 import com.f.a.kobe.service.CustomerCredentialService;
+import com.f.a.kobe.service.CustomerLogService;
 
 @Service
 public class LoginBiz {
@@ -15,7 +16,10 @@ public class LoginBiz {
 	@Autowired
 	private Map<String,CustomerCredentialService> map;
 	
-	private static final String PREFFIX = "CredentialService";
+	@Autowired
+	private CustomerLogService customerLogService;
+	
+	private static final String PREFFIX = "CustomerCredentialService";
 	
 	/**
 	 * 通过loginType 获取服务实例
@@ -31,7 +35,7 @@ public class LoginBiz {
 	 * @param loginType 登陆类型
 	 * @return
 	 */
-	public boolean userExistsed(String loginType,AuthResult customerCredential) {
+	public CustomerCredential userExistsed(String loginType,AuthResult customerCredential) {
 		return getServiceInstance(loginType).existsed(customerCredential);
 	}
 	
@@ -45,16 +49,22 @@ public class LoginBiz {
 	 * 1.根据来源获取对应的实例
 	 * 
 	 */
-	public void login(Object request,String loginType) {
+	public String login(Object request,String loginType) {
 		//1.根据来源获取对应的实例
-		CustomerCredentialService serviceInstance = getServiceInstance(loginType);
+		CustomerCredentialService customerCredentialService = getServiceInstance(loginType);
 		//2.获取返回字符串
-		//String requestStr = loginType.getClass().cast(request);
-		AuthResult authInfoByLoginRequest = serviceInstance.getAuthInfoByLoginRequest(request);
-		if(!serviceInstance.existsed(authInfoByLoginRequest)) {
-			serviceInstance.insertCustomerCredential(authInfoByLoginRequest);
+		AuthResult authResult = customerCredentialService.getAuthInfoByLoginRequest(request);
+		//3.判断用户是否进入用户授权信息表 没有则创建
+		CustomerCredential customerCredential = customerCredentialService.existsed(authResult);
+		if(customerCredential == null) {
+			long id = customerCredentialService.insertCustomerCredential(authResult);
+			customerCredential = customerCredentialService.queryCustomerCredentialById(id);
 		}
-		//3.记流水
+		//4.记流水
+		customerLogService.recordLogin(loginType, customerCredential);
+		//5.返回登陆凭证
+		return authResult.getAuthToken();
+		
 	}
 	
 	//logout

@@ -8,7 +8,8 @@ public enum ErrEnum {
 	WX_AUTH_INVAILD("9004","微信授权异常"),
 	WX_AUTH_INSERTFAil_INVAILD("9005","添加授权用户异常"),
 	CUSTOMER_NOT_FOUND("9006","用户不存在异常"),
-	OVER_LIMITS("9007","记录超过上限");
+	OVER_LIMITS("9007","记录超过上限"),
+	UNKNOWN_LOGIN_TYPE("9008","未知的登陆类型");
 	
 	private String errCode;
 	private String errMsg;

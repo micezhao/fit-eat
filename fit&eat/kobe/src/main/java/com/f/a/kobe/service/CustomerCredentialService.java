@@ -18,25 +18,7 @@ public abstract class CustomerCredentialService {
 	@Autowired
 	private CustomerCredentialManager manager;
 	
-	//判断用户是否存在
-//	public boolean existsed(AuthResult authInfoByLoginRequest) {
-//		 List<CustomerCredential> list= manager.listByConditional(authInfoByLoginRequest);
-//		 if(list.isEmpty()) {
-//			 return false;
-//		 }
-//		 if(list.size() > 1) {
-//			 throw new InvaildException(ErrEnum.REDUPICATE_RECORD.getErrCode(),"用户凭证"+ErrEnum.REDUPICATE_RECORD.getErrMsg());
-//		 }
-//		 return true;
-//	}
-	
 	//原子服务
-	
-	//获取授权信息，根据code获取存储字符串
-	protected abstract String getAuthStringByCode(String code);
-	
-	
-	
 	
 	protected abstract CustomerCredential queryCustomerCredential(String authCode) ;
 	
@@ -55,9 +37,9 @@ public abstract class CustomerCredentialService {
 	//用户认证
 	public abstract AuthResult getAuthInfoByLoginRequest(Object requestAuth);
 	
-	public abstract boolean existsed(AuthResult authInfoByLoginRequest);
+	public abstract CustomerCredential existsed(AuthResult authInfoByLoginRequest);
 	
-	public abstract void insertCustomerCredential(AuthResult authInfoByLoginRequest);
+	public abstract long insertCustomerCredential(AuthResult authInfoByLoginRequest);
 	
 	//新增授权用户
 //	public void insertCustomerCredential(AuthResult authInfoByLoginRequest) {
@@ -71,6 +53,13 @@ public abstract class CustomerCredentialService {
 	
 	//合并授权用户
 	public void combineCustomerCredential(CustomerCredential source,CustomerCredential destine) {
+	}
+
+
+
+
+	public CustomerCredential queryCustomerCredentialById(long id) {
+		return manager.queryById(id);
 	}
 	
 	//
