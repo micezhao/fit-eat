@@ -5,7 +5,11 @@ import lombok.Data;
 @Data
 public class AuthResult {
 
-	private String sessionKeyMD5;
+	private String authToken;
+	
+	private String sessionKey;
 	
 	private String openid;
+	
+	private Long customerId;
 }
