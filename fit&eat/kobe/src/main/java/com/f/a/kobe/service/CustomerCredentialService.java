@@ -13,6 +13,7 @@ import com.f.a.kobe.pojo.CustomerCredential;
 import com.f.a.kobe.pojo.bo.AuthResult;
 import com.f.a.kobe.pojo.enums.LoginTypeEnum;
 import com.f.a.kobe.pojo.request.ParamRequest;
+import com.f.a.kobe.util.IdWorker;
 
 //改造为实现统一接口
 @Service
@@ -20,6 +21,9 @@ public abstract class CustomerCredentialService {
 
 	@Autowired
 	public CustomerCredentialManager manager;
+	
+	@Autowired
+	public IdWorker idWorker;
 
 	// 原子服务
 

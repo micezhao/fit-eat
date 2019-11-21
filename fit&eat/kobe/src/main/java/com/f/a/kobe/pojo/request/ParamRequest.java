@@ -21,6 +21,8 @@ public class ParamRequest {
 	private String password;
 	
 	private String code;
+	
+	private String validateCode;
 
 	private String email;
 	/** 用户凭证信息参数 --结束-- **/

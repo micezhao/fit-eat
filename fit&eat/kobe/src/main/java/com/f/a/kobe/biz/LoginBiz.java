@@ -12,6 +12,7 @@ import com.f.a.kobe.pojo.bo.AuthResult;
 import com.f.a.kobe.pojo.request.ParamRequest;
 import com.f.a.kobe.service.CustomerCredentialService;
 import com.f.a.kobe.service.CustomerLogService;
+import com.f.a.kobe.service.MobileValidateCodeService;
 
 @Service
 public class LoginBiz {
@@ -21,6 +22,9 @@ public class LoginBiz {
 	
 	@Autowired
 	private CustomerLogService customerLogService;
+	
+	@Autowired
+	MobileValidateCodeService mobileValidateCodeService;
 	
 	private static final String PREFFIX = "CustomerCredentialService";
 	
@@ -110,31 +114,6 @@ public class LoginBiz {
 		}
 	}
 	
-	/**
-	 * 校验通过 才能进行 以下操作 1 登陆（手机号+验证码方式）2 修改密码 3 注册
-	 * @param 手机号 + 验证码
-	 * @return
-	 */
-	public boolean checkRegisterMobileValidate(ParamRequest request) {
-		//1 收集验证码和手机号去redis里面查询是否正确
-		return false;
-	}
-	
-	/**
-	 * 
-	 * @param request
-	 */
-	public void sendMobileValidateCode(ParamRequest request) {
-		
-	}
-	
-	/**
-	 * 获取校验码，校验码通过才可以发送手机验证码
-	 */
-	public String getCheckCode() {
-		return "11a1";
-	}
-	
 	//checkregister
 	/**
 	 * 在需要已注册才能操作的功能时，弹出注册界面的依据
@@ -152,8 +131,14 @@ public class LoginBiz {
 	/**
 	 * 忘记密码根据手机号找回，修改密码
 	 */
-	public void findBackPasswordByMobile() {
-		
+	public void findBackPasswordByMobile(ParamRequest request,String loginType) {
+		if(!mobileValidateCodeService.checkMobileValidateCode(request.getMobile(), request.getValidateCode())) {
+			throw new InvaildException(ErrEnum.VALIDATECODEERROR.getErrCode(),ErrEnum.VALIDATECODEERROR.getErrMsg());
+		}
+		CustomerCredentialService customerCredentialService = getServiceInstance(loginType);
+		CustomerCredential customerCredential = customerCredentialService.queryByBizId(request.getCustomerId());
+		customerCredential.setPassword(request.getPassword());
+		customerCredentialService.updateCustomerCredential(customerCredential);
 	}
 	
 }

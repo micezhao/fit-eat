@@ -53,9 +53,6 @@ public class WxCustomerCredentialService extends CustomerCredentialService {
 	@Autowired
 	private CustomerBaseInfoManager customerBaseInfoManager;
 	
-	@Autowired
-	private IdWorker idWorker;
-	
 	private static final String hashKey = "customerAuth";
 
 	private static final String AES_CBC = "AES/CBC/PKCS5Padding";
