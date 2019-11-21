@@ -306,5 +306,29 @@ fit-eat 开发过程的问题记录和经验总结
       1.6.5 【此方法不适用于有[redis集群]的生成全局唯一有序id的场景】
 2、通过 WebMvcConfigurationSupport 进行mvc的配置，并结合自定义参数解析器HandlerMethodArgumentResolver实现从session获取请求者信息并转换为当前的请求对象userAgent
    实现步骤如下：
-   2.1 new class WeConfig extends WebMvcConfigurationSupport 【WebMvcConfigurationSupport新版本spring 】
-
+   2.1 new class WeConfig extends WebMvcConfigurationSupport 【 WebMvcConfigurationSupport 新版本springboot推荐使用 】
+   2.2 WebMvcConfigurationSupport 已经实现了springmvc功能的默认实现，WeConfig类继承并重写WebMvcConfigurationSupport中的部分方法，是为了配置适用与本项目的个性化功能
+   2.3 HandlerMethodArgumentResolver 是一个参数解析器，这个参数解析器【必须】要配合拦截器共同使用，其作用是从拦截的请求中获取一些参数，
+       并将这些参数进行包装并改写成为一个ctrl的入参，例如：@PathVariable 注解
+       2.3.1 自定义的参数解析器，例： UserAgentResolver implements HandlerMethodArgumentResolver 接口
+       2.3.2 重写 supportsParameter 方法，在其中【定义这个参数解析要匹配的参数类型】，例如 UserAgentResolver指定解析UserAgent.class 
+             一旦在被拦截的请求路径中springmvc发现需要用到UserAgent类型的参数是，就会进入这个UserAgentResolver进行解析；
+       2.3.3 重写 resolveArgument 方法，在这个方法中从被拦截的请求中获取需要的信息，然后经过处理，转换成supportsParameter 中定义的数据类型，
+             NativeWebRequest(webRequest)类是获取请求信息的入口，webRequest.getAttribute(ATTR_NAME, RequestAttributes.SCOPE_SESSION);
+             RequestAttributes.SCOPE_SESSION -> 从session中获取数据
+             RequestAttributes.SCOPE_REQUEST -> 从request中获取数据
+             ATTR_NAME -> 指定需要被获取的属性
+   2.4 配置拦截器 UserSessionInterceptor implements HandlerInterceptor 
+        preHandle ——> 请求已经拦截，但是在执行处理方法之前 -》 例如：拦截请求中是否具备用户的认证信息
+        postHandle ——> 请求逻辑已经执行，但是在渲染页面之前 -》 例如：对响应数据进行格式化之后再渲染到页面上
+        afterCompletion ——> 请求已经执行结束后 -》 例如：执行完成后记录日志
+       自定义的拦击器可以根据需求选择性的重写这三个方法，也可以只是实现不重写，作为一项显式声明的拦截策略存在于WebMvcConfigurationSupport中，配合其他组件来使用
+   2.5 开始配置WebMvcConfigurationSupport 
+        重写 public void addInterceptors(InterceptorRegistry registry)  方法： 针对某个拦截器指定需要执行的匹配路径。
+            使用registry.addInterceptor(自定义拦截器类).addPathPatterns(拦截路径[支持通配符])
+                                                    .excludePathPatterns(需要排除的拦截路径[支持通配符])
+        重写 public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) 配置请求数据解析器
+            使用 argumentResolvers.add(new UserAgentResolver()); 将自定义的数据解析器加入到springmvc配置中
+        重写 public void configureMessageConverters(List<HttpMessageConverter<?>> converters) 配置消息的转换器，一般是为了解决中文乱码或者请求内容支持的相关问题
+            converters.add(new StringHttpMessageConverter(Charset.forName("UTF-8"))); // 解决中文乱码问题
+		    converters.add(new MappingJackson2HttpMessageConverter()); // 解决 application/json；charset=utf-8 unsupported mediaType 的问题

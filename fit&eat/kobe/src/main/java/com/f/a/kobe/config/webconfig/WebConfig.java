@@ -1,8 +1,10 @@
 package com.f.a.kobe.config.webconfig;
 
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -17,6 +19,13 @@ import com.f.a.kobe.ctrl.intercepter.UserSessionInterceptor;
 @Configuration
 public class WebConfig extends WebMvcConfigurationSupport {
 	
+	// 自定义的参数解析器
+	@Bean
+	public List<HandlerMethodArgumentResolver>  initResolvers() {
+		List<HandlerMethodArgumentResolver> list = new ArrayList<HandlerMethodArgumentResolver>();
+		list.add(new UserAgentResolver());
+		return list;
+	}
 	
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
@@ -28,7 +37,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
 	 */
 	@Override
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-		argumentResolvers.add(new UserAgentResolver());
+		argumentResolvers.addAll(initResolvers());
 	}
 	
 	/**
