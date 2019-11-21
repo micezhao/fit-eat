@@ -32,6 +32,7 @@ import com.f.a.kobe.pojo.CustomerCredential;
 import com.f.a.kobe.pojo.bo.AuthResult;
 import com.f.a.kobe.pojo.enums.DrEnum;
 import com.f.a.kobe.pojo.enums.LoginTypeEnum;
+import com.f.a.kobe.pojo.request.ParamRequest;
 import com.f.a.kobe.service.CustomerCredentialService;
 import com.f.a.kobe.util.IdWorker;
 
@@ -128,8 +129,8 @@ public class WxCustomerCredentialService extends CustomerCredentialService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public AuthResult getAuthInfoByLoginRequest(Object requestAuth) {
-		String code = (String)requestAuth;
+	public AuthResult getAuthInfoByLoginRequest(ParamRequest requestAuth) {
+		String code = requestAuth.getCode();
 		String result = requestWxAuthInfoByCode1(code);
 		WxLoginSuccess wxLoginSuccess = JSONObject.parseObject(result, WxLoginSuccess.class);
 		String session_key = wxLoginSuccess.getSession_key();

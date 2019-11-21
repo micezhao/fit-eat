@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
 import com.f.a.kobe.pojo.request.LoginRequest;
+import com.f.a.kobe.pojo.request.ParamRequest;
 import com.f.a.kobe.pojo.view.UserAgent;
 
 @RestController
@@ -33,7 +34,7 @@ public class LoginCtrl {
 	LoginBiz loginBiz;
 	
 	@GetMapping("/login/{loginType}")
-	public String login(@PathVariable("loginType")String loginType,@RequestBody Object request) {
+	public String login(@PathVariable("loginType")String loginType,@RequestBody ParamRequest request) {
 		 return loginBiz.login(request, loginType);
 	}
 	
