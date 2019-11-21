@@ -11,6 +11,7 @@ import com.f.a.kobe.exceptions.InvaildException;
 import com.f.a.kobe.manager.CustomerCredentialManager;
 import com.f.a.kobe.pojo.CustomerCredential;
 import com.f.a.kobe.pojo.bo.AuthResult;
+import com.f.a.kobe.pojo.enums.LoginTypeEnum;
 import com.f.a.kobe.pojo.request.ParamRequest;
 
 //改造为实现统一接口
@@ -18,7 +19,7 @@ import com.f.a.kobe.pojo.request.ParamRequest;
 public abstract class CustomerCredentialService {
 
 	@Autowired
-	private CustomerCredentialManager manager;
+	public CustomerCredentialManager manager;
 
 	// 原子服务
 
@@ -45,7 +46,20 @@ public abstract class CustomerCredentialService {
 	public abstract long insertCustomerCredential(AuthResult authInfoByLoginRequest);
 
 	// 合并授权用户
-	public void combineCustomerCredential(CustomerCredential source, CustomerCredential destine) {
+	public void combineCustomerCredential(CustomerCredential source, CustomerCredential destine,String loginType) {
+		//将 source 合并到 destine
+		if(LoginTypeEnum.WECHAT.getLoginTypeCode().equalsIgnoreCase(loginType)) {
+			destine.setWxOpenid(source.getWxOpenid());
+		}else if(LoginTypeEnum.ALI_PAY.getLoginTypeCode().equalsIgnoreCase(loginType)) {
+			destine.setAliOpenid(source.getAliOpenid());
+		}else if(LoginTypeEnum.APP.getLoginTypeCode().equalsIgnoreCase(loginType)){
+			destine.setUsername(source.getUsername());
+			destine.setPassword(source.getPassword());
+		}else {
+			throw new InvaildException(ErrEnum.UNKNOWN_LOGIN_TYPE.getErrCode(),ErrEnum.UNKNOWN_LOGIN_TYPE.getErrMsg());
+		}
+		this.updateCustomerCredential(destine);
+		manager.delete(source.getId());
 	}
 
 	// 更新授权用户

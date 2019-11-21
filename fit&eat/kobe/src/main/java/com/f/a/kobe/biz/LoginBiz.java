@@ -2,10 +2,11 @@ package com.f.a.kobe.biz;
 
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.f.a.kobe.exceptions.ErrEnum;
+import com.f.a.kobe.exceptions.InvaildException;
 import com.f.a.kobe.pojo.CustomerCredential;
 import com.f.a.kobe.pojo.bo.AuthResult;
 import com.f.a.kobe.pojo.request.ParamRequest;
@@ -88,36 +89,25 @@ public class LoginBiz {
 		CustomerCredentialService customerCredentialService = getServiceInstance(loginType);
 		CustomerCredential conditional = new CustomerCredential();
 		conditional.setMobile(request.getMobile());
+		//根据手机号作为条件查询是否已经有记录
 		CustomerCredential sourceCustomer = customerCredentialService.queryCustomerCredentialByConditional(conditional);
 		CustomerCredential customerCredential = customerCredentialService.queryByBizId(request.getCustomerId());
 		
-		//2.判断手机号是否已经绑定
-		if(StringUtils.isEmpty(customerCredential.getMobile())) {
-			//2.1 未绑定
-			customerCredential.setMobile(request.getMobile());
-			customerCredentialService.updateCustomerCredential(customerCredential);
-		}else {
-			//2.2 已绑定
-				//2.3 判断用户请求来源是否和已绑定来源不一致
-			boolean accessSource = customerCredentialService.compareAccessSource(customerCredential,loginType);
-				//2.3.1 不一致 则合并用户
-				//2.3.2 一致则抛出异常 同一手机号不允许 重复绑定
-		}
-		
-		//如果手机号之前不存在 则注册
+		//2. 如果手机号之前不存在 则注册
 		if(sourceCustomer == null) {
+			//2.1 未绑定
 			customerCredentialService.registerCustomer(request);
 		}else {
-			boolean accessSource = customerCredentialService.compareAccessSource(customerCredential,loginType);
-			if(accessSource) {
-				
+			//2.2 已绑定
+			boolean accordAccessSource = customerCredentialService.compareAccessSource(customerCredential,loginType);
+			if(!accordAccessSource) {
+				//2.3.1 不一致 则合并用户
+				customerCredentialService.combineCustomerCredential(customerCredential, sourceCustomer ,loginType);
 			}else {
-				
+				//2.3.2 一致则抛出异常 同一手机号不允许 重复绑定
+				throw new InvaildException(ErrEnum.REDUPICATE_REGISTER.getErrCode(),ErrEnum.REDUPICATE_REGISTER.getErrMsg());
 			}
 		}
-		
-		
-		
 	}
 	
 	/**

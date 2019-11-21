@@ -48,9 +48,6 @@ public class WxCustomerCredentialService extends CustomerCredentialService {
 	private RestTemplate restTemplate;
 
 	@Autowired
-	private CustomerCredentialManager customerCredentialManager;
-
-	@Autowired
 	private RedisTemplate redisTemplate;
 
 	@Autowired
@@ -66,19 +63,19 @@ public class WxCustomerCredentialService extends CustomerCredentialService {
 	private static final String AES = "AES";
 
 	public void updateCustomerCredential(CustomerCredential customerCredential) {
-		customerCredentialManager.update(customerCredential);
+		manager.update(customerCredential);
 	}
 
 
 	public List<CustomerCredential> listCustomerCredential(CustomerCredential conditional) {
-		return customerCredentialManager.listByConditional(conditional);
+		return manager.listByConditional(conditional);
 	}
 
 	// 根据openid 判断用户是否存在于授权表
 	private CustomerCredential getCustomerCredentialByOpenid(String openid) {
 		CustomerCredential conditional = new CustomerCredential();
 		conditional.setWxOpenid(openid);
-		List<CustomerCredential> customerCredentialList = customerCredentialManager.listByConditional(conditional);
+		List<CustomerCredential> customerCredentialList = manager.listByConditional(conditional);
 		if (customerCredentialList.size() > 0) {
 			return customerCredentialList.get(0);
 		}
@@ -123,7 +120,7 @@ public class WxCustomerCredentialService extends CustomerCredentialService {
 
 	@Override
 	protected CustomerCredential queryCustomerCredential(String authCode) {
-		CustomerCredential record = customerCredentialManager.queryByAutCode(authCode, LoginTypeEnum.WECHAT.getLoginTypeCode());
+		CustomerCredential record = manager.queryByAutCode(authCode, LoginTypeEnum.WECHAT.getLoginTypeCode());
 		return record;
 	}
 
@@ -162,7 +159,7 @@ public class WxCustomerCredentialService extends CustomerCredentialService {
 	public CustomerCredential existsed(AuthResult authInfoByLoginRequest) {
 		CustomerCredential customerCredential = new CustomerCredential();
 		customerCredential.setWxOpenid(authInfoByLoginRequest.getOpenid());
-		 List<CustomerCredential> list= customerCredentialManager.listByConditional(customerCredential);
+		 List<CustomerCredential> list= manager.listByConditional(customerCredential);
 		 if(list.isEmpty()) {
 			 return null;
 		 }
@@ -178,8 +175,16 @@ public class WxCustomerCredentialService extends CustomerCredentialService {
 		customerCredential.setCustomerId(idWorker.nextId());
 		customerCredential.setDr(DrEnum.AVAILABLE.getCode());
 		customerCredential.setWxOpenid(authInfoByLoginRequest.getOpenid());
-		customerCredentialManager.insert(customerCredential);
+		manager.insert(customerCredential);
 		return customerCredential.getId();
+	}
+
+
+	@Override
+	public void registerCustomer(ParamRequest request) {
+		CustomerCredential customerCredential = manager.queryByBiz(request.getCustomerId());
+		customerCredential.setMobile(request.getMobile());
+		manager.update(customerCredential);
 	}
 
 }
