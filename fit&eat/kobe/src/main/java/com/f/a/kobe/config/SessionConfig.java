@@ -22,6 +22,4 @@ public class SessionConfig {
     private RedisSerializer<Object> valueSerializer() {
         return new FastJsonRedisSerializer<>(Object.class);
     }
-
-	
 }
