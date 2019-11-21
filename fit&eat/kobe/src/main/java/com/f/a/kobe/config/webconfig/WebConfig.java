@@ -1,6 +1,7 @@
 package com.f.a.kobe.config.webconfig;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,11 +28,11 @@ public class WebConfig extends WebMvcConfigurationSupport {
 		return list;
 	}
 	
-	@Override
-	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(new UserSessionInterceptor())
-			.addPathPatterns("/kobe/**");
-	}
+//	@Override
+//	public void addInterceptors(InterceptorRegistry registry) {
+//		registry.addInterceptor(new UserSessionInterceptor())
+//			.addPathPatterns("/kobe/**");
+//	}
 	/**
 	 * 注册一个自定义的对象解析器
 	 */
@@ -41,12 +42,15 @@ public class WebConfig extends WebMvcConfigurationSupport {
 	}
 	
 	/**
-     *消息转换器，防止中文乱码
+     *扩展消息转换器，防止中文乱码
      */
 	@Override
-	public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-		converters.add(new StringHttpMessageConverter(Charset.forName("UTF-8")));
-		converters.add(new MappingJackson2HttpMessageConverter());
-	}
-
+    protected void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+        // 解决controller返回字符串中文乱码问题
+        for (HttpMessageConverter<?> converter : converters) {
+            if (converter instanceof StringHttpMessageConverter) {
+                ((StringHttpMessageConverter)converter).setDefaultCharset(StandardCharsets.UTF_8);
+            }
+        }
+    }
 }

@@ -30,7 +30,7 @@ public class LoginCtrl {
 	private final static  Logger logger = LoggerFactory.getLogger(LoginCtrl.class);
 	
 	@Autowired
-	LoginBiz loginBiz;
+	private LoginBiz loginBiz;
 	
 	@GetMapping("/login/{loginType}")
 	public String login(@PathVariable("loginType")String loginType,@RequestBody Object request) {
@@ -40,7 +40,6 @@ public class LoginCtrl {
 	
 	@PostMapping("/testlogin")
 	public ResponseEntity<UserAgent> login(@RequestBody LoginRequest loginRequest,HttpServletRequest request) {
-		String str = request.getHeader("content-type");
 		HttpSession session = request.getSession();
 		UserAgent userAgent = new UserAgent();
 		if(StringUtils.equals("micezhao", loginRequest.getWxOpenid()) && StringUtils.equals("wx", loginRequest.getLoginType())) {

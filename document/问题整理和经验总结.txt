@@ -332,3 +332,29 @@ fit-eat 开发过程的问题记录和经验总结
         重写 public void configureMessageConverters(List<HttpMessageConverter<?>> converters) 配置消息的转换器，一般是为了解决中文乱码或者请求内容支持的相关问题
             converters.add(new StringHttpMessageConverter(Charset.forName("UTF-8"))); // 解决中文乱码问题
 		    converters.add(new MappingJackson2HttpMessageConverter()); // 解决 application/json；charset=utf-8 unsupported mediaType 的问题
+
+    【重点总结：HttpMessageConverter】
+     springmvc框架是一套mvc框架，其作用是将请求、响应和页面渲染解耦。其最核心的组件是 DispatcherServlet类，有这个类提供请求拦截和跳转控制以及页面渲染的工作。
+     不过DispatcherServlet的执行也是需要加载一些相关资源的，这个资源的配置在WebMvcConfigurationSupport中进行。
+     WebMvcConfigurationSupport中的getMessageConverters()方法是用来配置本项目中需要的消息解析器，其中有个重要的判断逻辑：
+        如果没有自定义的HttpMessageConverters就进行默认加载，其中加载的new StringHttpMessageConverter()的默认字符集是ISO-8859-1
+       【反之则只加载用户自定义的HttpMessageConverters】：因此就出现了如果在拦截器中重写StringHttpMessageConverter的charset = utf-8 后，就没办法拦截@Requestbody注解的请求（content-type:application/json）
+        此时使用重写extendMessageConverters方法，用来对在默认加载的HttpMessageConverters进行扩展，而不是清空默认列表
+     WebMvcConfigurationSupport 是在项目启动是就会根据默认/自定义配置加载到springIOC中，提供了解析各种content-type的支持，等到DispatcherServlet开始执行请求响应流程时提供支持；
+     
+     请求和响应在被DispathcheServlet处理
+        执行doDispath方法
+            调用 -> HandlerAdapter ha = this.getHandlerAdapter(mappedHandler.getHandler()); // 获得处理器
+            当前处理器 执行 mv = ha.handle(processedRequest, response, mappedHandler.getHandler());  //正式处理请求和响应的结果
+            /*
+             *在正式过程中会将请求包装成 HttpInputMessage 传入AbstractMessageConverterMethodArgumentResolver.readWithMessageConverters()方法中
+             *判断当前的请求类型是否能被来自于WebMvcConfigurationSupport中的List<HttpMessageConverter<?>>列表中的解析器某一个read 
+             */
+             /*
+             *在系统处理完成后返回数据会被包装成 HttpOutputMessage 传入 AbstractMessageConverterMethodProcessor.writeWithMessageConverters()方法中
+             *判断当前的请求类型是否能被来自于WebMvcConfigurationSupport中的List<HttpMessageConverter<?>>列表中的解析器某一个write
+             */
+             最后调用invokeHandlerMethod方法，完成请求的受理
+
+
+        
