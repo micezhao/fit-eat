@@ -8,6 +8,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,25 @@ public class CustomerBaseInfoService {
 
 	public void insertCustomerBaseInfo(CustomerBaseInfo customerBaseInfo) {
 		customerBaseInfo.setId(idworker.nextId());
-		customerBaseInfo.setAge(sumAge(customerBaseInfo.getBirthday()));
+		if(StringUtils.isNotBlank(customerBaseInfo.getBirthday()) ) {
+			customerBaseInfo.setBirthday(customerBaseInfo.getBirthday());
+			customerBaseInfo.setAge(sumAge(customerBaseInfo.getBirthday()));
+		}
+		if(StringUtils.isNotBlank(customerBaseInfo.getMobile() )) {
+			customerBaseInfo.setMobile(customerBaseInfo.getMobile());
+		}
+		if(StringUtils.isNotBlank(customerBaseInfo.getRealname())) {
+			customerBaseInfo.setRealname(customerBaseInfo.getRealname());
+		}
+		if(StringUtils.isNotBlank(customerBaseInfo.getGender())) {
+			customerBaseInfo.setGender(customerBaseInfo.getGender());
+		}
+		if(StringUtils.isNotBlank(customerBaseInfo.getNickname()) ) {
+			customerBaseInfo.setNickname(customerBaseInfo.getNickname());
+		}
+		if(StringUtils.isNotBlank(customerBaseInfo.getHeadimg()) ) {
+			customerBaseInfo.setHeadimg(customerBaseInfo.getHeadimg());
+		}
 		customerBaseInfo.setDr(DrEnum.AVAILABLE.getCode());
 		customerBaseInfoManager.insert(customerBaseInfo);
 	}
@@ -69,6 +88,15 @@ public class CustomerBaseInfoService {
 	// 查询用户是否存在
 	public boolean exsisted(Long customerId) {
 		return customerBaseInfoManager.queryByBiz(customerId)==null?false:true;
+	}
+	
+	// 查询用户是否存在
+	public boolean hasBinded(Long customerId,String mobile) {
+		CustomerBaseInfo conditional = new CustomerBaseInfo();
+		conditional.setCustomerId(customerId);
+		conditional.setMobile(mobile);
+		List<CustomerBaseInfo> list=customerBaseInfoManager.listByConditional(conditional);
+		return list.isEmpty() == true ? false:true;
 	}
 
 	/**

@@ -9,7 +9,7 @@ import org.springframework.util.StringUtils;
 import com.f.a.kobe.exceptions.ErrEnum;
 import com.f.a.kobe.exceptions.InvaildException;
 import com.f.a.kobe.pojo.CustomerCredential;
-import com.f.a.kobe.pojo.bo.AuthResult;
+import com.f.a.kobe.pojo.bo.AuthBo;
 import com.f.a.kobe.pojo.enums.DrEnum;
 import com.f.a.kobe.pojo.request.ParamRequest;
 import com.f.a.kobe.service.CustomerCredentialService;
@@ -28,10 +28,10 @@ public class AppCustomerCredentialService extends CustomerCredentialService {
 	}
 
 	@Override
-	public AuthResult getAuthInfoByLoginRequest(ParamRequest requestAuth) {
+	public AuthBo getAuthInfoByLoginRequest(ParamRequest requestAuth) {
 		String username = requestAuth.getUsername();
 		String password = requestAuth.getPassword();
-		AuthResult authResult;
+		AuthBo authResult;
 		if(StringUtils.isEmpty(username)) {
 			authResult = mobileValidateCodeLogin(requestAuth.getMobile(),requestAuth.getValidateCode());
 		}else {
@@ -40,7 +40,7 @@ public class AppCustomerCredentialService extends CustomerCredentialService {
 		return authResult;
 	}
 
-	private AuthResult mobileValidateCodeLogin(String mobile, String validateCode) {
+	private AuthBo mobileValidateCodeLogin(String mobile, String validateCode) {
 		if(mobileValidateCodeService.checkMobileValidateCode(mobile, validateCode)) {
 			CustomerCredential conditional = new CustomerCredential();
 			conditional.setMobile(mobile);
@@ -49,14 +49,14 @@ public class AppCustomerCredentialService extends CustomerCredentialService {
 				throw new InvaildException(ErrEnum.CUSTOMER_NOT_FOUND.getErrCode(),ErrEnum.CUSTOMER_NOT_FOUND.getErrMsg());
 			}
 			CustomerCredential customerCredential = result.get(0);
-			AuthResult authResult = new AuthResult();
+			AuthBo authResult = new AuthBo();
 			authResult.setCustomerId(customerCredential.getCustomerId());
 			return authResult;
 		}
 		return null;
 	}
 
-	private AuthResult userNameAndPasswordLogin(String username,String password) {
+	private AuthBo userNameAndPasswordLogin(String username,String password) {
 		CustomerCredential conditional = new CustomerCredential();
 		conditional.setUsername(username);
 		conditional.setPassword(password);
@@ -65,29 +65,26 @@ public class AppCustomerCredentialService extends CustomerCredentialService {
 			throw new InvaildException(ErrEnum.CUSTOMER_NOT_FOUND.getErrCode(),ErrEnum.CUSTOMER_NOT_FOUND.getErrMsg());
 		}
 		CustomerCredential customerCredential = result.get(0);
-		AuthResult authResult = new AuthResult();
+		AuthBo authResult = new AuthBo();
 		authResult.setCustomerId(customerCredential.getCustomerId());
 		return authResult;
 	}
 
 	@Override
-	public CustomerCredential existsed(AuthResult authInfoByLoginRequest) {
+	public boolean existsed(AuthBo authInfoByLoginRequest) {
 		CustomerCredential customerCredential = new CustomerCredential();
 		customerCredential.setCustomerId(authInfoByLoginRequest.getCustomerId());
 		 List<CustomerCredential> list= manager.listByConditional(customerCredential);
 		 if(list.isEmpty()) {
-			 return null;
+			 return false;
 		 }
-		 if(list.size() > 1) {
-			 throw new InvaildException(ErrEnum.REDUPICATE_RECORD.getErrCode(),"用户凭证"+ErrEnum.REDUPICATE_RECORD.getErrMsg());
-		 }
-		 return list.get(0);
+		 return true;
 	}
 
 	@Override
-	public long insertCustomerCredential(AuthResult authInfoByLoginRequest) {
+	public CustomerCredential insertCustomerCredential(AuthBo authInfoByLoginRequest) {
 		// TODO Auto-generated method stub
-		return 0;
+		return null;
 	}
 
 	@Override

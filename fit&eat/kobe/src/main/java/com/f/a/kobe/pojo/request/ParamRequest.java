@@ -8,6 +8,8 @@ public class ParamRequest {
 	private Long id;
 
 	private Long customerId;
+	
+	private String loginType;
 
 	/** 用户凭证信息参数 --开始-- **/
 	private String mobile;

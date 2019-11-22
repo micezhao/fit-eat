@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 import com.f.a.kobe.exceptions.ErrEnum;
 import com.f.a.kobe.exceptions.InvaildException;
 import com.f.a.kobe.pojo.CustomerCredential;
-import com.f.a.kobe.pojo.bo.AuthResult;
 import com.f.a.kobe.pojo.request.ParamRequest;
+import com.f.a.kobe.service.CustomerBaseInfoService;
 import com.f.a.kobe.service.CustomerCredentialService;
 import com.f.a.kobe.service.CustomerLogService;
 import com.f.a.kobe.service.MobileValidateCodeService;
@@ -24,6 +24,9 @@ public class LoginBiz {
 	private CustomerLogService customerLogService;
 	
 	@Autowired
+	private CustomerBaseInfoService customerBaseInfoService;
+	
+	@Autowired
 	MobileValidateCodeService mobileValidateCodeService;
 	
 	private static final String PREFFIX = "CustomerCredentialService";
@@ -33,18 +36,14 @@ public class LoginBiz {
 	 * @param loginType
 	 * @return
 	 */
-	private CustomerCredentialService getServiceInstance(String loginType) {
+	public CustomerCredentialService getServiceInstance(String loginType) {
+		if(map.get(loginType+PREFFIX) == null) {
+			throw new InvaildException(ErrEnum.NO_INSTANCE.getErrCode(), ErrEnum.NO_INSTANCE.getErrMsg()); 
+		}
 		return map.get(loginType+PREFFIX);
 	}
 	
-	/**
-	 * 通过具体的实现类来判断这个用户是否存在
-	 * @param loginType 登陆类型
-	 * @return
-	 */
-	public CustomerCredential userExistsed(String loginType,AuthResult customerCredential) {
-		return getServiceInstance(loginType).existsed(customerCredential);
-	}
+
 	
 	//就登陆而言，分为第三方登录 与 用户名密码登陆
 	
@@ -112,6 +111,11 @@ public class LoginBiz {
 				throw new InvaildException(ErrEnum.REDUPICATE_REGISTER.getErrCode(),ErrEnum.REDUPICATE_REGISTER.getErrMsg());
 			}
 		}
+	}
+	
+	//检查这个用户的是否绑定了手机号
+	public boolean checkMobileBinded(String mobile,Long customerId ) {
+		return customerBaseInfoService.hasBinded(customerId, mobile);
 	}
 	
 	//checkregister

@@ -4,7 +4,6 @@ import java.security.AlgorithmParameters;
 import java.security.Security;
 import java.text.MessageFormat;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 
 import javax.crypto.Cipher;
@@ -20,21 +19,16 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.f.a.kobe.config.credential.WeChatConfigProperties;
 import com.f.a.kobe.exceptions.ErrEnum;
-import com.f.a.kobe.exceptions.InvaildException;
 import com.f.a.kobe.manager.CustomerBaseInfoManager;
-import com.f.a.kobe.manager.CustomerCredentialManager;
-import com.f.a.kobe.pojo.CustomerBaseInfo;
 import com.f.a.kobe.pojo.CustomerCredential;
-import com.f.a.kobe.pojo.bo.AuthResult;
+import com.f.a.kobe.pojo.bo.AuthBo;
 import com.f.a.kobe.pojo.enums.DrEnum;
 import com.f.a.kobe.pojo.enums.LoginTypeEnum;
 import com.f.a.kobe.pojo.request.ParamRequest;
 import com.f.a.kobe.service.CustomerCredentialService;
-import com.f.a.kobe.util.IdWorker;
 
 @Component(value="wxCustomerCredentialService")
 public class WxCustomerCredentialService extends CustomerCredentialService {
@@ -120,19 +114,22 @@ public class WxCustomerCredentialService extends CustomerCredentialService {
 		CustomerCredential record = manager.queryByAutCode(authCode, LoginTypeEnum.WECHAT.getLoginTypeCode());
 		return record;
 	}
-
+	
+	
+	// 与微信交互
 	@SuppressWarnings("unchecked")
 	@Override
-	public AuthResult getAuthInfoByLoginRequest(ParamRequest requestAuth) {
+	public AuthBo getAuthInfoByLoginRequest(ParamRequest requestAuth) {
 		String code = requestAuth.getCode();
 		String result = requestWxAuthInfoByCode1(code);
 		WxLoginSuccess wxLoginSuccess = JSONObject.parseObject(result, WxLoginSuccess.class);
 		String session_key = wxLoginSuccess.getSession_key();
 		String md5Hex = DigestUtils.md5Hex(session_key);
 		redisTemplate.opsForValue().set(md5Hex, session_key, KEY_EXPIRE);
-		AuthResult wxAuthResult = new AuthResult();
+		AuthBo wxAuthResult = new AuthBo();
 		wxAuthResult.setOpenid(wxLoginSuccess.getOpenid());
 		wxAuthResult.setAuthToken(md5Hex);
+		wxAuthResult.setAuthType(LoginTypeEnum.WECHAT.getLoginTypeCode());
 		return wxAuthResult;
 	}
 
@@ -153,27 +150,24 @@ public class WxCustomerCredentialService extends CustomerCredentialService {
 	}
 
 	@Override
-	public CustomerCredential existsed(AuthResult authInfoByLoginRequest) {
+	public boolean existsed(AuthBo authInfoByLoginRequest) {
 		CustomerCredential customerCredential = new CustomerCredential();
 		customerCredential.setWxOpenid(authInfoByLoginRequest.getOpenid());
 		 List<CustomerCredential> list= manager.listByConditional(customerCredential);
 		 if(list.isEmpty()) {
-			 return null;
+			 return true;
 		 }
-		 if(list.size() > 1) {
-			 throw new InvaildException(ErrEnum.REDUPICATE_RECORD.getErrCode(),"用户凭证"+ErrEnum.REDUPICATE_RECORD.getErrMsg());
-		 }
-		 return list.get(0);
+		 return false;
 	}
+	
 
 	@Override
-	public long insertCustomerCredential(AuthResult authInfoByLoginRequest) {
+	public CustomerCredential insertCustomerCredential(AuthBo authInfoByLoginRequest) {
 		CustomerCredential customerCredential = new CustomerCredential();
-		customerCredential.setCustomerId(idWorker.nextId());
 		customerCredential.setDr(DrEnum.AVAILABLE.getCode());
 		customerCredential.setWxOpenid(authInfoByLoginRequest.getOpenid());
 		manager.insert(customerCredential);
-		return customerCredential.getId();
+		return customerCredential;
 	}
 
 

@@ -10,8 +10,10 @@ public enum ErrEnum {
 	CUSTOMER_NOT_FOUND("9006","用户不存在异常"),
 	OVER_LIMITS("9007","记录超过上限"),
 	UNKNOWN_LOGIN_TYPE("9008","未知的登陆类型"),
-	REDUPICATE_REGISTER("9009","重复注册"),
-	VALIDATECODEERROR("9010","错误的验证码");
+	REDUPICATE_REGISTER("9009","用户已存在请勿重复注册"),
+	VALIDATECODEERROR("9010","错误的验证码"),
+	
+	NO_INSTANCE("8001","无法找到服务实例");
 	
 	private String errCode;
 	private String errMsg;

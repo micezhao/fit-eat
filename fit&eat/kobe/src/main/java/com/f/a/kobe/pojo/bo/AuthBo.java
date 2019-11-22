@@ -3,7 +3,7 @@ package com.f.a.kobe.pojo.bo;
 import lombok.Data;
 
 @Data
-public class AuthResult {
+public class AuthBo {
 
 	private String authToken;
 	
@@ -11,5 +11,11 @@ public class AuthResult {
 	
 	private String openid;
 	
+	private String authType;
+	
 	private Long customerId;
+	
+	private String mobile;
+	
+	
 }

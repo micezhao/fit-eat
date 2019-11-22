@@ -10,7 +10,7 @@ import com.f.a.kobe.exceptions.ErrEnum;
 import com.f.a.kobe.exceptions.InvaildException;
 import com.f.a.kobe.manager.CustomerCredentialManager;
 import com.f.a.kobe.pojo.CustomerCredential;
-import com.f.a.kobe.pojo.bo.AuthResult;
+import com.f.a.kobe.pojo.bo.AuthBo;
 import com.f.a.kobe.pojo.enums.LoginTypeEnum;
 import com.f.a.kobe.pojo.request.ParamRequest;
 import com.f.a.kobe.util.IdWorker;
@@ -42,12 +42,26 @@ public abstract class CustomerCredentialService {
 		return customerCredentialList.get(0);
 	}
 
-	// 用户认证
-	public abstract AuthResult getAuthInfoByLoginRequest(ParamRequest requestAuth);
-
-	public abstract CustomerCredential existsed(AuthResult authInfoByLoginRequest);
-
-	public abstract long insertCustomerCredential(AuthResult authInfoByLoginRequest);
+	/**
+	 * 从第三方获取用户的认证信息
+	 * @param requestAuth
+	 * @return
+	 */
+	public abstract AuthBo getAuthInfoByLoginRequest(ParamRequest requestAuth);
+	
+	/**
+	 * 判断这个用户凭证是否存在
+	 * @param authInfoByLoginRequest
+	 * @return
+	 */
+	public abstract boolean existsed(AuthBo authInfoByLoginRequest);
+	
+	/**
+	 * 将用户凭证存入系统
+	 * @param authInfoByLoginRequest
+	 * @return
+	 */
+	public abstract CustomerCredential insertCustomerCredential(AuthBo authInfoByLoginRequest);
 
 	// 合并授权用户
 	public void combineCustomerCredential(CustomerCredential source, CustomerCredential destine,String loginType) {
