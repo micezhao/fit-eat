@@ -56,22 +56,22 @@ public class LoginBiz {
 	 * 1.根据来源获取对应的实例
 	 * 
 	 */
-	public String login(ParamRequest request,String loginType) {
-		//1.根据来源获取对应的实例
-		CustomerCredentialService customerCredentialService = getServiceInstance(loginType);
-		//2.获取授权结果
-		AuthResult authResult = customerCredentialService.getAuthInfoByLoginRequest(request);
-		//3.判断用户是否进入用户授权信息表 没有则创建
-		CustomerCredential customerCredential = customerCredentialService.existsed(authResult);
-		if(customerCredential == null) {
-			long id = customerCredentialService.insertCustomerCredential(authResult);
-			customerCredential = customerCredentialService.queryById(id);
-		}
-		//4.记流水
-		customerLogService.recordLogin(loginType, customerCredential);
-		//5.返回登陆凭证
-		return authResult.getAuthToken();
-	}
+//	public String login(ParamRequest request,String loginType) {
+//		//1.根据来源获取对应的实例
+//		CustomerCredentialService customerCredentialService = getServiceInstance(loginType);
+//		//2.获取授权结果
+//		AuthResult authResult = customerCredentialService.getAuthInfoByLoginRequest(request);
+//		//3.判断用户是否进入用户授权信息表 没有则创建
+//		CustomerCredential customerCredential = customerCredentialService.existsed(authResult);
+//		if(customerCredential == null) {
+//			long id = customerCredentialService.insertCustomerCredential(authResult);
+//			customerCredential = customerCredentialService.queryById(id);
+//		}
+//		//4.记流水
+//		customerLogService.recordLogin(loginType, customerCredential);
+//		//5.返回登陆凭证
+//		return authResult.getAuthToken();
+//	}
 	
 	//logout
 	/***
