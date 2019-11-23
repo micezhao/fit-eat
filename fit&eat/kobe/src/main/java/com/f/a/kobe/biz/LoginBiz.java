@@ -1,7 +1,9 @@
 package com.f.a.kobe.biz;
 
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -90,15 +92,32 @@ public class LoginBiz {
 		}
 		return userAgent;
 	}
-
+	
+	
 	// 检查这个用户的是否绑定了手机号
-	public boolean checkMobileBinded(String mobile, Long customerId) {
+	public boolean checkMobileBinded(String mobile, Long customerId,String loginType, String  thirdAuthId) {
+		CustomerCredentialService customerCredentialService = getServiceInstance(loginType);
+		// 如果当前的三方授权码不为空，则在检查绑定状态前，先判断当前操作是否存在重复绑定
+		if(StringUtils.isNotBlank(thirdAuthId)) {
+			CustomerCredential conditional = new CustomerCredential();
+			conditional.setCustomerId(customerId);
+			conditional.setMobile(mobile);
+			if (LoginTypeEnum.getLoginTypeEnum(loginType) == LoginTypeEnum.WECHAT) {
+				conditional.setWxOpenid(thirdAuthId);
+			} else if (LoginTypeEnum.getLoginTypeEnum(loginType) == LoginTypeEnum.ALI_PAY) {
+				conditional.setAliOpenid(thirdAuthId);
+			}
+			List<CustomerCredential> list= customerCredentialService.listCustomerCredential(conditional);
+			if(list.isEmpty()) {
+				throw new InvaildException(ErrEnum.REDUPICATE_BIND.getErrCode(), ErrEnum.REDUPICATE_BIND.getErrMsg());
+			}
+		}
 		return customerBaseInfoService.hasBinded(customerId, mobile);
 	}
 	
 	
 	//绑定手机号
-	public void binding(String mobile, Long customerId, String loginType) {
+	public CustomerCredential binding(String mobile, Long customerId, String loginType) {
 		CustomerBaseInfo currentUser = customerBaseInfoService.query(customerId);
 		currentUser.setMobile(mobile);
 		customerBaseInfoService.updateCustomer(currentUser);
@@ -106,9 +125,10 @@ public class LoginBiz {
 		CustomerCredential credential = getServiceInstance(loginType).queryByBizId(currentUser.getCustomerId());
 		credential.setMobile(mobile);
 		credentialService.updateCustomerCredential(credential);
+		return credential;
 	}
 	
-	public void combine(String mobile, Long customerId, String loginType) {
+	public CustomerCredential combine(String mobile, Long customerId, String loginType) {
 		CustomerCredentialService credentialService = getServiceInstance(loginType);
 		CustomerCredential source = credentialService.queryByBizId(customerId);
 		CustomerCredential conditional = new CustomerCredential();
@@ -119,6 +139,7 @@ public class LoginBiz {
 		//凭证合并完成后，删除这个新注册的用户信息，绑定后只保留一条用户记录
 		CustomerBaseInfo souruceUserRecord = customerBaseInfoService.query(customerId);
 		customerBaseInfoService.delete(souruceUserRecord.getId());
+		return destine;
 	}
 
 	// checkregister

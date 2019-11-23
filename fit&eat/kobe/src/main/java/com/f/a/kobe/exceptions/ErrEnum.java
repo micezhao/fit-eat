@@ -13,6 +13,7 @@ public enum ErrEnum {
 	REDUPICATE_REGISTER("9009","用户已存在请勿重复注册"),
 	VALIDATECODEERROR("9010","错误的验证码"),
 	UNLOGIN_ERROR("9011","当前用户未登录"),
+	REDUPICATE_BIND("9012","当前手机号已经通过本渠道进行过绑定，请勿重复绑定"),
 	
 	NO_INSTANCE("8001","无法找到服务实例");
 	
