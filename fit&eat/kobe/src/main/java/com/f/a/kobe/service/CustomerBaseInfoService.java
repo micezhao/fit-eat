@@ -37,7 +37,7 @@ public class CustomerBaseInfoService {
 	ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
 	public void insertCustomerBaseInfo(CustomerBaseInfo customerBaseInfo) {
-		customerBaseInfo.setId(idworker.nextId());
+		customerBaseInfo.setCustomerId(idworker.nextId());
 		if(StringUtils.isNotBlank(customerBaseInfo.getBirthday()) ) {
 			customerBaseInfo.setBirthday(customerBaseInfo.getBirthday());
 			customerBaseInfo.setAge(sumAge(customerBaseInfo.getBirthday()));

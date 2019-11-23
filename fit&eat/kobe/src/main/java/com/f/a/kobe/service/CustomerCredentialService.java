@@ -61,7 +61,7 @@ public abstract class CustomerCredentialService {
 	 * @param authInfoByLoginRequest
 	 * @return
 	 */
-	public abstract CustomerCredential insertCustomerCredential(AuthBo authInfoByLoginRequest);
+	public abstract CustomerCredential insertCustomerCredential(AuthBo authBo);
 
 	// 合并授权用户
 	public void combineCustomerCredential(CustomerCredential source, CustomerCredential destine,String loginType) {

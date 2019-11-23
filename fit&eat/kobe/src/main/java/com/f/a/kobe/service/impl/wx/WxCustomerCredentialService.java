@@ -155,17 +155,18 @@ public class WxCustomerCredentialService extends CustomerCredentialService {
 		customerCredential.setWxOpenid(authInfoByLoginRequest.getOpenid());
 		 List<CustomerCredential> list= manager.listByConditional(customerCredential);
 		 if(list.isEmpty()) {
-			 return true;
+			 return false;
 		 }
-		 return false;
+		 return true;
 	}
 	
 
 	@Override
-	public CustomerCredential insertCustomerCredential(AuthBo authInfoByLoginRequest) {
+	public CustomerCredential insertCustomerCredential(AuthBo authBo) {
 		CustomerCredential customerCredential = new CustomerCredential();
 		customerCredential.setDr(DrEnum.AVAILABLE.getCode());
-		customerCredential.setWxOpenid(authInfoByLoginRequest.getOpenid());
+		customerCredential.setCustomerId(authBo.getCustomerId());
+		customerCredential.setWxOpenid(authBo.getOpenid());
 		manager.insert(customerCredential);
 		return customerCredential;
 	}

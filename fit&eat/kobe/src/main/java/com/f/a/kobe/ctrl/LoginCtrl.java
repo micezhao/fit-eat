@@ -59,7 +59,7 @@ public class LoginCtrl {
 		}
 		boolean exsisted = loginBiz.checkExsistedByThirdAuthId(loginType,thirdAuthId);
 		if(exsisted) {
-			logger.error(" {loginType}渠道 用户凭证 thirdAuthId ：[{}] 已经存在",loginType,thirdAuthId);
+			logger.error(" {}渠道 用户凭证 thirdAuthId ：{} 已经存在",loginType,thirdAuthId);
 			throw new InvaildException(ErrEnum.REDUPICATE_REGISTER.getErrCode(), ErrEnum.REDUPICATE_REGISTER.getErrMsg());
 		}		
 		UserAgent userAgent = loginBiz.registerByThirdPart(thirdAuthId, loginType);

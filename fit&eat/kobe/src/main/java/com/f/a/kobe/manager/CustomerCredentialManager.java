@@ -73,21 +73,21 @@ public class CustomerCredentialManager implements BaseManager<CustomerCredential
 		return customerCredentialList;
 	}
 	
-	@ToMongoDB
+//	@ToMongoDB
 	@Override
 	public int insert(CustomerCredential customerCredential) {
 		customerCredential.setCdt(Calendar.getInstance().getTime());
 		return customerCredentialMapper.insertSelective(customerCredential);
 	}
 	
-	@ToMongoDB
+//	@ToMongoDB
 	@Override
 	public int update(CustomerCredential customerCredential) {
 		customerCredential.setMdt(Calendar.getInstance().getTime());
 		return customerCredentialMapper.updateByPrimaryKeySelective(customerCredential);
 	}
 
-	@ToMongoDB
+//	@ToMongoDB
 	@Override
 	public int delete(Long id) {
 		return customerCredentialMapper.deleteByPrimaryKey(id);

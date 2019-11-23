@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.f.a.kobe.exceptions.ErrEnum;
 import com.f.a.kobe.exceptions.InvaildException;
@@ -68,8 +69,9 @@ public class LoginBiz {
 	 * 三方用户注册业务服务（微信支付宝，要求）
 	 * 
 	 */
+	@Transactional
 	public UserAgent registerByThirdPart(String thirdAuthId, String loginType) {
-		UserAgent userAgent = new UserAgent();
+		UserAgent userAgent = new UserAgent(); 
 		AuthBo authResult = new AuthBo();
 		CustomerCredentialService customerCredentialService = getServiceInstance(loginType);
 		// 先要生成一条用户信息
