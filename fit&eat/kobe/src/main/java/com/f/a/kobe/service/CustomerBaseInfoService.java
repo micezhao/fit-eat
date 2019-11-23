@@ -90,6 +90,10 @@ public class CustomerBaseInfoService {
 		return customerBaseInfoManager.queryByBiz(customerId)==null?false:true;
 	}
 	
+	public void delete(Long id) {
+		customerBaseInfoManager.delete(id);
+	}
+	
 	// 查询用户是否存在
 	public boolean hasBinded(Long customerId,String mobile) {
 		CustomerBaseInfo conditional = new CustomerBaseInfo();

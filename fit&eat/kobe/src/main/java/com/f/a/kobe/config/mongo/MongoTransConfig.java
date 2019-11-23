@@ -1,4 +1,4 @@
-package com.f.a.kobe.config;
+package com.f.a.kobe.config.mongo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

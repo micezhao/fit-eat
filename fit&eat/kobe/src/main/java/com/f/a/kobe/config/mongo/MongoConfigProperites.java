@@ -1,4 +1,4 @@
-package com.f.a.kobe.config;
+package com.f.a.kobe.config.mongo;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
