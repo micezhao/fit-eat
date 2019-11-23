@@ -37,7 +37,7 @@ public class CustomerBaseInfoService {
 	ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
 	public void insertCustomerBaseInfo(CustomerBaseInfo customerBaseInfo) {
-		customerBaseInfo.setId(idworker.nextId());
+		customerBaseInfo.setCustomerId(idworker.nextId());
 		if(StringUtils.isNotBlank(customerBaseInfo.getBirthday()) ) {
 			customerBaseInfo.setBirthday(customerBaseInfo.getBirthday());
 			customerBaseInfo.setAge(sumAge(customerBaseInfo.getBirthday()));
@@ -88,6 +88,10 @@ public class CustomerBaseInfoService {
 	// 查询用户是否存在
 	public boolean exsisted(Long customerId) {
 		return customerBaseInfoManager.queryByBiz(customerId)==null?false:true;
+	}
+	
+	public void delete(Long id) {
+		customerBaseInfoManager.delete(id);
 	}
 	
 	// 查询用户是否存在

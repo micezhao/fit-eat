@@ -1,4 +1,4 @@
-package com.f.a.kobe.ctrl.intercepter;
+package com.f.a.kobe.config.webconfig.interceptor;
 
 import java.io.PrintWriter;
 import java.util.HashMap;

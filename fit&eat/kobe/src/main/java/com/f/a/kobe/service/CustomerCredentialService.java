@@ -41,6 +41,12 @@ public abstract class CustomerCredentialService {
 		}
 		return customerCredentialList.get(0);
 	}
+	
+	// 查询授权用户
+		public List<CustomerCredential> listCustomerCredential(CustomerCredential conditional) {
+			List<CustomerCredential> customerCredentialList = manager.listByConditional(conditional);
+			return customerCredentialList;
+		}
 
 	/**
 	 * 从第三方获取用户的认证信息
@@ -61,7 +67,7 @@ public abstract class CustomerCredentialService {
 	 * @param authInfoByLoginRequest
 	 * @return
 	 */
-	public abstract CustomerCredential insertCustomerCredential(AuthBo authInfoByLoginRequest);
+	public abstract CustomerCredential insertCustomerCredential(AuthBo authBo);
 
 	// 合并授权用户
 	public void combineCustomerCredential(CustomerCredential source, CustomerCredential destine,String loginType) {

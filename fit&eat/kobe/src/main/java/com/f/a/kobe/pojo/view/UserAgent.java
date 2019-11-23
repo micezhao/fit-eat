@@ -33,5 +33,7 @@ public class UserAgent {
 	    private String password;
 	    // 邮箱信息
 	    private String email;
+	    
+	    private String loginType;
 	
 }

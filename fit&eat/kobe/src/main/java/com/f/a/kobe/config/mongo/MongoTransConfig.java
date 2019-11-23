@@ -1,4 +1,4 @@
-package com.f.a.kobe.config;
+package com.f.a.kobe.config.mongo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,15 +32,13 @@ public class MongoTransConfig {
 	
 	private static final String PREFIX = "mongodb://";
 	
-	
-	
 	@Autowired
 	private MongoConfigProperites mongoConfigProperites;
 	
-	@Bean // 配置事务管理：mongodb 4.0以上版本才支持事务，4.0只支持副本集的事务，4.2支持分片场景的事务
-	MongoTransactionManager transactionManager(MongoDbFactory factory) {
-		return new MongoTransactionManager(factory);
-	}
+//	@Bean // 配置事务管理：mongodb 4.0以上版本才支持事务，4.0只支持副本集的事务，4.2支持分片场景的事务
+//	MongoTransactionManager transactionManager(MongoDbFactory factory) {
+//		return new MongoTransactionManager(factory);
+//	}
 	@Bean //配置连接工厂
 	public MongoDbFactory mongoDbFactory() throws Exception {
 //		return new SimpleMongoClientDbFactory(PREFIX+mongoConfigProperites.getUsername()+":"+mongoConfigProperites.getPassword()+"@"+mongoConfigProperites.getHost()+":"+mongoConfigProperites.getPort()+"/"+mongoConfigProperites.getDbName());

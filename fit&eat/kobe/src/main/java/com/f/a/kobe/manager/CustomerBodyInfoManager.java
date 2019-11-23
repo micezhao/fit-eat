@@ -51,21 +51,21 @@ public class CustomerBodyInfoManager implements BaseManager<CustomerBodyInfo> {
 		return CustomerBodyInfoList;
 	}
 	
-	@ToMongoDB
+//	@ToMongoDB
 	@Override
 	public int insert(CustomerBodyInfo CustomerBodyInfo) {
 		CustomerBodyInfo.setCdt(Calendar.getInstance().getTime());
 		return CustomerBodyInfoMapper.insertSelective(CustomerBodyInfo);
 	}
 	
-	@ToMongoDB
+//	@ToMongoDB
 	@Override
 	public int update(CustomerBodyInfo CustomerBodyInfo) {
 		CustomerBodyInfo.setMdt(Calendar.getInstance().getTime());
 		return CustomerBodyInfoMapper.updateByPrimaryKeySelective(CustomerBodyInfo);
 	}
 
-	@ToMongoDB
+//	@ToMongoDB
 	@Override
 	public int delete(Long id) {
 		return CustomerBodyInfoMapper.deleteByPrimaryKey(id);
