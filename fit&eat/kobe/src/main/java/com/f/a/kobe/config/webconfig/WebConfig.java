@@ -28,8 +28,8 @@ public class WebConfig extends WebMvcConfigurationSupport {
 	
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(new UserSessionInterceptor()).addPathPatterns("/login/** ").
-			excludePathPatterns("/login/getAuthCode","/login/registerByThird");
+		registry.addInterceptor(new UserSessionInterceptor()).addPathPatterns("/**").
+			excludePathPatterns("/login/getAuthCode","/login/registerByThird","/login/thirdPart/**");
 	}
 	/**
 	 * 注册一个自定义的对象解析器
