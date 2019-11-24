@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,7 +49,14 @@ public class LoginCtrl {
 		AuthBo authResult = getServiceInstance(request.getLoginType()).getAuthInfoByLoginRequest(request);
 		return new ResponseEntity<AuthBo>(authResult, HttpStatus.OK);
 	}
-
+	
+	@GetMapping("/thirdPart/{loginType}/{thirdAuthId}")
+	public ResponseEntity<Object>  login(@PathVariable("loginType") String loginType,@PathVariable("thirdAuthId") String thirdAuthId,HttpSession session){
+		UserAgent userAgent = loginBiz.generateUserAgent(loginType, thirdAuthId);
+		session.setAttribute(SystemContanst.USER_AGENT, userAgent);
+		return new ResponseEntity<Object>(userAgent, HttpStatus.OK);
+	}
+	
 	@PostMapping("/registerByThird")
 	public ResponseEntity<Object> registerByThird(@RequestBody ParamRequest request, HttpSession session) {
 

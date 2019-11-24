@@ -3,6 +3,7 @@ package com.f.a.kobe.biz;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import com.f.a.kobe.service.CustomerBaseInfoService;
 import com.f.a.kobe.service.CustomerCredentialService;
 import com.f.a.kobe.service.CustomerLogService;
 import com.f.a.kobe.service.MobileValidateCodeService;
+import com.f.a.kobe.util.ObjectTransUtils;
 
 @Service
 public class LoginBiz {
@@ -65,28 +67,24 @@ public class LoginBiz {
 		}
 		return exsisted;
 	}
-
-	// register
-	/**
-	 * 三方用户注册业务服务（微信支付宝，要求）
-	 * 
-	 */
-//	public String login(ParamRequest request,String loginType) {
-//		//1.根据来源获取对应的实例
-//		CustomerCredentialService customerCredentialService = getServiceInstance(loginType);
-//		//2.获取授权结果
-//		AuthResult authResult = customerCredentialService.getAuthInfoByLoginRequest(request);
-//		//3.判断用户是否进入用户授权信息表 没有则创建
-//		CustomerCredential customerCredential = customerCredentialService.existsed(authResult);
-//		if(customerCredential == null) {
-//			long id = customerCredentialService.insertCustomerCredential(authResult);
-//			customerCredential = customerCredentialService.queryById(id);
-//		}
-//		//4.记流水
-//		customerLogService.recordLogin(loginType, customerCredential);
-//		//5.返回登陆凭证
-//		return authResult.getAuthToken();
-//	}
+	
+	public UserAgent generateUserAgent(String loginType, String thirdAuthId) {
+		UserAgent userAgent = new UserAgent();
+		userAgent.setLoginType(loginType);
+		CustomerCredentialService customerCredentialService = getServiceInstance(loginType);
+		CustomerCredential conditional = new CustomerCredential();
+		if (LoginTypeEnum.getLoginTypeEnum(loginType) == LoginTypeEnum.WECHAT) {
+			conditional.setWxOpenid(thirdAuthId);
+		} else if (LoginTypeEnum.getLoginTypeEnum(loginType) == LoginTypeEnum.ALI_PAY) {
+			conditional.setAliOpenid(thirdAuthId);
+		}
+		CustomerCredential userCredential = customerCredentialService.queryCustomerCredentialByConditional(conditional);
+		CustomerBaseInfo userBaseInfo = customerBaseInfoService.query(userCredential.getCustomerId());
+		//组装成useragent对象
+		ObjectTransUtils.copy(userAgent, userCredential); 
+		ObjectTransUtils.copy(userAgent, userBaseInfo);
+		return userAgent;
+	}
 	
 	@Transactional
 	public UserAgent registerByThirdPart(String thirdAuthId, String loginType) {
@@ -145,6 +143,7 @@ public class LoginBiz {
 		return credential;
 	}
 	
+	//合并用户
 	public CustomerCredential combine(String mobile, Long customerId, String loginType) {
 		CustomerCredentialService credentialService = getServiceInstance(loginType);
 		CustomerCredential source = credentialService.queryByBizId(customerId);

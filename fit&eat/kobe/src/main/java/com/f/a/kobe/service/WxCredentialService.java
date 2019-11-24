@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.f.a.kobe.manager.CustomerCredentialManager;
-import com.f.a.kobe.pojo.CustomerBaseInfo;
 import com.f.a.kobe.pojo.CustomerCredential;
 import com.f.a.kobe.pojo.enums.LoginTypeEnum;
 
