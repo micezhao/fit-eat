@@ -78,6 +78,9 @@ public class LoginBiz {
 			conditional.setAliOpenid(thirdAuthId);
 		}
 		CustomerCredential userCredential = customerCredentialService.queryCustomerCredentialByConditional(conditional);
+		if(userCredential == null) {
+			throw new InvaildException(ErrEnum.CUSTOMER_NOT_FOUND.getErrCode(), ErrEnum.CUSTOMER_NOT_FOUND.getErrMsg());
+		}
 		CustomerBaseInfo userBaseInfo = customerBaseInfoService.query(userCredential.getCustomerId());
 		//组装成useragent对象
 		ObjectTransUtils.copy(userAgent, userCredential); 

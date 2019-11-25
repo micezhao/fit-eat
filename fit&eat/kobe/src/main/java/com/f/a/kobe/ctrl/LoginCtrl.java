@@ -52,9 +52,15 @@ public class LoginCtrl {
 	
 	@GetMapping("/thirdPart/{loginType}/{thirdAuthId}")
 	public ResponseEntity<Object>  login(@PathVariable("loginType") String loginType,@PathVariable("thirdAuthId") String thirdAuthId,HttpSession session){
-		UserAgent userAgent = loginBiz.generateUserAgent(loginType, thirdAuthId);
-		session.setAttribute(SystemContanst.USER_AGENT, userAgent);
-		return new ResponseEntity<Object>(userAgent, HttpStatus.OK);
+		try {
+			UserAgent userAgent = loginBiz.generateUserAgent(loginType, thirdAuthId);
+			session.setAttribute(SystemContanst.USER_AGENT, userAgent);
+		}catch (InvaildException ex) {
+			return new ResponseEntity<Object>(
+					new ErrRtn(ex.getErrCode(), ex.getErrMsg()),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<Object>(HttpStatus.OK);
 	}
 	
 	@PostMapping("/registerByThird")
