@@ -5,6 +5,8 @@ import java.security.Security;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -42,7 +44,7 @@ public class WxCustomerCredentialService extends CustomerCredentialService {
 	private RestTemplate restTemplate;
 
 	@Autowired
-	private RedisTemplate redisTemplate;
+	private RedisTemplate<String, String> redisTemplate;
 
 	@Autowired
 	private CustomerBaseInfoManager customerBaseInfoManager;
@@ -125,7 +127,8 @@ public class WxCustomerCredentialService extends CustomerCredentialService {
 		WxLoginSuccess wxLoginSuccess = JSONObject.parseObject(result, WxLoginSuccess.class);
 		String session_key = wxLoginSuccess.getSession_key();
 		String md5Hex = DigestUtils.md5Hex(session_key);
-		redisTemplate.opsForValue().set(md5Hex, session_key, KEY_EXPIRE);
+		redisTemplate.opsForValue().set(md5Hex, session_key);
+		redisTemplate.expire(md5Hex, KEY_EXPIRE, TimeUnit.SECONDS);
 		AuthBo wxAuthResult = new AuthBo();
 		wxAuthResult.setOpenid(wxLoginSuccess.getOpenid());
 		wxAuthResult.setAuthToken(md5Hex);
@@ -145,7 +148,10 @@ public class WxCustomerCredentialService extends CustomerCredentialService {
 	
 	private String requestWxAuthInfoByCode1(String code) {
 		
-		String result = "{\"session_key\":\"KdAdSaaNNDAS8877JSADN+1==\",\"openid\":\"o2ndaJdsaJ3omdasmn-LU\"}";
+		Random random = new Random();
+		int nextInt = random.nextInt();
+		
+		String result = "{\"session_key\":\"KdAdSaaNNDAS"+nextInt+"8877JSADN+1==\",\"openid\":\"o"+nextInt+"ndaJdsaJ3omdasmn-LU\"}";
 		return result;
 	}
 
