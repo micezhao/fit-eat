@@ -14,6 +14,7 @@ public enum ErrEnum {
 	VALIDATECODEERROR("9010","错误的验证码"),
 	UNLOGIN_ERROR("9011","当前用户未登录"),
 	REDUPICATE_BIND("9012","当前手机号已经通过本渠道进行过绑定，请勿重复绑定"),
+	NO_DEFAULT_ADDR("9013","当前用户未设置默认地址"),
 	
 	NO_INSTANCE("8001","无法找到服务实例"),
 	COPY_EXCEPTION("8002","对象复制发生异常");

@@ -8,7 +8,7 @@ public class ParamRequest {
 	private Long id;
 
 	private Long customerId;
-	
+
 	private String loginType;
 
 	/** 用户凭证信息参数 --开始-- **/
@@ -21,9 +21,9 @@ public class ParamRequest {
 	private String username;
 
 	private String password;
-	
+
 	private String code;
-	
+
 	private String validateCode;
 
 	private String email;
@@ -35,6 +35,16 @@ public class ParamRequest {
 	private String regionId;
 
 	private String regionPid;
+
+	private String provinceNo;
+
+	private String cityNo;
+
+	private String distrcNo;
+
+	private String connectorMobile;
+
+	private String connectorName;
 
 	private String useDefault;
 	/** 用户地址信息 --结束-- **/
@@ -54,7 +64,7 @@ public class ParamRequest {
 
 	private Integer sorce;
 	/** 用户基本信息 --结束-- **/
-	
+
 	/** 用户体征信息 --开始-- **/
 	private String registerDate;
 

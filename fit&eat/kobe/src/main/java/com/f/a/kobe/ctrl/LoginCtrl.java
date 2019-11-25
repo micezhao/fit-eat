@@ -86,7 +86,7 @@ public class LoginCtrl {
 	 * 
 	 * @return
 	 */
-	@PutMapping("/binding")
+	@PostMapping("/binding")
 	public ResponseEntity<Object> binding(@RequestBody ParamRequest request, UserAgent userAgent, HttpSession session) {
 		String mobile = request.getMobile();
 		Long customerId = userAgent.getCustomerId();

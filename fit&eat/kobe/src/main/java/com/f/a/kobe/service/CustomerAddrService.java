@@ -1,7 +1,9 @@
 package com.f.a.kobe.service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.codec.binary.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,11 +66,30 @@ public class CustomerAddrService {
 	}
 	
 	public void deleteAddr(Long id) {
-		manager.delete(id);
+		CustomerAddr selectedAddr = manager.queryById(id);
+		//如果当前被删除的地址是默认地址，那么就需要从其他地址中一个为默认地址
+		if(StringUtils.equals(UseDefaultEnum.USE_DEFAULT.getCode(), selectedAddr.getUseDefault())) {
+			manager.delete(id); // 执行删除操作
+			Long customerId = selectedAddr.getCustomerId() ;
+			List<CustomerAddr> addrList = manager.listByCustomerId(customerId);
+			addrList.sort(new Comparator<CustomerAddr>() {
+				@Override //按照升序重排集合
+				public int compare(CustomerAddr o1, CustomerAddr o2) {
+					 int i = (int)(o1.getAddrId() - o2.getAddrId());  
+		                return i;
+				}
+			});
+			CustomerAddr optioned = addrList.get(0); //将 最近添加的一个地址选中，作为默认地址
+			optioned.setUseDefault(UseDefaultEnum.USE_DEFAULT.getCode()); 
+			manager.update(optioned);
+		}else { // 否则就直接删除
+			manager.delete(id);
+		}
+		
 	}
 	
 	/**
-	 * 设置用户
+	 * 用户设定默认地址
 	 * @param customerId
 	 * @param addrId
 	 */
@@ -89,13 +110,59 @@ public class CustomerAddrService {
 	}
 	
 	/**
+	 * 更新地址
+	 * @param addr
+	 */
+	public void updateSelectedAddr(CustomerAddr addr) {
+		// 判断是否需要将当前修改的记录设置为默认地址,
+		if(StringUtils.equals(UseDefaultEnum.USE_DEFAULT.getCode(),addr.getUseDefault()) ) {
+			//如果需要将它设置为默认地址，就先执行 设定默认地址的操作
+			setDefaultAddr(addr.getCustomerId(), addr.getAddrId());
+		}
+		String provinceName = regionService.getAreaName(addr.getProvinceNo());
+		addr.setProvinceName(provinceName);
+		String cityName = regionService.getAreaName(addr.getCityNo());
+		addr.setCityName(cityName);
+		String distrcName = regionService.getAreaName(addr.getDistrcNo());
+		addr.setDistrcName(distrcName);
+		StringBuffer areaDetailBuffer = new StringBuffer();
+		List<String> idList = new ArrayList<String>();
+		idList.add(addr.getProvinceNo());
+		idList.add(addr.getCityNo());
+		idList.add(addr.getDistrcNo());
+		String areaBefore = regionService.getAreaName(idList);
+		areaDetailBuffer.append(areaBefore).append(addr.getAddrDetail()); // 组合详细地址信息
+		addr.setAddrDetail(areaDetailBuffer.toString());
+		manager.update(addr);
+	} 
+	
+	/**
 	 * 获取用户的收货地址
-	 * TODO 先从mongo中获取，如果找不到在从sql中获取
 	 * @param customerId
 	 * @return
 	 */
 	public List<CustomerAddr> getCustomerAddrs(Long customerId){
 		return manager.listByCustomerId(customerId);
+	}
+	
+	/**
+	 * 查询用户的默认地址
+	 * @param customerId
+	 * @return
+	 */
+	public CustomerAddr getCustomerDefaultAddrs(Long customerId) throws InvaildException{
+		CustomerAddr conditional = new CustomerAddr();
+		conditional.setCustomerId(customerId);
+		conditional.setUseDefault(UseDefaultEnum.USE_DEFAULT.getCode());
+		List<CustomerAddr> list = manager.listByConditional(conditional);
+		if(list.isEmpty()) {
+			throw new InvaildException(ErrEnum.NO_DEFAULT_ADDR.getErrCode(), ErrEnum.NO_DEFAULT_ADDR.getErrMsg());
+		} 
+		if(list.size() > 1) {
+			throw new InvaildException(ErrEnum.REDUPICATE_RECORD.getErrCode(), ErrEnum.REDUPICATE_RECORD.getErrMsg());
+		}
+			
+		return list.get(0);
 	}
 	
 	/**

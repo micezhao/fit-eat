@@ -33,7 +33,10 @@ public class UserAgent {
 	    private String password;
 	    // 邮箱信息
 	    private String email;
-	    
+	    // 登陆渠道
 	    private String loginType;
+	    // 默认收货地址
+	    private String defaultAddrId;
+	    
 	
 }
