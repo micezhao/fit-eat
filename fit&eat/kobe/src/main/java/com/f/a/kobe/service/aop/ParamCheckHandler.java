@@ -13,7 +13,7 @@ public interface ParamCheckHandler {
 	
 	boolean updateCheck(Object t);
 	
-	
+	boolean binding(Object t);
 	
 	
 }

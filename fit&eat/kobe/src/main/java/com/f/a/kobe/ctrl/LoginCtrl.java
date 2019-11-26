@@ -29,6 +29,7 @@ import com.f.a.kobe.pojo.request.LoginRequest;
 import com.f.a.kobe.pojo.request.ParamRequest;
 import com.f.a.kobe.pojo.view.UserAgent;
 import com.f.a.kobe.service.CustomerCredentialService;
+import com.f.a.kobe.service.aop.ParamCheck;
 
 @RestController
 @RequestMapping("/login")
@@ -92,6 +93,7 @@ public class LoginCtrl {
 	 * 
 	 * @return
 	 */
+	@ParamCheck
 	@PostMapping("/binding")
 	public ResponseEntity<Object> binding(@RequestBody ParamRequest request, UserAgent userAgent, HttpSession session) {
 		String mobile = request.getMobile();

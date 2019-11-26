@@ -3,6 +3,8 @@ package com.f.a.kobe.service.aop;
 import org.springframework.stereotype.Component;
 
 import com.f.a.kobe.pojo.CustomerAddr;
+import com.f.a.kobe.pojo.request.LoginRequest;
+import com.f.a.kobe.pojo.request.ParamRequest;
 import com.f.a.kobe.util.CombinedParam;
 import com.f.a.kobe.util.CombinedParamBuilder;
 import com.f.a.kobe.util.CombinedParamCheckUtil;
@@ -40,6 +42,16 @@ public class  CustomerAddrParamCheckor implements ParamCheckHandler{
 	@Override
 	public boolean updateCheck(Object t) {
 		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean binding(Object t) {
+		// TODO Auto-generated method stub
+		
+		ParamRequest paramRequest = (ParamRequest)t;
+		String mobile = paramRequest.getMobile();
+		
 		return false;
 	}
 
