@@ -61,7 +61,7 @@ public class LoginCtrl {
 					new ErrRtn(ex.getErrCode(), ex.getErrMsg()),
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return new ResponseEntity<Object>(HttpStatus.OK);
+ 		return new ResponseEntity<Object>(HttpStatus.OK);
 	}
 	
 	@PostMapping("/registerByThird")

@@ -22,11 +22,13 @@ import com.f.a.kobe.exceptions.ErrRtn;
 import com.f.a.kobe.exceptions.InvaildException;
 import com.f.a.kobe.pojo.CustomerAddr;
 import com.f.a.kobe.pojo.CustomerBaseInfo;
+import com.f.a.kobe.pojo.CustomerBodyInfo;
 import com.f.a.kobe.pojo.enums.UseDefaultEnum;
 import com.f.a.kobe.pojo.request.ParamRequest;
 import com.f.a.kobe.pojo.view.UserAgent;
 import com.f.a.kobe.service.CustomerAddrService;
 import com.f.a.kobe.service.CustomerBaseInfoService;
+import com.f.a.kobe.service.CustomerBodyInfoService;
 import com.f.a.kobe.util.ObjectTransUtils;
 
 @RestController
@@ -40,6 +42,9 @@ public class CustomerCtrl {
 
 	@Autowired
 	private CustomerAddrService addrService;
+	
+	@Autowired
+	private CustomerBodyInfoService customerBodyInfoService;
 
 	/**
 	 * 获取用户的基础信息
@@ -133,5 +138,16 @@ public class CustomerCtrl {
 		}
 		return new ResponseEntity<Object>(HttpStatus.OK);
 	}
+	
+	@PostMapping("/bodyInfo/add")
+	public ResponseEntity<Object> getBodyInfo(@RequestBody ParamRequest request,UserAgent userAgent){
+		CustomerBodyInfo customerBodyInfo = new CustomerBodyInfo();
+		ObjectTransUtils.copy(customerBodyInfo, request);
+		customerBodyInfoService.registBodyInfo(customerBodyInfo, request.getGender());
+		return new ResponseEntity<Object>(HttpStatus.OK);
+	}
+	
+	
+	
 	
 }

@@ -68,12 +68,13 @@ public class CustomerBodyInfoService {
 		BigDecimal height = new BigDecimal(customerBodyInfo.getHeight());
 		BigDecimal weight = new BigDecimal( customerBodyInfo.getWeight());
 		// bim = 体重kg/身高(m)的二次幂 
-		BigDecimal bmi  = height.divide(weight.divide(new BigDecimal(100)).pow(2)).setScale(2, BigDecimal.ROUND_HALF_UP);
+		BigDecimal w = (height.divide(new BigDecimal(100))).pow(2);
+ 		BigDecimal bmi = weight.divide(w,2,BigDecimal.ROUND_HALF_UP);
 		customerBodyInfo.setBmi(bmi.toString());
 		customerBodyInfo.setRegisterDate(sdf.format(Calendar.getInstance().getTime()));
 		BigDecimal hipline = new BigDecimal(customerBodyInfo.getHipline()); // 臀围
 		BigDecimal waistline = new BigDecimal(customerBodyInfo.getWaistline());//腰围
-		BigDecimal waistHipRatio = waistline.divide(hipline).setScale(2,BigDecimal.ROUND_HALF_UP);
+		BigDecimal waistHipRatio = waistline.divide(hipline,2,BigDecimal.ROUND_HALF_UP);
 		customerBodyInfo.setWaistHipRatio(waistHipRatio.toString()); // 腰臀比
 		manager.insert(customerBodyInfo);
 	}
