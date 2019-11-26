@@ -125,7 +125,7 @@ public class LoginBiz {
 				conditional.setAliOpenid(thirdAuthId);
 			}
 			List<CustomerCredential> list= customerCredentialService.listCustomerCredential(conditional);
-			if(list.isEmpty()) {
+			if(!list.isEmpty()) {
 				throw new InvaildException(ErrEnum.REDUPICATE_BIND.getErrCode(), ErrEnum.REDUPICATE_BIND.getErrMsg());
 			}
 		}

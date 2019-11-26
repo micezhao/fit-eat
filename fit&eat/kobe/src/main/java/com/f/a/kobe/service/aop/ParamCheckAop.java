@@ -35,13 +35,13 @@ public class ParamCheckAop {
 	}
 	
 	@Around(value = "@annotation(ParamCheck)")
+	@SuppressWarnings("unchecked")
 	public ResponseEntity<Object> dofore(ProceedingJoinPoint joinPoint) throws Throwable{
 		ParamCheck paramCheck = ((MethodSignature) joinPoint.getSignature()).getMethod().getAnnotation(ParamCheck.class);
 		String value = paramCheck.value();
 		String clazzName = joinPoint.getSignature().getDeclaringType().getSimpleName();
 		String beanName = extractHandlerName(clazzName);
 		ParamCheckHandler checkHandler = getCheckHandler(beanName+SUFFIX);
-		ParamRequest paramRequest = (ParamRequest)joinPoint.getArgs()[0];
 		Map<String, String> commonCheck = checkHandler.commonCheck(joinPoint.getArgs()[0],value);
 		if(commonCheck != null) {
 			return new ResponseEntity<Object>("非常不ok", HttpStatus.OK); 
