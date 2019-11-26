@@ -11,11 +11,4 @@ public interface ParamCheckHandler {
 	
 	Map<String, String> commonCheck(Object t,String value);
 	
-	boolean insertCheck(Object t);
-	
-	boolean updateCheck(Object t);
-	
-	boolean binding(Object t);
-	
-	
 }
