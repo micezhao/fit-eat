@@ -355,6 +355,22 @@ fit-eat 开发过程的问题记录和经验总结
              *判断当前的请求类型是否能被来自于WebMvcConfigurationSupport中的List<HttpMessageConverter<?>>列表中的解析器某一个write
              */
              最后调用invokeHandlerMethod方法，完成请求的受理
+3、 梳理并完成用户登陆，注册，手机号绑定的功能
+
+第四周(2019/11/15 - 2019/11/29)
+已完成的任务：
+1、完成用户地址信息维护功能
+2、完成用户体征信息结构化数据，构建业务视图并同步到mongodb中
+3、使用CountDownLatch类，在单元测试中使用多线程来方式来测试，通过CountDownLatch也是一种让主线程等待子线程完成后结束的方法，Thread.join() 方式类似
+   有点在于，使用CountDownLatch是异步进行的，子线程不需要排队，非常适用于模拟高并发请求。
+   用法 ：主线程 声明 CountDownLatch countDownLatch = new CountDownLatch(count); // count 是线程计数器，一般与需要开启的线程数量一致
+               子线程： forkThread(CountDownLatch countDownLatch)
+                            --> run(){
+                                // do xxxx
+                                countDownLatch.countDown();  // 子线程run方法中业务执行完成后 调用 countDownLatch.countDown(); 扣减计数器
+                            }
+        主线程： countDownLatch.await();   //主线程等待子线程进行完毕
+
 
 
         
