@@ -23,7 +23,7 @@ public class CustomerBodyInfoService {
 	@Autowired
 	private CustomerBodyInfoManager manager;
 	
-	private static final String COLLECTION_NAME = "customerBodyInfoView";
+	private static final String COLLECTION_NAME = "CustomerBodyInfoView";
 	
 	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	
@@ -31,7 +31,7 @@ public class CustomerBodyInfoService {
 	private MongoTemplate mongoTemplate;
 	
 	private String recordIdBuilder(Long customerId,String preiffxRecordId) {
-		String curDate = sdf.format(Calendar.getInstance().getTime());
+		String curDate = sdf.format(Calendar.getInstance().getTime()).replaceAll("-", "");
 		StringBuffer buffer = new StringBuffer(curDate);
 		if(preiffxRecordId == null ) {
 			buffer.append("00");
@@ -46,7 +46,7 @@ public class CustomerBodyInfoService {
 	 * 注册一条信息的体征记录
 	 * @param customerBodyInfo
 	 */
-	public void registBodyInfo(CustomerBodyInfo customerBodyInfo,String gender) {
+	public CustomerBodyInfoView registBodyInfo(CustomerBodyInfo customerBodyInfo,String gender) {
 		CustomerBodyInfo registedRecord = hasRegisted(customerBodyInfo.getCustomerId());
 		if(registedRecord != null) { //如果存在就先删除
 			delete(registedRecord);
@@ -62,7 +62,10 @@ public class CustomerBodyInfoService {
 		// 使用 mongoTemplate.insert 方法，如果存在相同ID，则程序报错
 		// 使用 mongoTemplate.save 方法，如果存在相同ID，则修改原先的数据，需要遍历整个集合，效率低
 		mongoTemplate.insert(view, COLLECTION_NAME);
+		return view;
 	}
+	
+
 	
 	private void insert(CustomerBodyInfo customerBodyInfo) {
 		BigDecimal height = new BigDecimal(customerBodyInfo.getHeight());
@@ -79,10 +82,11 @@ public class CustomerBodyInfoService {
 		manager.insert(customerBodyInfo);
 	}
 	
-	private void delete(CustomerBodyInfo customerBodyInfo) {
+	private boolean delete(CustomerBodyInfo customerBodyInfo) {
+		Query query = new Query(Criteria.where("_id").is(customerBodyInfo.getId()));
 		manager.delete(customerBodyInfo.getId());
-		Query query = new Query(new Criteria().where("id").is(customerBodyInfo.getId()));
 		boolean isAck = mongoTemplate.remove(query, COLLECTION_NAME).wasAcknowledged();
+		return isAck;
 		
 	}
 	

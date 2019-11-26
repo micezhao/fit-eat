@@ -25,6 +25,7 @@ import com.f.a.kobe.pojo.CustomerBaseInfo;
 import com.f.a.kobe.pojo.CustomerBodyInfo;
 import com.f.a.kobe.pojo.enums.UseDefaultEnum;
 import com.f.a.kobe.pojo.request.ParamRequest;
+import com.f.a.kobe.pojo.view.CustomerBodyInfoView;
 import com.f.a.kobe.pojo.view.UserAgent;
 import com.f.a.kobe.service.CustomerAddrService;
 import com.f.a.kobe.service.CustomerBaseInfoService;
@@ -142,9 +143,10 @@ public class CustomerCtrl {
 	@PostMapping("/bodyInfo/add")
 	public ResponseEntity<Object> getBodyInfo(@RequestBody ParamRequest request,UserAgent userAgent){
 		CustomerBodyInfo customerBodyInfo = new CustomerBodyInfo();
+		request.setCustomerId(userAgent.getCustomerId());
 		ObjectTransUtils.copy(customerBodyInfo, request);
-		customerBodyInfoService.registBodyInfo(customerBodyInfo, request.getGender());
-		return new ResponseEntity<Object>(HttpStatus.OK);
+		CustomerBodyInfoView view = customerBodyInfoService.registBodyInfo(customerBodyInfo, request.getGender());
+		return new ResponseEntity<Object>(view,HttpStatus.OK);
 	}
 	
 	

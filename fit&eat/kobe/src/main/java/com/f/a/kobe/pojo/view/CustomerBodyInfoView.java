@@ -90,6 +90,7 @@ public class CustomerBodyInfoView extends CustomerBodyInfo {
 	public CustomerBodyInfoView build(final CustomerBodyInfo options,final String gender) {
 		this.setId(options.getId());
 		this.setRecordId(options.getRecordId());
+		this.setCustomerId(options.getCustomerId());
 		this.gender = gender;
 		this.setRegisterDate(options.getRegisterDate());
 		this.setHeight(options.getHeight() + LINE_UNIT);

@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoClientDbFactory;
 import org.springframework.data.mongodb.core.convert.DbRefResolver;
 import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
+import org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 
@@ -64,7 +65,7 @@ public class MongoTransConfig {
 		DbRefResolver dbRefResolver = new DefaultDbRefResolver(mongoDbFactory());
 		MappingMongoConverter mappingMongoConverter = new MappingMongoConverter(dbRefResolver, new MongoMappingContext());
 		//实现在向mongodb中插入数据是，不写入 _class : xxx 字段
-		mappingMongoConverter.setTypeMapper(null);
+		mappingMongoConverter.setTypeMapper( new DefaultMongoTypeMapper(null));
 		MongoTemplate mongoTemplate = new MongoTemplate(mongoDbFactory(), mappingMongoConverter);
 		return mongoTemplate;
 	}
