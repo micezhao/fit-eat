@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.f.a.kobe.exceptions.ErrEnum;
-import com.f.a.kobe.manager.aop.ToMongoDB;
 import com.f.a.kobe.mapper.CustomerBodyInfoMapper;
 import com.f.a.kobe.pojo.CustomerBodyInfo;
 import com.f.a.kobe.pojo.CustomerBodyInfoExample;
