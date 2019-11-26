@@ -7,8 +7,8 @@ public class CombinedParamBuilder {
 		this.combinedParam = new CombinedParam();
 	}
 	
-	public CombinedParamBuilder setPhone(String phone ) {
-		this.combinedParam.setPhone(phone);
+	public CombinedParamBuilder setMobile(String mobile ) {
+		this.combinedParam.setMobile(mobile);
 		return this;
 	}
 	

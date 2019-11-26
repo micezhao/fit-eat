@@ -3,11 +3,16 @@ package com.f.a.kobe.service.aop;
 import java.util.Locale;
 import java.util.Map;
 
-import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+
+import com.f.a.kobe.pojo.request.ParamRequest;
 
 @Aspect
 @Component
@@ -29,11 +34,20 @@ public class ParamCheckAop {
 		
 	}
 	
-	@Before(value = "@annotation(ParamCheck)")
-	public void dofore(JoinPoint joinPoint) throws ClassNotFoundException {
-	
+	@Around(value = "@annotation(ParamCheck)")
+	public ResponseEntity<Object> dofore(ProceedingJoinPoint joinPoint) throws Throwable{
+		ParamCheck paramCheck = ((MethodSignature) joinPoint.getSignature()).getMethod().getAnnotation(ParamCheck.class);
+		String value = paramCheck.value();
 		String clazzName = joinPoint.getSignature().getDeclaringType().getSimpleName();
-		getCheckHandler(extractHandlerName(clazzName)).commonCheck(joinPoint.getArgs()[0]); 
+		String beanName = extractHandlerName(clazzName);
+		ParamCheckHandler checkHandler = getCheckHandler(beanName+SUFFIX);
+		ParamRequest paramRequest = (ParamRequest)joinPoint.getArgs()[0];
+		Map<String, String> commonCheck = checkHandler.commonCheck(joinPoint.getArgs()[0],value);
+		if(commonCheck != null) {
+			return new ResponseEntity<Object>("非常不ok", HttpStatus.OK); 
+		}
+		joinPoint.proceed();
+		return new ResponseEntity<Object>("非常ok", HttpStatus.OK); 
 	}
 	
 	// 抽取校验器的beanName

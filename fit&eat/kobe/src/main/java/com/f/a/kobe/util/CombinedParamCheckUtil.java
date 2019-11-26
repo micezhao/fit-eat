@@ -18,28 +18,49 @@ public class CombinedParamCheckUtil {
 	
 	public static Map<String,String> notEmptyResultMap = new HashMap<String,String>();
 	
-	public boolean check() throws Exception{
+	public Map<String,String> check() throws Exception{
 		Method[] methods = this.combinedParam.getClass().getMethods();
 		for(Method method : methods) {
 			String methodName = method.getName();
 			if(methodName.contains("get")) {
 				Object invoke = method.invoke(this.combinedParam, null);
 				if(invoke != null && !methodName.contains("Class")) {
-					String methodCheck = methodName+"Check";
-					
 					Method method2 = CombinedParamCheckUtil.class.getMethod(methodName+"Check",Object.class);
-					boolean invoke2 = (boolean)method2.invoke(this, invoke);
+					Result result = (Result)method2.invoke(this, invoke);
+					if(!result.tag) {
+						errResultMap.put(result.errCode,result.errMsg);
+					}
 				}
 			}
 		}
-		
-		return true;
+		if(!errResultMap.isEmpty()) {
+			return errResultMap;
+		}
+		return null;
 	}
 	
-	public boolean getPhoneCheck(Object obj) {
-		
+	class Result{
+		public Result(boolean tag, String errCode, String errMsg) {
+			super();
+			this.tag = tag;
+			this.errCode = errCode;
+			this.errMsg = errMsg;
+		}
+		public Result(boolean tag) {
+			super();
+			this.tag = tag;
+		}
+		boolean tag;
+		String errCode;
+		String errMsg;
+	}
+	
+	public Result getMobileCheck(Object obj) {
 		String phone = (String)obj;
-		return true;
+		if(phone.length() != 11) {
+			return new Result(false,"mobile","手机号格式错误");
+		}
+		return new Result(true);
 	}
 	
 	

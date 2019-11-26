@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class CombinedParam {
 
-	private String phone;
+	private String mobile;
 	
 	private Integer age;
 	

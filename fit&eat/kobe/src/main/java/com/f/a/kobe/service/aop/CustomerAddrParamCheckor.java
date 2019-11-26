@@ -1,5 +1,7 @@
 package com.f.a.kobe.service.aop;
 
+import java.util.Map;
+
 import org.springframework.stereotype.Component;
 
 import com.f.a.kobe.pojo.CustomerAddr;
@@ -13,7 +15,7 @@ import com.f.a.kobe.util.CombinedParamCheckUtil;
 public class  CustomerAddrParamCheckor implements ParamCheckHandler{
 
 	@Override
-	public boolean commonCheck(Object obj) {
+	public Map<String, String> commonCheck(Object obj,String value) {
 		CustomerAddr customerAddr = (CustomerAddr)obj;
 		customerAddr.setConnectorMobile("15827310817");
 		String connectorMobile = customerAddr.getConnectorMobile();
@@ -22,15 +24,15 @@ public class  CustomerAddrParamCheckor implements ParamCheckHandler{
 		CombinedParamCheckUtil.checkEmpty(connectorMobile, "connectorMobile", "联系人电话不得为空");
 		CombinedParamCheckUtil.checkEmpty(addrDetail, "addrDetail", "联系人详细地址不得为空");
 		CombinedParamCheckUtil.checkEmpty(connectorName, "connectorName", "联系人姓名不得为空");
-		CombinedParam combinedParam = new CombinedParamBuilder().setPhone(customerAddr.getConnectorMobile()).build();
+		CombinedParam combinedParam = new CombinedParamBuilder().setMobile(customerAddr.getConnectorMobile()).build();
 		CombinedParamCheckUtil cutil = new CombinedParamCheckUtil();
 		cutil.setCombinedParam(combinedParam);
 		try {
-			cutil.check();
+			return cutil.check();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return false;
+		return null;
 	}
 
 	@Override
