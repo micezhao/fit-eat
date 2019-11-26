@@ -46,8 +46,8 @@ public class ParamCheckAop {
 		if(commonCheck != null) {
 			return new ResponseEntity<Object>("非常不ok", HttpStatus.OK); 
 		}
-		joinPoint.proceed();
-		return new ResponseEntity<Object>("非常ok", HttpStatus.OK); 
+		ResponseEntity<Object> proceed = (ResponseEntity<Object>)joinPoint.proceed();
+		return proceed;
 	}
 	
 	// 抽取校验器的beanName
