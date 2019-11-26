@@ -4,6 +4,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +31,16 @@ public class ParamCheckAop {
 	}
 	
 	@Before(value = "@annotation(ParamCheck)")
-	public void dofore(JoinPoint joinPoint) throws ClassNotFoundException {
-	
+	public void dofore(ProceedingJoinPoint joinPoint) throws ClassNotFoundException {
+		Object[] args = joinPoint.getArgs();
 		String clazzName = joinPoint.getSignature().getDeclaringType().getSimpleName();
 		getCheckHandler(extractHandlerName(clazzName)).commonCheck(joinPoint.getArgs()[0]); 
+		try {
+			joinPoint.proceed(args);
+		} catch (Throwable e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	// 抽取校验器的beanName
