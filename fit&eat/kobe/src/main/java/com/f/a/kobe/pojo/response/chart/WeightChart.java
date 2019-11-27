@@ -18,4 +18,6 @@ public class WeightChart {
 	private String fatContent;
 	
 	private String muscleContent;
+	
+	private String otherWeight;
 }	
