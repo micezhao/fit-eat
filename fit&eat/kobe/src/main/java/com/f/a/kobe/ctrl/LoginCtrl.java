@@ -44,9 +44,10 @@ public class LoginCtrl {
 		return loginBiz.getServiceInstance(loginType);
 	}
 
+	@ParamCheck("authCode")
 	@PostMapping("/getAuthCode")
 	public ResponseEntity<AuthBo> getAuthCode(@RequestBody ParamRequest request) {
-		// 2.获取授权结果
+		//2.获取授权结果
 		AuthBo authResult = getServiceInstance(request.getLoginType()).getAuthInfoByLoginRequest(request);
 		return new ResponseEntity<AuthBo>(authResult, HttpStatus.OK);
 	}

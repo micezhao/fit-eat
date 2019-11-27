@@ -17,10 +17,21 @@ public class LoginCtrlParamCheckor implements ParamCheckHandler{
 	public Map<String, String> commonCheck(Object t,String value) {
 		if(value.equals("binding")) {
 			return binding(t);
+		}else if(value.equals("authCode")) {
+			return authCode(t);
 		}
 		else {
 			throw new InvaildException("9999", "找不到合适的校验规则");
 		}
+	}
+
+	private Map<String, String> authCode(Object t) {
+		ParamRequest paramRequest = (ParamRequest)t;
+		boolean checkEmpty = CombinedParamCheckUtil.checkEmpty(paramRequest.getCode(), "authCode",  "请求code不允许为空");
+		if(!checkEmpty) {
+			throw new InvaildException("molibe", "联系人电话不得为空");
+		}
+		return null;
 	}
 
 	private Map<String, String> binding(Object t) {
