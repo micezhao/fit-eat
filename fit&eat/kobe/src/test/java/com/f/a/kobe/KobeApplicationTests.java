@@ -8,6 +8,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.f.a.kobe.manager.CustomerBaseInfoManager;
 import com.f.a.kobe.pojo.CustomerBaseInfo;
+import com.f.a.kobe.service.CustomerBodyInfoService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -19,6 +20,9 @@ class KobeApplicationTests {
 	@Test
 	void contextLoads() {
 	}
+	
+	@Autowired
+	private CustomerBodyInfoService bodyService;
 	
 	@Test
 	void test1() {
