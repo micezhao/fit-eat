@@ -6,8 +6,12 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.CriteriaDefinition;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +19,7 @@ import com.f.a.kobe.exceptions.ErrEnum;
 import com.f.a.kobe.exceptions.InvaildException;
 import com.f.a.kobe.manager.CustomerBodyInfoManager;
 import com.f.a.kobe.pojo.CustomerBodyInfo;
+import com.f.a.kobe.pojo.response.chart.WeightChart;
 import com.f.a.kobe.pojo.view.CustomerBodyInfoView;
 
 @Service
@@ -108,12 +113,18 @@ public class CustomerBodyInfoService {
 		}
 	}
 	
-	public List<CustomerBodyInfoView> listCustomerBodyInfoView(){
+	/**
+	 * 获取用户体重信息的图表数据
+	 * @param customerId
+	 * @param startDate
+	 * @param endDate
+	 * @return
+	 */
+	public List<WeightChart> getWeightChart(Long customerId,String startDate,String endDate){
 		Query query = new Query();
-		// 封装查询条件
-		//query.addCriteria(criteriaDefinition);
-		mongoTemplate.find(query, CustomerBodyInfoView.class);
-		return null;
+		query.addCriteria(Criteria.where("customerId").is(customerId)) ;
+		query.addCriteria(Criteria.where("registerDate").gte(startDate).lte(endDate));
+		return mongoTemplate.find(query, WeightChart.class, COLLECTION_NAME);
 	}
 	
 	
