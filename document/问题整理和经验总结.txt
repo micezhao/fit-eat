@@ -370,6 +370,13 @@ fit-eat 开发过程的问题记录和经验总结
                                 countDownLatch.countDown();  // 子线程run方法中业务执行完成后 调用 countDownLatch.countDown(); 扣减计数器
                             }
         主线程： countDownLatch.await();   //主线程等待子线程进行完毕
+4、关于mysql-connector-java 8.0X 版本的jdbc连接配置的正确写法
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://118.190.53.214:3386/fa_kobe?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
+
+5、开发chart数据视图功能
+
+
 
 
 
