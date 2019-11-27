@@ -155,23 +155,6 @@ public class CustomerCtrl {
 		CustomerBodyInfoView view = customerBodyInfoService.registBodyInfo(customerBodyInfo, request.getGender());
 		return new ResponseEntity<Object>(view,HttpStatus.OK);
 	}
-	
-	@GetMapping("/bodyInfo/weightChart/{seletcion}")
-	public ResponseEntity<Object> weightChart(@PathVariable("seletcion") int seletcion,UserAgent userAgent){
-		DateSelection selection = DateUtils.getDateSelection(seletcion);
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		List<WeightChart> list = customerBodyInfoService.getWeightChart(userAgent.getCustomerId(),
-				sdf.format(selection.getStratDate()),
-				sdf.format(selection.getEndDate()));
-		return new ResponseEntity<Object>(list,HttpStatus.OK);
-	}
-	
-	
-	
-	
-	
-	
-	
-	
+
 	
 }

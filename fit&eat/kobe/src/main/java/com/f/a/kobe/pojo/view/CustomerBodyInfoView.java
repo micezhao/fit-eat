@@ -1,5 +1,7 @@
 package com.f.a.kobe.pojo.view;
 
+import java.math.BigDecimal;
+
 import com.f.a.kobe.pojo.CustomerBodyInfo;
 import com.f.a.kobe.service.handler.offset.OffsetHandler;
 import com.f.a.kobe.service.handler.offset.OffsetStrategy;
@@ -22,10 +24,13 @@ public class CustomerBodyInfoView extends CustomerBodyInfo {
 	private static final String PRESSURE_UNIT = "mm/Hg";
 	
 	
+	
 	private String gender;
 
 	// 腰臀比偏移量
 	private String whrOffset;
+	
+	private String otherWeight;
 
 	// 体脂率偏移量
 	private String fatpercentagetOffset;
@@ -45,6 +50,16 @@ public class CustomerBodyInfoView extends CustomerBodyInfo {
 
 	public void setGender(String gender) {
 		this.gender = gender;
+	}
+	
+	
+	
+	public String getOtherWeight() {
+		return otherWeight;
+	}
+
+	public void setOtherWeight(String otherWeight) {
+		this.otherWeight = otherWeight;
 	}
 
 	public String getWhrOffset() {
@@ -105,6 +120,10 @@ public class CustomerBodyInfoView extends CustomerBodyInfo {
 		this.setRightThighCircumference(options.getRightThighCircumference() + LINE_UNIT);
 		this.setFatPercentage(options.getFatPercentage() + PERCENT_UNIT);
 		this.setFatContent(options.getFatContent() + WEIGHT_UNIT);
+		BigDecimal otherWeightBd = new BigDecimal(options.getWeight())
+							.subtract(new BigDecimal(options.getFatContent()))
+							.subtract(new BigDecimal(options.getMuscleContent())).setScale(2,BigDecimal.ROUND_HALF_UP);
+		this.setOtherWeight(otherWeightBd.toString()+WEIGHT_UNIT);
 		this.setHeartRate(options.getHeartRate() + RATE_UNIT);
 		this.setSdp(options.getSdp() + PRESSURE_UNIT);
 		this.setDbp(options.getDbp() + PRESSURE_UNIT);

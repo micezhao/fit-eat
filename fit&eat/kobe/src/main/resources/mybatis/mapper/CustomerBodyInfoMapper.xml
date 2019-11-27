@@ -32,8 +32,8 @@
     <result column="ext4" property="ext4" jdbcType="VARCHAR" />
     <result column="ext5" property="ext5" jdbcType="VARCHAR" />
     <result column="bmi" property="bmi" jdbcType="VARCHAR" />
-    <result column="cdt" property="cdt" jdbcType="DATE" />
-    <result column="mdt" property="mdt" jdbcType="DATE" />
+    <result column="cdt" property="cdt" jdbcType="TIMESTAMP" />
+    <result column="mdt" property="mdt" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <!--
@@ -355,10 +355,10 @@
         #{bmi,jdbcType=VARCHAR},
       </if>
       <if test="cdt != null" >
-        #{cdt,jdbcType=DATE},
+        #{cdt,jdbcType=TIMESTAMP},
       </if>
       <if test="mdt != null" >
-        #{mdt,jdbcType=DATE},
+        #{mdt,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -458,10 +458,10 @@
         bmi = #{record.bmi,jdbcType=VARCHAR},
       </if>
       <if test="record.cdt != null" >
-        cdt = #{record.cdt,jdbcType=DATE},
+        cdt = #{record.cdt,jdbcType=TIMESTAMP},
       </if>
       <if test="record.mdt != null" >
-        mdt = #{record.mdt,jdbcType=DATE},
+        mdt = #{record.mdt,jdbcType=TIMESTAMP},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -500,8 +500,8 @@
       ext4 = #{record.ext4,jdbcType=VARCHAR},
       ext5 = #{record.ext5,jdbcType=VARCHAR},
       bmi = #{record.bmi,jdbcType=VARCHAR},
-      cdt = #{record.cdt,jdbcType=DATE},
-      mdt = #{record.mdt,jdbcType=DATE}
+      cdt = #{record.cdt,jdbcType=TIMESTAMP},
+      mdt = #{record.mdt,jdbcType=TIMESTAMP}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -589,10 +589,10 @@
         bmi = #{bmi,jdbcType=VARCHAR},
       </if>
       <if test="cdt != null" >
-        cdt = #{cdt,jdbcType=DATE},
+        cdt = #{cdt,jdbcType=TIMESTAMP},
       </if>
       <if test="mdt != null" >
-        mdt = #{mdt,jdbcType=DATE},
+        mdt = #{mdt,jdbcType=TIMESTAMP},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
@@ -628,8 +628,8 @@
       ext4 = #{ext4,jdbcType=VARCHAR},
       ext5 = #{ext5,jdbcType=VARCHAR},
       bmi = #{bmi,jdbcType=VARCHAR},
-      cdt = #{cdt,jdbcType=DATE},
-      mdt = #{mdt,jdbcType=DATE}
+      cdt = #{cdt,jdbcType=TIMESTAMP},
+      mdt = #{mdt,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>
