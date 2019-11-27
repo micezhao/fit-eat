@@ -18,6 +18,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.f.a.kobe.manager.RegionManager;
 import com.f.a.kobe.pojo.Areas;
 
@@ -97,7 +98,8 @@ public class RegionService {
 	}
 
 	public String getAreaName(String areaKey) {
-		Areas areas = (Areas) regionRedisTemplate.opsForHash().get(KEY_AREA, areaKey);
+		String areaString = JSONObject.toJSONString(regionRedisTemplate.opsForHash().get(KEY_AREA, areaKey));
+		Areas areas = JSONObject.parseObject(areaString, Areas.class);
 		return areas.getAreaname();
 	}
 

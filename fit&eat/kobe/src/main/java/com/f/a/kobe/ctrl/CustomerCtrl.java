@@ -34,6 +34,7 @@ import com.f.a.kobe.pojo.view.UserAgent;
 import com.f.a.kobe.service.CustomerAddrService;
 import com.f.a.kobe.service.CustomerBaseInfoService;
 import com.f.a.kobe.service.CustomerBodyInfoService;
+import com.f.a.kobe.service.aop.ParamCheck;
 import com.f.a.kobe.util.DateUtils;
 import com.f.a.kobe.util.ObjectTransUtils;
 
@@ -91,12 +92,13 @@ public class CustomerCtrl {
 		return new ResponseEntity<Object>(addrlist, HttpStatus.OK);
 	}
 
+	@ParamCheck("addAddr")
 	@PostMapping("/addr/add")
 	public ResponseEntity<Object> addCustomerAddr(@RequestBody ParamRequest request, UserAgent userAgent,
 			HttpSession session) {
 		CustomerAddr customerAddr = new CustomerAddr();
-		customerAddr.setCustomerId(userAgent.getCustomerId());
 		ObjectTransUtils.copy(customerAddr, request);
+		customerAddr.setCustomerId(userAgent.getCustomerId());
 		addrService.insertAddr(customerAddr);
 		if (StringUtils.equals(UseDefaultEnum.USE_DEFAULT.getCode(), customerAddr.getUseDefault())) {
 			userAgent.setDefaultAddrId(String.valueOf(customerAddr.getAddrId()));

@@ -27,18 +27,18 @@ public class LoginCtrlParamCheckor implements ParamCheckHandler{
 
 	private Map<String, String> authCode(Object t) {
 		ParamRequest paramRequest = (ParamRequest)t;
-		boolean checkEmpty = CombinedParamCheckUtil.checkEmpty(paramRequest.getCode(), "authCode",  "请求code不允许为空");
-		if(!checkEmpty) {
-			throw new InvaildException("molibe", "联系人电话不得为空");
+		Map<String, String> checkEmpty = CombinedParamCheckUtil.checkEmpty(paramRequest.getCode(), "authCode",  "请求code不允许为空");
+		if(checkEmpty != null) {
+			return checkEmpty;
 		}
 		return null;
 	}
 
 	private Map<String, String> binding(Object t) {
 		ParamRequest paramRequest = (ParamRequest)t;
-		boolean checkEmpty = CombinedParamCheckUtil.checkEmpty(paramRequest.getMobile(), "molibe",  "联系人电话不得为空");
-		if(!checkEmpty) {
-			throw new InvaildException("molibe", "联系人电话不得为空");
+		Map<String, String> checkEmpty = CombinedParamCheckUtil.checkEmpty(paramRequest.getMobile(), "molibe",  "联系人电话不得为空");
+		if(checkEmpty != null) {
+			return checkEmpty;
 		}
 		CombinedParam combinedParam = new CombinedParamBuilder().setMobile(paramRequest.getMobile()).build();
 		CombinedParamCheckUtil cutil = new CombinedParamCheckUtil();

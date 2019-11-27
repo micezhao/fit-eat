@@ -1,14 +1,13 @@
 package com.f.a.kobe.util;
 
-import lombok.Data;
+import com.f.a.kobe.pojo.request.ParamRequest;
 
-@Data
-public class CombinedParam {
+public class CombinedParam extends ParamRequest{
 
-	private String mobile;
-	
-	private Integer age;
-	
-	private Long customerId;
+//	private String mobile;
+//	
+//	private Integer age;
+//	
+//	private Long customerId;
 	
 }

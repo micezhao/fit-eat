@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
@@ -28,9 +29,12 @@ public class WebConfig extends WebMvcConfigurationSupport {
 	
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(new UserSessionInterceptor()).addPathPatterns("/**").
-			excludePathPatterns("/login/getAuthCode","/login/registerByThird","/login/thirdPart/**");
+		UserSessionInterceptor userSessionInterceptor = new UserSessionInterceptor();
+		InterceptorRegistration addInterceptor = registry.addInterceptor(userSessionInterceptor);
+		addInterceptor.addPathPatterns("/**");
+		addInterceptor.excludePathPatterns("/login/getAuthCode","/login/registerByThird","/login/thirdPart/**");
 	}
+	
 	/**
 	 * 注册一个自定义的对象解析器
 	 */

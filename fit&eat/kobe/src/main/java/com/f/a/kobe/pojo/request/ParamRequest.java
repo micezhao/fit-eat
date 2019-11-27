@@ -43,6 +43,8 @@ public class ParamRequest {
 	private String distrcNo;
 
 	private String connectorMobile;
+	
+	private String addrDetail;
 
 	private String connectorName;
 

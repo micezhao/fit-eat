@@ -15,7 +15,7 @@ public class UserSessionInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
-		response.setCharacterEncoding("utf-8");;
+		response.setCharacterEncoding("utf-8");
 		response.setContentType("application/json; charset=utf-8");
 		if(request.getSession().getAttribute(SystemContanst.USER_AGENT) == null ) {
 			response.setStatus(HttpStatus.SC_NON_AUTHORITATIVE_INFORMATION);

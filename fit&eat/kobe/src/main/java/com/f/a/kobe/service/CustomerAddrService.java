@@ -48,6 +48,9 @@ public class CustomerAddrService {
 		}
 		
 		customerAddr.setAddrId(idWorker.nextId()); //生成一个序列号
+//		String provinceNo = customerAddr.getProvinceNo();
+//		String cityNo = customerAddr.getCityNo();
+//		String distrcNo = customerAddr.getDistrcNo();
 		String provinceName = regionService.getAreaName(customerAddr.getProvinceNo());
 		customerAddr.setProvinceName(provinceName);
 		String cityName = regionService.getAreaName(customerAddr.getCityNo());

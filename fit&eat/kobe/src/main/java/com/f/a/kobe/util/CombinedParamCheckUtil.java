@@ -63,6 +63,54 @@ public class CombinedParamCheckUtil {
 		return new Result(true);
 	}
 	
+	public Result getConnectorNameCheck(Object obj) {
+		String phone = (String)obj;
+		if(phone.length() > 11) {
+			return new Result(false,"ConnectorName","联系人名称不恰当");
+		}
+		return new Result(true);
+	}
+	
+	public Result getConnectorMobileCheck(Object obj) {
+		String phone = (String)obj;
+		if(phone.length() != 11) {
+			return new Result(false,"mobile","手机号格式错误");
+		}
+		return new Result(true);
+	}
+	
+	public Result getProvinceNoCheck(Object obj) {
+		String phone = (String)obj;
+		if(phone.length() != 6) {
+			return new Result(false,"ProvinceNo","省编码错误");
+		}
+		return new Result(true);
+	}
+	
+	public Result getCityNoCheck(Object obj) {
+		String phone = (String)obj;
+		if(phone.length() != 6) {
+			return new Result(false,"CityNo","市编码错误");
+		}
+		return new Result(true);
+	}
+	
+	public Result getDistrcNoCheck(Object obj) {
+		String phone = (String)obj;
+		if(phone.length() != 6) {
+			return new Result(false,"DistrcNo","区编码式错误");
+		}
+		return new Result(true);
+	}
+	
+	public Result getAddrDetailCheck(Object obj) {
+		String phone = (String)obj;
+		if(phone.length() > 100) {
+			return new Result(false,"AddrDetail","详细地址");
+		}
+		return new Result(true);
+	}
+	
 	
 	public static boolean checkEmpty(Integer value,String attrName,String tip) {
 		return false;
@@ -72,11 +120,12 @@ public class CombinedParamCheckUtil {
 		return false;
 	}
 	
-	public static boolean checkEmpty(String value,String attrName,String tip) {
+	public static Map<String, String> checkEmpty(String value,String attrName,String tip) {
 		if(StringUtils.isEmpty(value)) {
 			notEmptyResultMap.put(attrName,tip);
-			return false;
+			return notEmptyResultMap;
 		}
-		return true;
+		return null;
 	}
+
 }
