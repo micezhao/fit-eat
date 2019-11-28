@@ -74,7 +74,10 @@ public class CustomerCtrl {
 			HttpSession session) {
 		CustomerBaseInfo customerBaseInfo = new CustomerBaseInfo();
 		ObjectTransUtils.copy(customerBaseInfo, request);
+		customerBaseInfo.setCustomerId(userAgent.getCustomerId());
+		customerBaseInfo.setMobile(userAgent.getMobile());
 		customerBaseInfoService.updateCustomer(customerBaseInfo);
+		
 		logger.info("用户基本信息完成,当前用户基本信息:{}", customerBaseInfo.toString());
 		ObjectTransUtils.copy(userAgent, customerBaseInfo);
 		session.setAttribute(SystemContanst.USER_AGENT, userAgent);
