@@ -15,7 +15,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 
 import com.f.a.kobe.config.webconfig.interceptor.UserAgentResolver;
 import com.f.a.kobe.config.webconfig.interceptor.UserSessionInterceptor;
-import com.f.a.kobe.config.webconfig.interceptor.UserStatusInterceptor;
 
 @Configuration
 public class WebConfig extends WebMvcConfigurationSupport {
@@ -30,14 +29,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
 	
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		UserSessionInterceptor userSessionInterceptor = new UserSessionInterceptor();
-		UserStatusInterceptor userStatusInterceptor = new UserStatusInterceptor();
-		InterceptorRegistration addInterceptor = registry.addInterceptor(userSessionInterceptor);
-		InterceptorRegistration addInterceptor2 = registry.addInterceptor(userStatusInterceptor);
-		addInterceptor.addPathPatterns("/**");
-		addInterceptor.excludePathPatterns("/login/getAuthCode","/login/registerByThird","/login/thirdPart/**");
-		addInterceptor2.addPathPatterns("/**");
-		addInterceptor2.excludePathPatterns("/login/**");
+		registry.addInterceptor(new UserSessionInterceptor()).addPathPatterns("/**").excludePathPatterns("/login/getAuthCode","/login/registerByThird","/login/thirdPart/**");
 	}
 	
 	/**

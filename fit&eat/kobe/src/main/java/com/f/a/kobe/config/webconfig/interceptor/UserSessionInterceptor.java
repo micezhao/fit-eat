@@ -5,10 +5,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.HttpStatus;
+import org.springframework.util.StringUtils;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import com.alibaba.fastjson.JSONObject;
 import com.f.a.kobe.config.contants.SystemContanst;
+import com.f.a.kobe.pojo.view.UserAgent;
 
 public class UserSessionInterceptor implements HandlerInterceptor {	
 	
@@ -24,7 +27,20 @@ public class UserSessionInterceptor implements HandlerInterceptor {
 			json.put("desc", "Non Authoritative Information");
 			writer.write(json.toJSONString());
 			return false;
-		}        
+		}
+		Object object = request.getSession().getAttribute(SystemContanst.USER_AGENT);
+		UserAgent userAgent = JSONObject.parseObject(JSONObject.toJSONString(object), UserAgent.class);
+		String name = ((HandlerMethod)handler).getMethod().getName();
+		if(!("binding".equals(name)||"logout".equals(name))) {
+			if(StringUtils.isEmpty(userAgent.getMobile())) {
+				response.setStatus(HttpStatus.SC_NOT_ACCEPTABLE);
+				PrintWriter writer = response.getWriter();
+				JSONObject json = new JSONObject();
+				json.put("desc", "Non Finished Binding Access Refused");
+				writer.write(json.toJSONString());
+				return false;
+			}
+		}
 		return true;
 	}
 }
