@@ -114,7 +114,7 @@ public class CustomerBodyInfoService {
 	}
 	
 	/**
-	 * 获取用户体重信息的图表数据
+	 * 获取用户体重信息的图表数据 堆叠柱状图
 	 * @param customerId
 	 * @param startDate
 	 * @param endDate
