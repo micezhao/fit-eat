@@ -1,6 +1,7 @@
 package com.f.a.kobe.util;
 
 public class CombinedParamBuilder {
+	
 	CombinedParam combinedParam;
 	
 	private Long id;
@@ -39,6 +40,8 @@ public class CombinedParamBuilder {
 	private String cityNo;
 
 	private String distrcNo;
+	
+	private String streetNo;
 
 	private String connectorMobile;
 
@@ -102,6 +105,11 @@ public class CombinedParamBuilder {
 	
 	public CombinedParamBuilder() {
 		this.combinedParam = new CombinedParam();
+	}
+	
+	public CombinedParamBuilder setStreetNo(String streetNo ) {
+		this.combinedParam.setStreetNo(streetNo);
+		return this;
 	}
 	
 	public CombinedParamBuilder setAddrDetail(String addrDetail ) {

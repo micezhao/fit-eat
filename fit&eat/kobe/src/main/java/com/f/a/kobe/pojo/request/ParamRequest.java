@@ -41,6 +41,8 @@ public class ParamRequest {
 	private String cityNo;
 
 	private String distrcNo;
+	
+	private String streetNo;
 
 	private String connectorMobile;
 	

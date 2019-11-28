@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.codec.binary.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -48,9 +48,6 @@ public class CustomerAddrService {
 		}
 		
 		customerAddr.setAddrId(idWorker.nextId()); //生成一个序列号
-//		String provinceNo = customerAddr.getProvinceNo();
-//		String cityNo = customerAddr.getCityNo();
-//		String distrcNo = customerAddr.getDistrcNo();
 		String provinceName = regionService.getAreaName(customerAddr.getProvinceNo());
 		customerAddr.setProvinceName(provinceName);
 		String cityName = regionService.getAreaName(customerAddr.getCityNo());
@@ -62,6 +59,11 @@ public class CustomerAddrService {
 		idList.add(customerAddr.getProvinceNo());
 		idList.add(customerAddr.getCityNo());
 		idList.add(customerAddr.getDistrcNo());
+		String streetNo = customerAddr.getStreetNo();
+		if(!StringUtils.isEmpty(streetNo)) {
+			customerAddr.setStreetName(regionService.getAreaName(streetNo));
+			idList.add(streetNo);
+		}
 		String areaBefore = regionService.getAreaName(idList);
 		areaDetailBuffer.append(areaBefore).append(customerAddr.getAddrDetail()); // 组合详细地址信息
 		customerAddr.setAddrDetail(areaDetailBuffer.toString());
