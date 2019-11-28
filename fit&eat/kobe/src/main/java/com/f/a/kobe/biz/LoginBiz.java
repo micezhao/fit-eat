@@ -114,11 +114,25 @@ public class LoginBiz {
 	// 检查这个用户的是否绑定了手机号
 	public boolean checkMobileBinded(String mobile, Long customerId,String loginType, String  thirdAuthId) {
 		CustomerCredentialService customerCredentialService = getServiceInstance(loginType);
+		//同一手机号不允许在相同渠道注册多次
+		CustomerCredential conditional = new CustomerCredential();
+		conditional.setMobile(mobile);
+		List<CustomerCredential> listCustomerCredential = customerCredentialService.listCustomerCredential(conditional);
+		if(!listCustomerCredential.isEmpty()) {
+			CustomerCredential customerCredential = listCustomerCredential.get(0);
+			if (LoginTypeEnum.getLoginTypeEnum(loginType) == LoginTypeEnum.WECHAT && !customerCredential.getWxOpenid().isEmpty()) {
+				throw new InvaildException(ErrEnum.REDUPICATE_BIND.getErrCode(), ErrEnum.REDUPICATE_BIND.getErrMsg());
+			} else if (LoginTypeEnum.getLoginTypeEnum(loginType) == LoginTypeEnum.ALI_PAY && !customerCredential.getAliOpenid().isEmpty()) {
+				throw new InvaildException(ErrEnum.REDUPICATE_BIND.getErrCode(), ErrEnum.REDUPICATE_BIND.getErrMsg());
+			}
+		}
+		
 		// 如果当前的三方授权码不为空，则在检查绑定状态前，先判断当前操作是否存在重复绑定
 		if(StringUtils.isNotBlank(thirdAuthId)) {
-			CustomerCredential conditional = new CustomerCredential();
+			conditional = new CustomerCredential();
 			conditional.setCustomerId(customerId);
 			conditional.setMobile(mobile);
+			
 			if (LoginTypeEnum.getLoginTypeEnum(loginType) == LoginTypeEnum.WECHAT) {
 				conditional.setWxOpenid(thirdAuthId);
 			} else if (LoginTypeEnum.getLoginTypeEnum(loginType) == LoginTypeEnum.ALI_PAY) {

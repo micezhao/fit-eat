@@ -20,6 +20,7 @@ import com.f.a.kobe.exceptions.InvaildException;
 import com.f.a.kobe.manager.CustomerBaseInfoManager;
 import com.f.a.kobe.pojo.CustomerBaseInfo;
 import com.f.a.kobe.pojo.enums.DrEnum;
+import com.f.a.kobe.pojo.enums.LoginTypeEnum;
 import com.f.a.kobe.util.IdWorker;
 
 @Service
@@ -99,8 +100,8 @@ public class CustomerBaseInfoService {
 		CustomerBaseInfo conditional = new CustomerBaseInfo();
 		conditional.setCustomerId(customerId);
 		conditional.setMobile(mobile);
-		List<CustomerBaseInfo> list=customerBaseInfoManager.listByConditional(conditional);
-		return list.isEmpty() == true ? false:true;
+		List<CustomerBaseInfo> list = customerBaseInfoManager.listByConditional(conditional);
+		return list.isEmpty() == true ? false : true;
 	}
 
 	/**

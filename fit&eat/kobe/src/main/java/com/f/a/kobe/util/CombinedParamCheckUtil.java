@@ -74,7 +74,15 @@ public class CombinedParamCheckUtil {
 	public Result getConnectorMobileCheck(Object obj) {
 		String phone = (String)obj;
 		if(phone.length() != 11) {
-			return new Result(false,"mobile","手机号格式错误");
+			return new Result(false,"cConnectorMobile","手机号格式错误");
+		}
+		return new Result(true);
+	}
+	
+	public Result getCodeCheck(Object obj) {
+		String phone = (String)obj;
+		if(phone.length() > 100) {
+			return new Result(false,"code","微信授权code失效");
 		}
 		return new Result(true);
 	}
@@ -99,6 +107,14 @@ public class CombinedParamCheckUtil {
 		String phone = (String)obj;
 		if(phone.length() != 6) {
 			return new Result(false,"DistrcNo","区编码式错误");
+		}
+		return new Result(true);
+	}
+	
+	public Result getStreetNoCheck(Object obj) {
+		String phone = (String)obj;
+		if(phone.length() > 20) {
+			return new Result(false,"StreetNo","街道编码式错误");
 		}
 		return new Result(true);
 	}
