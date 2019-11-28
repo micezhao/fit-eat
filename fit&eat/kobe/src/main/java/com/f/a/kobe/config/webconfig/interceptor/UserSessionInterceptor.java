@@ -24,7 +24,7 @@ public class UserSessionInterceptor implements HandlerInterceptor {
 			json.put("desc", "Non Authoritative Information");
 			writer.write(json.toJSONString());
 			return false;
-		}
+		}        
 		return true;
 	}
 }
