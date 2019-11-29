@@ -108,7 +108,7 @@ public class CombinedParamCheckUtil {
 	public Result getConnectorMobileCheck(Object obj) {
 		String phone = (String) obj;
 		if (phone.length() != 11) {
-			return new Result(false, "cConnectorMobile", "手机号格式错误");
+			return new Result(false, "ConnectorMobile", "手机号格式错误");
 		}
 		return new Result(true);
 	}

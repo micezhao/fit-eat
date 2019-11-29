@@ -3,14 +3,17 @@ package com.f.a.kobe.manager;
 import java.util.Calendar;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.f.a.kobe.exceptions.ErrEnum;
+import com.f.a.kobe.exceptions.InvaildException;
 import com.f.a.kobe.mapper.CustomerBaseInfoMapper;
 import com.f.a.kobe.pojo.CustomerBaseInfo;
 import com.f.a.kobe.pojo.CustomerBaseInfoExample;
 import com.f.a.kobe.pojo.CustomerBaseInfoExample.Criteria;
+import com.f.a.kobe.util.DateUtils;
 import com.f.a.kobe.util.QueryParamTransUtil;
 
 @Component
@@ -62,11 +65,41 @@ public class CustomerBaseInfoManager implements BaseManager<CustomerBaseInfo> {
 		return customerBaseInfoMapper.updateByPrimaryKeySelective(t);
 	}
 	
+	/**
+	 * 不更新
+	 * @param record
+	 * @param updateContent
+	 * @return
+	 */
+	public int update(CustomerBaseInfo record,CustomerBaseInfo updateContent) {
+		 CustomerBaseInfoExample example = new CustomerBaseInfoExample();
+		 Criteria criteria =  example.createCriteria();
+		 criteria.andCustomerIdEqualTo(record.getCustomerId());
+		
+		 if(StringUtils.isNotBlank(updateContent.getGender()) ) {
+			 criteria.andGenderEqualTo(updateContent.getGender());
+		 }
+		 if(StringUtils.isNotBlank(updateContent.getHeadimg())) {
+			 criteria.andHeadimgEqualTo(updateContent.getHeadimg());
+		 }
+		 if(StringUtils.isNotBlank(updateContent.getNickname())) {
+			 criteria.andNicknameEqualTo(updateContent.getNickname());
+		 }
+		 if(StringUtils.isNotBlank(updateContent.getRealname())) {
+			 criteria.andRealnameEqualTo(updateContent.getRealname());
+		 }
+		 if(updateContent.getSorce() != null && updateContent.getSorce() != 0) {
+			 criteria.andSorceEqualTo(updateContent.getSorce());
+		 }
+		 criteria.andMdtEqualTo(Calendar.getInstance().getTime());
+		return customerBaseInfoMapper.updateByExampleSelective(record, example);
+	}
+	
+	
 //	@ToMongoDB
 	@Override
 	public int delete(Long id) {
 		return customerBaseInfoMapper.deleteByPrimaryKey(id);
 	}
 	
-
 }

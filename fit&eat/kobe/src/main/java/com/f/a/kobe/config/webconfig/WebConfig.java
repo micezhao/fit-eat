@@ -1,13 +1,18 @@
 package com.f.a.kobe.config.webconfig;
 
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.format.Formatter;
+import org.springframework.format.FormatterRegistry;
+import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -15,6 +20,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 
 import com.f.a.kobe.config.webconfig.interceptor.UserAgentResolver;
 import com.f.a.kobe.config.webconfig.interceptor.UserSessionInterceptor;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Configuration
 public class WebConfig extends WebMvcConfigurationSupport {
@@ -49,6 +56,13 @@ public class WebConfig extends WebMvcConfigurationSupport {
         for (HttpMessageConverter<?> converter : converters) {
             if (converter instanceof StringHttpMessageConverter) {
                 ((StringHttpMessageConverter)converter).setDefaultCharset(StandardCharsets.UTF_8);
+            }
+            // 配置全局时间格式转换器 
+            if(converter instanceof MappingJackson2HttpMessageConverter) {
+            	ObjectMapper mapper = new ObjectMapper();
+        	    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        	    mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+        	    ((MappingJackson2HttpMessageConverter) converter).setObjectMapper(mapper);
             }
         }
     }

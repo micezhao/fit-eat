@@ -67,22 +67,38 @@ public class CustomerCtrl {
 		return new ResponseEntity<Object>(user, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
-	@Deprecated
 	@ParamCheck("updateCustomerBaseInfo")
 	@PostMapping
 	public ResponseEntity<Object> updateCustomerBaseInfo(@RequestBody ParamRequest request, UserAgent userAgent,
 			HttpSession session) {
-		CustomerBaseInfo customerBaseInfo = new CustomerBaseInfo();
-		ObjectTransUtils.copy(customerBaseInfo, request);
-		customerBaseInfo.setCustomerId(userAgent.getCustomerId());
-		customerBaseInfo.setMobile(userAgent.getMobile());
-		customerBaseInfoService.updateCustomer(customerBaseInfo);
-		
-		logger.info("用户基本信息完成,当前用户基本信息:{}", customerBaseInfo.toString());
-		ObjectTransUtils.copy(userAgent, customerBaseInfo);
+		if(StringUtils.isNotBlank(request.getMobile()) ) {
+			 new ResponseEntity<Object>(new ErrRtn(
+					 	ErrEnum.OPERATION_RESTRITCED.getErrCode(),
+					 	"用户手机号更新，请先解绑"), 
+					 HttpStatus.OK);
+		}
+		CustomerBaseInfo record =customerBaseInfoService.query(userAgent.getCustomerId());
+		if(StringUtils.isNotBlank(request.getNickname())) {
+			record.setNickname(request.getNickname());
+		}
+		if(StringUtils.isNotBlank(request.getRealname())) {
+			record.setRealname(request.getRealname());
+		}
+		if(StringUtils.isNotBlank(request.getBirthday())) {
+			record.setBirthday(request.getBirthday());
+		}
+		if(StringUtils.isNotBlank(request.getHeadimg())) {
+			record.setHeadimg(request.getHeadimg());
+		}
+		if(StringUtils.isNotBlank(request.getGender())) {
+			record.setHeadimg(request.getGender());
+		}
+		customerBaseInfoService.updateCustomer(record);
+		logger.info("用户基本信息完成,当前用户基本信息:{}", record.toString());
+		ObjectTransUtils.copy(userAgent, record);
 		session.setAttribute(SystemContanst.USER_AGENT, userAgent);
 		logger.info("用户基本信息已经同步更新到session中", userAgent.toString());
-		return new ResponseEntity<Object>(customerBaseInfo, HttpStatus.OK);
+		return new ResponseEntity<Object>(record, HttpStatus.OK);
 	}
 
 	@GetMapping("/addr")

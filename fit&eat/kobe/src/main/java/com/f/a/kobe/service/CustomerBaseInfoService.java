@@ -21,6 +21,7 @@ import com.f.a.kobe.manager.CustomerBaseInfoManager;
 import com.f.a.kobe.pojo.CustomerBaseInfo;
 import com.f.a.kobe.pojo.enums.DrEnum;
 import com.f.a.kobe.pojo.enums.LoginTypeEnum;
+import com.f.a.kobe.util.DateUtils;
 import com.f.a.kobe.util.IdWorker;
 
 @Service
@@ -41,7 +42,7 @@ public class CustomerBaseInfoService {
 		customerBaseInfo.setCustomerId(idworker.nextId());
 		if(StringUtils.isNotBlank(customerBaseInfo.getBirthday()) ) {
 			customerBaseInfo.setBirthday(customerBaseInfo.getBirthday());
-			customerBaseInfo.setAge(sumAge(customerBaseInfo.getBirthday()));
+			customerBaseInfo.setAge(DateUtils.sumAge(customerBaseInfo.getBirthday()));
 		}
 		if(StringUtils.isNotBlank(customerBaseInfo.getMobile() )) {
 			customerBaseInfo.setMobile(customerBaseInfo.getMobile());
@@ -76,8 +77,12 @@ public class CustomerBaseInfoService {
 				DrEnum.getByCode(customerInfo.getDr()).getDescription());
 	}
 
-	// 修改用户信息
+	// 修改用户基本信息
 	public void updateCustomer(CustomerBaseInfo customerBaseInfo) {
+		 if(StringUtils.isNotBlank(customerBaseInfo.getBirthday())) {
+			int age =  DateUtils.sumAge(customerBaseInfo.getBirthday());
+			customerBaseInfo.setAge(age);
+		 }
 		customerBaseInfoManager.update(customerBaseInfo);
 	}
 	
@@ -181,46 +186,6 @@ public class CustomerBaseInfoService {
 		}
 	}
 
-	private int sumAge(String csny) {
-		// 根据出生年月求年龄
-		// 根据出生年月求年龄 适用于 2018-1-1 类似的日期
-		// 解析出生年月
-		String[] split = csny.split("-");
-		if (split.length != 3) {
-			// 给的出生年月不合法
-			throw new InvaildException(ErrEnum.INPUT_PARAM_INVAILD.getErrCode(), "出生日期格式不正确");
-		}
-		String birthMonth = split[1];
-		if (split[1].startsWith("0", 0)) {
-			birthMonth = split[1].replaceFirst("0", "");
-		}
-		String birthDay = split[2];
-		if (split[1].startsWith("0", 0)) {
-			birthDay = split[2].replaceFirst("0", "");
-		}
-		// 求当前年月日
-		Calendar now = Calendar.getInstance();
-		int year = now.get(Calendar.YEAR);
-		int month = now.get(Calendar.MONTH) + 1;
-		int day = now.get(Calendar.DAY_OF_MONTH);
-		// 算出当前大概年龄
-		int age = year - Integer.parseInt(split[0]);
-		if (age < 0) {
-			throw new InvaildException(ErrEnum.INPUT_PARAM_INVAILD.getErrCode(), "出生年份不能小于当前年份");
-		}
-		if (month - Integer.parseInt(birthMonth) > 0) {
-			// 过生日了
-		} else if (month - Integer.parseInt(birthMonth) == 0) {
-			// 在本月，不知道有没有过生日，需要用天去判断
-			if (day - Integer.parseInt(birthDay) < 0) {
-				// 没有过生日
-				age -= 1;
-			}
-		} else {
-			// 没有过生日
-			age -= 1;
-		}
-		return age;
-	}
+	
 
 }
