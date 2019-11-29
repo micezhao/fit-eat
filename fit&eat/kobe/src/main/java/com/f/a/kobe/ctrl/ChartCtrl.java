@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.f.a.kobe.pojo.bo.DateSelection;
+import com.f.a.kobe.pojo.response.chart.LineChart;
 import com.f.a.kobe.pojo.response.chart.WeightChart;
 import com.f.a.kobe.pojo.view.UserAgent;
 import com.f.a.kobe.service.CustomerBodyInfoService;
@@ -34,7 +35,15 @@ public class ChartCtrl {
 		return new ResponseEntity<Object>(list,HttpStatus.OK);
 	}
 	
-	
+	@GetMapping("/lineChart/{seletcion}")
+	public ResponseEntity<Object> lineChart(@PathVariable("seletcion") int seletcion,UserAgent userAgent){
+		DateSelection selection = DateUtils.getDateSelection(seletcion);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		List<LineChart> list = customerBodyInfoService.getLineChart(userAgent.getCustomerId(),
+				sdf.format(selection.getStratDate()),
+				sdf.format(selection.getEndDate()));
+		return new ResponseEntity<Object>(list,HttpStatus.OK);
+	}
 	
 	
 }

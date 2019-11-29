@@ -19,6 +19,7 @@ import com.f.a.kobe.exceptions.ErrEnum;
 import com.f.a.kobe.exceptions.InvaildException;
 import com.f.a.kobe.manager.CustomerBodyInfoManager;
 import com.f.a.kobe.pojo.CustomerBodyInfo;
+import com.f.a.kobe.pojo.response.chart.LineChart;
 import com.f.a.kobe.pojo.response.chart.WeightChart;
 import com.f.a.kobe.pojo.view.CustomerBodyInfoView;
 
@@ -125,6 +126,13 @@ public class CustomerBodyInfoService {
 		query.addCriteria(Criteria.where("customerId").is(customerId)) ;
 		query.addCriteria(Criteria.where("registerDate").gte(startDate).lte(endDate));
 		return mongoTemplate.find(query, WeightChart.class, COLLECTION_NAME);
+	}
+	
+	public List<LineChart> getLineChart(Long customerId,String startDate,String endDate){
+		Query query = new Query();
+		query.addCriteria(Criteria.where("customerId").is(customerId)) ;
+		query.addCriteria(Criteria.where("registerDate").gte(startDate).lte(endDate));
+		return mongoTemplate.find(query, LineChart.class, COLLECTION_NAME);
 	}
 	
 	
