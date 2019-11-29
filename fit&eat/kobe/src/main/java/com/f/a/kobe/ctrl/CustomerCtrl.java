@@ -1,6 +1,8 @@
 package com.f.a.kobe.ctrl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +26,8 @@ import com.f.a.kobe.exceptions.InvaildException;
 import com.f.a.kobe.pojo.CustomerAddr;
 import com.f.a.kobe.pojo.CustomerBaseInfo;
 import com.f.a.kobe.pojo.CustomerBodyInfo;
+import com.f.a.kobe.pojo.CustomerScoreTrans;
+import com.f.a.kobe.pojo.bo.DateSelection;
 import com.f.a.kobe.pojo.enums.UseDefaultEnum;
 import com.f.a.kobe.pojo.request.ParamRequest;
 import com.f.a.kobe.pojo.view.CustomerBodyInfoView;
@@ -30,8 +35,11 @@ import com.f.a.kobe.pojo.view.UserAgent;
 import com.f.a.kobe.service.CustomerAddrService;
 import com.f.a.kobe.service.CustomerBaseInfoService;
 import com.f.a.kobe.service.CustomerBodyInfoService;
+import com.f.a.kobe.service.CustomerScoreTransService;
 import com.f.a.kobe.service.aop.ParamCheck;
+import com.f.a.kobe.util.DateUtils;
 import com.f.a.kobe.util.ObjectTransUtils;
+import com.github.pagehelper.Page;
 
 @RestController
 @RequestMapping("/customer")
@@ -47,6 +55,9 @@ public class CustomerCtrl {
 	
 	@Autowired
 	private CustomerBodyInfoService customerBodyInfoService;
+	
+	@Autowired
+	private CustomerScoreTransService customerScoreTransService;
 
 	/**
 	 * 获取用户的基础信息
@@ -171,9 +182,20 @@ public class CustomerCtrl {
 		return new ResponseEntity<Object>(view,HttpStatus.OK);
 	}
 	
-	@GetMapping("/score")
-	public ResponseEntity<Object> getScore(){
-		return null;
+	@GetMapping("/score/{pageNum}/{pageSize}")
+	public ResponseEntity<Object> getScore(@PathVariable("{selection}") int selection
+						,@PathVariable("{pageNum}") int pageNum
+						,@PathVariable("{pageSize}") int pageSize
+						,UserAgent userAgent){
+		
+		Map<String,Object> map = new HashMap<String,Object>();
+		DateSelection dateSeleciton = DateUtils.getDateSelection(selection);
+		Page<CustomerScoreTrans> page = new Page<CustomerScoreTrans>(pageNum,pageSize);
+		customerScoreTransService.listByCustomerId(userAgent.getCustomerId(),dateSeleciton.getStratDate(),dateSeleciton.getEndDate() );
+		map.put("result", page.getResult());
+		map.put("pageNum", page.getPageNum());
+		map.put("total", page.getTotal());
+		return new ResponseEntity<Object>(map,HttpStatus.OK);
 	}
 
 	

@@ -27,9 +27,9 @@ public class CustomerScoreTransManager implements BaseManager<CustomerScoreTrans
 
 	@Override
 	public CustomerScoreTrans queryByBiz(Object bizId) {
-		Long customerId = (Long) bizId;
+		Long transNo = (Long) bizId;
 		CustomerScoreTransExample customerScoreTransExample = new CustomerScoreTransExample();
-		customerScoreTransExample.createCriteria().andCustomerIdEqualTo(customerId);
+		customerScoreTransExample.createCriteria().andTransNoEqualTo(transNo);
 		List<CustomerScoreTrans> customerScoreTransList = customerScoreTransMapper
 				.selectByExample(customerScoreTransExample);
 		if (0 < customerScoreTransList.size()) {
@@ -45,6 +45,14 @@ public class CustomerScoreTransManager implements BaseManager<CustomerScoreTrans
 		CustomerScoreTransExample customerScoreTransExample = new CustomerScoreTransExample();
 		Criteria criteria = customerScoreTransExample.createCriteria();
 		criteria = QueryParamTransUtil.formConditionalToCriteria(criteria, conditional);
+		List<CustomerScoreTrans> customerScoreTransList = customerScoreTransMapper
+				.selectByExample(customerScoreTransExample);
+		return customerScoreTransList;
+	}
+	
+	public List<CustomerScoreTrans> listByConditional(Long customerId) {
+		CustomerScoreTransExample customerScoreTransExample = new CustomerScoreTransExample();
+		customerScoreTransExample.createCriteria().andCustomerIdEqualTo(customerId);
 		List<CustomerScoreTrans> customerScoreTransList = customerScoreTransMapper
 				.selectByExample(customerScoreTransExample);
 		return customerScoreTransList;
