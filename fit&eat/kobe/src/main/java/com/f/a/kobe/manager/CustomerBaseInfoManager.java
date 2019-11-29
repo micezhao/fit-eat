@@ -88,8 +88,8 @@ public class CustomerBaseInfoManager implements BaseManager<CustomerBaseInfo> {
 		 if(StringUtils.isNotBlank(updateContent.getRealname())) {
 			 criteria.andRealnameEqualTo(updateContent.getRealname());
 		 }
-		 if(updateContent.getSorce() != null && updateContent.getSorce() != 0) {
-			 criteria.andSorceEqualTo(updateContent.getSorce());
+		 if(updateContent.getScore() != null && updateContent.getScore() != 0) {
+			 criteria.andSorceEqualTo(updateContent.getScore());
 		 }
 		 criteria.andMdtEqualTo(Calendar.getInstance().getTime());
 		return customerBaseInfoMapper.updateByExampleSelective(record, example);

@@ -170,6 +170,11 @@ public class CustomerCtrl {
 		CustomerBodyInfoView view = customerBodyInfoService.registBodyInfo(customerBodyInfo, request.getGender());
 		return new ResponseEntity<Object>(view,HttpStatus.OK);
 	}
+	
+	@GetMapping("/score")
+	public ResponseEntity<Object> getScore(){
+		return null;
+	}
 
 	
 }

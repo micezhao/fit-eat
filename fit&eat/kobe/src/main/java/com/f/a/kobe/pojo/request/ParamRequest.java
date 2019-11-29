@@ -66,7 +66,7 @@ public class ParamRequest {
 
 	private String headimg;
 
-	private Integer sorce;
+	private Integer score;
 	/** 用户基本信息 --结束-- **/
 
 	/** 用户体征信息 --开始-- **/

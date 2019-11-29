@@ -63,7 +63,7 @@ public class CombinedParamBuilder {
 
 	private String headimg;
 
-	private Integer sorce;
+	private Integer score;
 	/** 用户基本信息 --结束-- **/
 
 	/** 用户体征信息 --开始-- **/
@@ -247,8 +247,8 @@ public class CombinedParamBuilder {
 		return this;
 	}
 
-	public CombinedParamBuilder setSorce(Integer sorce) {
-		this.combinedParam.setSorce(sorce);
+	public CombinedParamBuilder setSorce(Integer score) {
+		this.combinedParam.setScore(score);
 		return this;
 	}
 
