@@ -3,17 +3,27 @@ package com.f.a.kobe.util;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+
+import com.f.a.kobe.util.enums.ParamCheckorRuleEnumList;
 
 public class CombinedParamCheckUtil {
 
 	CombinedParam combinedParam;
+	
+	CombinedParamCheckor combinedParamCheckor;
 
 	public void setCombinedParam(CombinedParam combinedParam) {
 		this.combinedParam = combinedParam;
 	}
-
+	
+	public void setCombinedParamCheckor(CombinedParamCheckor combinedParamCheckor) {
+		this.combinedParamCheckor = combinedParamCheckor;
+	}
+	
 	public Map<String, String> errResultMap = new HashMap<String, String>();
 
 	public static Map<String, String> notEmptyResultMap = new HashMap<String, String>();
@@ -24,6 +34,28 @@ public class CombinedParamCheckUtil {
 			String methodName = method.getName();
 			if (methodName.contains("get")) {
 				Object invoke = method.invoke(this.combinedParam, null);
+				if (invoke != null && !methodName.contains("Class")) {
+					Method method2 = CombinedParamCheckUtil.class.getMethod(methodName + "Check", Object.class);
+					Result result = (Result) method2.invoke(this, invoke);
+					if (!result.tag) {
+						errResultMap.put(result.errCode, result.errMsg);
+					}
+				}
+			}
+		}
+		if (!errResultMap.isEmpty()) {
+			return errResultMap;
+		}
+		return null;
+	}
+	
+	//改造统一接受参数校验
+	public Map<String, String> check2() throws Exception {
+		Method[] methods = this.combinedParamCheckor.getClass().getMethods();
+		for (Method method : methods) {
+			String methodName = method.getName();
+			if (methodName.contains("get")) {
+				Object invoke = method.invoke(this.combinedParamCheckor, null);
 				if (invoke != null && !methodName.contains("Class")) {
 					Method method2 = CombinedParamCheckUtil.class.getMethod(methodName + "Check", Object.class);
 					Result result = (Result) method2.invoke(this, invoke);
@@ -56,6 +88,28 @@ public class CombinedParamCheckUtil {
 		String errCode;
 		String errMsg;
 	}
+	
+	//
+	
+	public static final String realNameRegex = "^[\\u4e00-\\u9fa5]{0,}$";
+	
+	public Result getRealNameCheck(Object obj) {
+		String realname = (String) obj;
+		Pattern pattern = Pattern.compile(realNameRegex);
+		pattern.matcher(realname);
+		return new Result(true);
+	}
+	
+	public static void main(String[] args) {
+		String realname = "1988-1307";
+		Pattern pattern = Pattern.compile(ParamCheckorRuleEnumList.BIRTHDAY.getRegex());
+		Matcher matcher = pattern.matcher(realname);
+		boolean matches = matcher.matches();
+		System.out.println(matches);
+	}
+	
+	
+	//
 
 	public Result getRealnameCheck(Object obj) {
 		String realname = (String) obj;
