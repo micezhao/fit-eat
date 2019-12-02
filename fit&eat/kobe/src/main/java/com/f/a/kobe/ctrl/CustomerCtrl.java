@@ -75,7 +75,7 @@ public class CustomerCtrl {
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		return new ResponseEntity<Object>(user, HttpStatus.INTERNAL_SERVER_ERROR);
+		return new ResponseEntity<Object>(user, HttpStatus.OK);
 	}
 
 	@ParamCheck("updateCustomerBaseInfo")
@@ -173,6 +173,7 @@ public class CustomerCtrl {
 		return new ResponseEntity<Object>(HttpStatus.OK);
 	}
 	
+	@ParamCheck("bodyinfo")
 	@PostMapping("/bodyInfo/add")
 	public ResponseEntity<Object> getBodyInfo(@RequestBody ParamRequest request,UserAgent userAgent){
 		CustomerBodyInfo customerBodyInfo = new CustomerBodyInfo();
@@ -198,5 +199,9 @@ public class CustomerCtrl {
 		return new ResponseEntity<Object>(map,HttpStatus.OK);
 	}
 
-	
+	@ParamCheck("test")
+	@PostMapping("test")
+	public ResponseEntity<Object> test(@RequestBody ParamRequest paramRequest) {
+		return new ResponseEntity<Object>(HttpStatus.OK);
+	}
 }

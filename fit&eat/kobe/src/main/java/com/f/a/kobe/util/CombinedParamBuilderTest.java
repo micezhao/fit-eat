@@ -1,9 +1,24 @@
 package com.f.a.kobe.util;
 
+import java.util.Arrays;
+import java.util.List;
+
 //封装需要校验的类型
 public class CombinedParamBuilderTest {
 	
 	CombinedParamCheckor combinedParamCheckor;
+	
+	public CombinedParamBuilderTest setMobileArrays(String ... arrays) {
+		List<String> list = Arrays.asList(arrays);
+		this.combinedParamCheckor.setMobileList(list);
+		return this;
+	}
+	
+	public CombinedParamBuilderTest setFloatArrays(String ... arrays) {
+		List<String> list = Arrays.asList(arrays);
+		this.combinedParamCheckor.setFloatList(list);
+		return this;
+	}
 	
 	//名字
 	public CombinedParamBuilderTest setRealName(String realName ) {

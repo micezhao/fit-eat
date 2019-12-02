@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.f.a.kobe.pojo.request.ParamRequest;
 import com.f.a.kobe.pojo.view.UserAgent;
+import com.f.a.kobe.service.aop.ParamCheck;
 import com.f.a.kobe.util.RedisSequenceUtils;
 
 @RestController
@@ -84,4 +86,5 @@ public class KobeCtrl {
 	public String getSequence() {
 		 return sequenceUtils.getRedisSequence("test");
 	}
+	
 }

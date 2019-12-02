@@ -1,9 +1,20 @@
 package com.f.a.kobe.util;
 
+import java.util.List;
+
 import lombok.Data;
 
 @Data
 public class CombinedParamCheckor {
+	
+	//手机号集
+	private List<String> mobileList;
+	
+	//浮点数
+	private String floatJ;
+	
+	//浮点数集
+	private List<String> floatList;
 	
 	//名称
 	private String realName;

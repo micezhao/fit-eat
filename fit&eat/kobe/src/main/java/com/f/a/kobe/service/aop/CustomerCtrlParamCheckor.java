@@ -14,6 +14,7 @@ import com.f.a.kobe.util.ObjectTransUtils;
 @Component("customerCtrlParamCheckor")
 public class CustomerCtrlParamCheckor implements ParamCheckHandler {
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, String> commonCheck(Object obj, String value) {
 		try {
@@ -44,9 +45,12 @@ public class CustomerCtrlParamCheckor implements ParamCheckHandler {
 		ObjectTransUtils.copy(combinedParam, paramRequest);
 		// 合法性判断
 		CombinedParamCheckUtil checkor = new CombinedParamCheckUtil();
-		checkor.setCombinedParam(combinedParam);
+		CombinedParamCheckor combinedParamCheckor = new CombinedParamBuilderTest().setProvinceNo(paramRequest.getProvinceNo()).setCityNo(paramRequest.getCityNo())
+				.setDistrictNo(paramRequest.getDistrcNo()).setStreetNo(paramRequest.getStreetNo())
+				.setRealName(paramRequest.getConnectorName()).setMobile(paramRequest.getConnectorMobile()).build();
+		checkor.setCombinedParamCheckor(combinedParamCheckor);
 		try {
-			Map<String, String> checkResult = checkor.check();
+			Map<String, String> checkResult = checkor.check2();
 			if (checkResult != null) {
 				return checkResult;
 			}
@@ -67,14 +71,49 @@ public class CustomerCtrlParamCheckor implements ParamCheckHandler {
 		CombinedParamCheckUtil checkor = new CombinedParamCheckUtil();
 		checkor.setCombinedParam(combinedParam);
 		CombinedParamCheckor combinedParamCheckor = new CombinedParamBuilderTest()
-				.setRealName(paramRequest.getRealname())
-				.setBirthday(paramRequest.getBirthday())
-				.setGender(paramRequest.getGender())
-				.setNickName(paramRequest.getNickname())
+				.setRealName(paramRequest.getRealname()).setBirthday(paramRequest.getBirthday())
+				.setGender(paramRequest.getGender()).setNickName(paramRequest.getNickname())
 				.setWebUrl(paramRequest.getHeadimg()).build();
 		checkor.setCombinedParamCheckor(combinedParamCheckor);
 		try {
 			Map<String, String> checkResult = checkor.check();
+			if (checkResult != null) {
+				return checkResult;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unused")
+	private Map<String, String> test(Object obj) {
+		ParamRequest paramRequest = (ParamRequest) obj;
+		CombinedParamCheckUtil checkor = new CombinedParamCheckUtil();
+		CombinedParamCheckor combinedParamCheckor = new CombinedParamBuilderTest()
+				.setMobileArrays(paramRequest.getMobile(), paramRequest.getConnectorMobile()).build();
+		checkor.setCombinedParamCheckor(combinedParamCheckor);
+		try {
+			Map<String, String> checkResult = checkor.check2();
+			if (checkResult != null) {
+				return checkResult;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public Map<String, String> bodyinfo(Object obj) {
+		ParamRequest paramRequest = (ParamRequest) obj;
+		CombinedParamCheckUtil checkor = new CombinedParamCheckUtil();
+		CombinedParamCheckor combinedParamCheckor = new CombinedParamBuilderTest()
+				.setFloatArrays(paramRequest.getHeight(), paramRequest.getWeight(), paramRequest.getWaistline(),
+						paramRequest.getHipline())
+				.build();
+		checkor.setCombinedParamCheckor(combinedParamCheckor);
+		try {
+			Map<String, String> checkResult = checkor.check2();
 			if (checkResult != null) {
 				return checkResult;
 			}

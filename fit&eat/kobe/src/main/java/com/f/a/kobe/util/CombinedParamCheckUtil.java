@@ -2,6 +2,7 @@ package com.f.a.kobe.util;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -57,10 +58,18 @@ public class CombinedParamCheckUtil {
 			if (methodName.contains("get")) {
 				Object invoke = method.invoke(this.combinedParamCheckor, null);
 				if (invoke != null && !methodName.contains("Class")) {
-					Method method2 = CombinedParamCheckUtil.class.getMethod(methodName + "Check", Object.class);
-					Result result = (Result) method2.invoke(this, invoke);
-					if (!result.tag) {
-						errResultMap.put(result.errCode, result.errMsg);
+					if(invoke instanceof List) {
+						Method method2 = CombinedParamCheckUtil.class.getMethod(methodName + "Check", Object.class);
+						Result result = (Result) method2.invoke(this, invoke);
+						if (!result.tag) {
+							errResultMap.put(result.errCode, result.errMsg);
+						}
+					}else {
+						Method method2 = CombinedParamCheckUtil.class.getMethod(methodName + "Check", Object.class);
+						Result result = (Result) method2.invoke(this, invoke);
+						if (!result.tag) {
+							errResultMap.put(result.errCode, result.errMsg);
+						}
 					}
 				}
 			}
@@ -89,120 +98,169 @@ public class CombinedParamCheckUtil {
 		String errMsg;
 	}
 	
-	//
-	
-	public static final String realNameRegex = "^[\\u4e00-\\u9fa5]{0,}$";
-	
-	public Result getRealNameCheck(Object obj) {
-		String realname = (String) obj;
-		Pattern pattern = Pattern.compile(realNameRegex);
-		pattern.matcher(realname);
-		return new Result(true);
+	//通用的校验方法
+	public boolean commonCheck(String target,String regex) {
+		Pattern pattern = Pattern.compile(regex);
+		return pattern.matcher(target).matches();
 	}
 	
+	@SuppressWarnings("unchecked")
+	public Result getFloatListCheck(Object obj) {
+		StringBuffer errMsgBuf = new StringBuffer();
+		List<String> floatList = (List<String>)obj;
+		for(String floatj : floatList) {
+			boolean checkResult = commonCheck(floatj,ParamCheckorRuleEnumList.FLOATJ.getRegex());
+			if(!checkResult) {
+				errMsgBuf.append(floatj);
+				errMsgBuf.append(" ");
+			}
+		}
+		if(!StringUtils.isBlank(errMsgBuf.toString())) {
+			errMsgBuf.append(ParamCheckorRuleEnumList.FLOATJ.getErrMsg());
+		}
+		String errMsg = errMsgBuf.toString();
+		if(StringUtils.isBlank(errMsg)) {
+			return new Result(true);
+		}
+		return new Result(false, "float", errMsg);			
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Result getMobileListCheck(Object obj) {
+		StringBuffer errMsgBuf = new StringBuffer();
+		List<String> mobileList = (List<String>)obj;
+		for(String mobile : mobileList) {
+			boolean checkResult = commonCheck(mobile,ParamCheckorRuleEnumList.MOBILE.getRegex());
+			if(!checkResult) {
+				errMsgBuf.append(mobile);
+				errMsgBuf.append(" ");
+			}
+		}
+		if(!StringUtils.isBlank(errMsgBuf.toString())) {
+			errMsgBuf.append(ParamCheckorRuleEnumList.MOBILE.getErrMsg());
+		}
+		String errMsg = errMsgBuf.toString();
+		if(StringUtils.isBlank(errMsg)) {
+			return new Result(true);
+		}
+		return new Result(false, "mobile", errMsg);			
+	}
+	
+	public Result getRealNameCheck(Object obj) {
+		String target = (String)obj;
+		boolean checkResult = commonCheck(target,ParamCheckorRuleEnumList.REALNAME.getRegex());
+		if(checkResult) {
+			return new Result(true);
+		}
+		return new Result(false, "REALNAME:" + target, ParamCheckorRuleEnumList.REALNAME.getErrMsg());			
+	}
+	
+	public Result getNickNameCheck(Object obj) {
+		String target = (String)obj;
+		boolean checkResult = commonCheck(target,ParamCheckorRuleEnumList.NICKNAME.getRegex());
+		if(checkResult) {
+			return new Result(true);
+		}
+		return new Result(false, "NICKNAME:" + target, ParamCheckorRuleEnumList.NICKNAME.getErrMsg());			
+	}
+	
+	public Result getMobileCheck(Object obj) {
+		String target = (String)obj;
+		boolean checkResult = commonCheck(target,ParamCheckorRuleEnumList.MOBILE.getRegex());
+		if(checkResult) {
+			return new Result(true);
+		}
+		return new Result(false, "MOBILE:" + target, ParamCheckorRuleEnumList.MOBILE.getErrMsg());			
+	}
+	
+	public Result getGenderCheck(Object obj) {
+		String target = (String)obj;
+		boolean checkResult = commonCheck(target,ParamCheckorRuleEnumList.GENDER.getRegex());
+		if(checkResult) {
+			return new Result(true);
+		}
+		return new Result(false, "GENDER:" + target, ParamCheckorRuleEnumList.GENDER.getErrMsg());			
+	}
+	
+	public Result getBirthdayCheck(Object obj) {
+		String target = (String)obj;
+		boolean checkResult = commonCheck(target,ParamCheckorRuleEnumList.BIRTHDAY.getRegex());
+		if(checkResult) {
+			return new Result(true);
+		}
+		return new Result(false, "BIRTHDAY:"+target, ParamCheckorRuleEnumList.BIRTHDAY.getErrMsg());	
+	}
+
+	public Result getAgeCheck(Object obj) {
+		String target = (String)obj;
+		boolean checkResult = commonCheck(target,ParamCheckorRuleEnumList.AGE.getRegex());
+		if(checkResult) {
+			return new Result(true);
+		}
+		return new Result(false, "AGE:"+target, ParamCheckorRuleEnumList.AGE.getErrMsg());	
+	}
+
+	public Result getWebUrlCheck(Object obj) {
+		String target = (String)obj;
+		boolean checkResult = commonCheck(target,ParamCheckorRuleEnumList.WEBURL.getRegex());
+		if(checkResult) {
+			return new Result(true);
+		}
+		return new Result(false, "url:"+target, ParamCheckorRuleEnumList.WEBURL.getErrMsg());	
+	}
+	
+	public Result getProvinceNoCheck(Object obj) {
+		String target = (String)obj;
+		boolean checkResult = commonCheck(target,ParamCheckorRuleEnumList.PROVINCENO.getRegex());
+		if(checkResult) {
+			return new Result(true);
+		}
+		return new Result(false, "PROVINCENO:" + target, ParamCheckorRuleEnumList.PROVINCENO.getErrMsg());	
+	}
+
+	public Result getCityNoCheck(Object obj) {
+		String target = (String)obj;
+		boolean checkResult = commonCheck(target,ParamCheckorRuleEnumList.CITYNO.getRegex());
+		if(checkResult) {
+			return new Result(true);
+		}
+		return new Result(false, "CITYNO:" + target, ParamCheckorRuleEnumList.CITYNO.getErrMsg());	
+	}
+
+	public Result getDistrcNoCheck(Object obj) {
+		String target = (String)obj;
+		boolean checkResult = commonCheck(target,ParamCheckorRuleEnumList.DISTRICTNO.getRegex());
+		if(checkResult) {
+			return new Result(true);
+		}
+		return new Result(false, "DISTRICTNO:" + target, ParamCheckorRuleEnumList.DISTRICTNO.getErrMsg());	
+	}
+
+	public Result getStreetNoCheck(Object obj) {
+		String target = (String)obj;
+		boolean checkResult = commonCheck(target,ParamCheckorRuleEnumList.STREETNO.getRegex());
+		if(checkResult) {
+			return new Result(true);
+		}
+		return new Result(false, "STREETNO:" + target, ParamCheckorRuleEnumList.STREETNO.getErrMsg());	
+	}
+
+	
 	public static void main(String[] args) {
-		String realname = "1988-1307";
-		Pattern pattern = Pattern.compile(ParamCheckorRuleEnumList.BIRTHDAY.getRegex());
+		String reg = "^(([1-9]{1}\\d*)|([0]{1}))(\\.(\\d){0,3})?$";
+		
+		String realname = "205.86";
+		Pattern pattern = Pattern.compile(reg);
 		Matcher matcher = pattern.matcher(realname);
 		boolean matches = matcher.matches();
 		System.out.println(matches);
 	}
 	
 	
-	//
-
-	public Result getRealnameCheck(Object obj) {
-		String realname = (String) obj;
-
-		return new Result(true);
-	}
-
-	public Result getBirthdayCheck(Object obj) {
-		String birthday = (String) obj;
-		return new Result(true);
-	}
-
-	public Result getGenderCheck(Object obj) {
-		String gender = (String) obj;
-		return new Result(true);
-	}
-
-	public Result getAgeCheck(Object obj) {
-		int age = (int) obj;
-		return new Result(true);
-	}
-
-	public Result getNicknameCheck(Object obj) {
-		String realname = (String) obj;
-
-		return new Result(true);
-	}
-
-	public Result getHeadimgCheck(Object obj) {
-		String headimg = (String) obj;
-		return new Result(true);
-	}
-
-	public Result getMobileCheck(Object obj) {
-		String phone = (String) obj;
-		if (phone.length() != 11) {
-			return new Result(false, "mobile", "手机号格式错误");
-		}
-		return new Result(true);
-	}
-
-	public Result getConnectorNameCheck(Object obj) {
-		String phone = (String) obj;
-		if (phone.length() > 11) {
-			return new Result(false, "ConnectorName", "联系人名称不恰当");
-		}
-		return new Result(true);
-	}
-
-	public Result getConnectorMobileCheck(Object obj) {
-		String phone = (String) obj;
-		if (phone.length() != 11) {
-			return new Result(false, "ConnectorMobile", "手机号格式错误");
-		}
-		return new Result(true);
-	}
-
 	public Result getCodeCheck(Object obj) {
 		String phone = (String) obj;
 		if (phone.length() > 100) {
 			return new Result(false, "code", "微信授权code失效");
-		}
-		return new Result(true);
-	}
-
-	public Result getProvinceNoCheck(Object obj) {
-		String phone = (String) obj;
-		if (phone.length() != 6) {
-			return new Result(false, "ProvinceNo", "省编码错误");
-		}
-		return new Result(true);
-	}
-
-	public Result getCityNoCheck(Object obj) {
-		String phone = (String) obj;
-		if (phone.length() != 6) {
-			return new Result(false, "CityNo", "市编码错误");
-		}
-		return new Result(true);
-	}
-
-	public Result getDistrcNoCheck(Object obj) {
-		String phone = (String) obj;
-		if (phone.length() != 6) {
-			return new Result(false, "DistrcNo", "区编码式错误");
-		}
-		return new Result(true);
-	}
-
-	public Result getStreetNoCheck(Object obj) {
-		String phone = (String) obj;
-		if (phone.length() > 20) {
-			return new Result(false, "StreetNo", "街道编码式错误");
 		}
 		return new Result(true);
 	}
@@ -226,9 +284,8 @@ public class CombinedParamCheckUtil {
 	public static Map<String, String> checkEmpty(String value, String attrName, String tip) {
 		if (StringUtils.isEmpty(value)) {
 			notEmptyResultMap.put(attrName, tip);
-			return notEmptyResultMap;
 		}
-		return null;
+		return notEmptyResultMap;
 	}
 
 }

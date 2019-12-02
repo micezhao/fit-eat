@@ -42,7 +42,7 @@ public class ParamCheckAop {
 		ParamCheckHandler checkHandler = getCheckHandler(beanName+SUFFIX);
 		Map<String, String> commonCheck = checkHandler.commonCheck(joinPoint.getArgs()[0],value);
 		if(commonCheck != null) {
-			return new ResponseEntity<Object>(commonCheck, HttpStatus.OK); 
+			return new ResponseEntity<Object>(commonCheck, HttpStatus.BAD_REQUEST); 
 		}
 		ResponseEntity<Object> proceed = (ResponseEntity<Object>)joinPoint.proceed();
 		return proceed;
