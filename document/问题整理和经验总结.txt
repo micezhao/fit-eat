@@ -376,6 +376,51 @@ fit-eat 开发过程的问题记录和经验总结
 
 5、开发chart数据视图功能
 
+第四周(2019/12/01 - 2019/12/06)
+1、SpringSession实现会话信息共享的机制的分析
+  1.1 SpringSession 是一个用于分布式系统共享会话信息的一种技术方案，可以解决微服务系统架构中用户请求会话共享的难题
+  1.2 SpringSession 对系统而言，是一个代替传统由网络服务器存放和维护会话管理的机制，SpringSession中提供了一个用来存储和维护会话信息的接口，SessionRepository
+      这个接口提供了不同的数据存放方案，例如：RedisSessionRepository,MongoSessionRepository 等
+  1.3 加载过程：
+    web项目启动时的web组件加载过程：context-param -> listener -> filter -> servlet
+    会话管理器是在一个项目中只需要被配置一次，然后全局使用，所以这是一个过滤器filter的配置
+    >>>>>> filter注册流程
+    由class SessionRepositoryFilter 选中需要加载的SessionRepository
+    由class s SessionRepositoryFilterConfiguration.FilterRegistrationBean 将被选中的SessionRepository的实现注册到filter中
+    那么SessionRepositoryFilter 又是如何选中 SessionRepository的具体实现方案的呢？
+    >>>>>> sessionRepository选中流程
+    【重点：@EnableRedisHttpSession】这个注解是使用redis作为sessionRepository的开关
+    @EnableRedisHttpSession -> @Import(RedisHttpSessionConfiguration.class) 
+    - > RedisHttpSessionConfiguration implements SpringHttpSessionConfiguration,BeanClassLoaderAware
+                |—— @Override BeanClassLoaderAware.setBeanClassLoader () // 在项目启动时将当前类初始化成一个bean
+                |—— @Bean public RedisIndexedSessionRepository sessionRepository() 将RedisIndexedSessionRepository初始化为sessionRepository
+    这样以来，就会在启动的时候，将RedisIndexedSessionRepository作为选中的sessionRepository方案了
+    【注意：**sessionRepository只是作为session的存储和维护的方案，也就是说，这只是springsession中的一个部分】
+    >>>>>>> 获取session的过程
+    所有的请求请求进入系统的过程中，需要先通过filter，通过过滤器链filterChain.doFilter(request, response); 执行dofilter方法，将请求交给系统中已经配置了过滤器
+    如果配置SessionRepositoryFilter 那么，将请求交给 SessionRepositoryFilter.doFilterInternal()方法
+    在这个方法中会通过 new SessionRepositoryRequestWrapper(request, response)，对当前的请求进行一次在此包装
+    这个包装中最重要的步骤
+        >>> 解析sessionId : httpSessionIdResolver.resolveSessionIds(this);   //this 是当前请求
+        >>> 查询sessionId : sessionRepository.findById(sessionId)
+        >>> 设置session : setCurrentSession(currentSession); 将SessionRepository存放的session信息，设置到服务端session中
+        setCurrentSession方法 返回 HttpSessionWrapper 对象，这个对象继承HttpSessionAdapter，HttpSessionAdapter又实现了HttpSession的方法
+        因此，如果需要获得session信息时，直接使用HttpServletRequest.getSession().getAttribute(“attr_name”);就可以获得到了
+    【****这样做的好处是：无论session采用什么方案进行存储，但是对于获取session的方法与普通做法都没有任何区别****】
+
+2、使用header来代替cookie 实现session信息的共享，使用如下方案，替换默认配置即可
+    @Bean
+	public HttpSessionIdResolver httpSessionIdResolver() {
+		return HeaderHttpSessionIdResolver.xAuthToken(); 
+	}
+    HttpSessionIdResolver：是一个session解析器接口
+        ｜—— CookieHttpSessionIdResolver // 默认实现，从cookie中获取session信息
+        ｜—— HeaderHttpSessionIdResolver // 从header中获取session信息 
+
+
+
+
+
 
 
 

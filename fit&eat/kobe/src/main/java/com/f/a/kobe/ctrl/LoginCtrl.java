@@ -1,5 +1,7 @@
 package com.f.a.kobe.ctrl;
 
+import java.util.HashMap;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -7,8 +9,10 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -85,7 +89,36 @@ public class LoginCtrl {
 		UserAgent userAgent = loginBiz.registerByThirdPart(thirdAuthId, loginType);
 		userAgent.setLoginType(loginType);
 		session.setAttribute(SystemContanst.USER_AGENT, userAgent); // 将这个用户凭证存入到session中
-		return new ResponseEntity<Object>(userAgent, HttpStatus.OK);
+		
+		return new ResponseEntity<Object>(userAgent,HttpStatus.OK);
+	}
+	
+	@PostMapping("/registerTest")
+	public ResponseEntity<Object> registerTest(@RequestBody ParamRequest request, HttpSession session) {
+
+		String loginType = request.getLoginType();
+		String thirdAuthId = "";
+		// 判断当前凭证是否已经存在了，如果存在就不再注册
+		if (LoginTypeEnum.getLoginTypeEnum(loginType) == LoginTypeEnum.WECHAT) {
+			thirdAuthId = request.getWxOpenid();
+		} else if (LoginTypeEnum.getLoginTypeEnum(loginType) == LoginTypeEnum.ALI_PAY) {
+			thirdAuthId = request.getAliOpenid();
+		}
+		boolean exsisted = loginBiz.checkExsistedByThirdAuthId(loginType, thirdAuthId);
+		if (exsisted) {
+			logger.error(" {}渠道 用户凭证 thirdAuthId ：{} 已经存在", loginType, thirdAuthId);
+			return new ResponseEntity<Object>(
+					new ErrRtn(ErrEnum.REDUPICATE_REGISTER.getErrCode(), ErrEnum.REDUPICATE_REGISTER.getErrMsg()),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		UserAgent userAgent = loginBiz.registerByThirdPart(thirdAuthId, loginType);
+		userAgent.setLoginType(loginType);
+		session.setAttribute(SystemContanst.USER_AGENT, userAgent); // 将这个用户凭证存入到session中
+//		MultiValueMap<String, String> headers = 
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("sessionId", session.getId());
+		ResponseEntity<Object> response = new ResponseEntity<Object>(headers, HttpStatus.OK);
+		return response;
 	}
 
 	/**

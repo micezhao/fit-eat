@@ -1,10 +1,15 @@
 package com.f.a.kobe.config.webconfig.interceptor;
 
 import java.io.PrintWriter;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.session.Session;
+import org.springframework.session.SessionRepository;
+import org.springframework.session.data.redis.RedisIndexedSessionRepository;
 import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -14,6 +19,9 @@ import com.f.a.kobe.config.contants.SystemContanst;
 import com.f.a.kobe.pojo.view.UserAgent;
 
 public class UserSessionInterceptor implements HandlerInterceptor {	
+	
+//	@Autowired
+//	private RedisIndexedSessionRepository sessionRepository; 
 	
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
