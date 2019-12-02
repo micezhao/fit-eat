@@ -28,7 +28,7 @@ public class CustomerCtrlParamCheckor implements ParamCheckHandler {
 	}
 
 	@SuppressWarnings("unused")
-	private Map<String, String> addAddr(Object obj) {
+	private Map<String, String> addr(Object obj) {
 		ParamRequest paramRequest = (ParamRequest) obj;
 		// 要求不为空判断
 		CombinedParamCheckUtil.checkEmpty(paramRequest.getConnectorName(), "ConnectorName", "联系人不能为空");

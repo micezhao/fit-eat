@@ -118,7 +118,7 @@ public class CustomerCtrl {
 		return new ResponseEntity<Object>(addrlist, HttpStatus.OK);
 	}
 
-	@ParamCheck("addAddr")
+	@ParamCheck("addr")
 	@PostMapping("/addr/add")
 	public ResponseEntity<Object> addCustomerAddr(@RequestBody ParamRequest request, UserAgent userAgent,
 			HttpSession session) {
@@ -133,6 +133,7 @@ public class CustomerCtrl {
 		return new ResponseEntity<Object>(customerAddr, HttpStatus.OK);
 	}
 
+	@ParamCheck("addr")
 	@PostMapping("/addr/update")
 	public ResponseEntity<Object> updateCustomerAddr(@RequestBody ParamRequest request, UserAgent userAgent,
 			HttpSession session) {
