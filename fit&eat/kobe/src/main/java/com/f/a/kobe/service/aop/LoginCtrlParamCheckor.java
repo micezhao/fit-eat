@@ -1,6 +1,7 @@
 package com.f.a.kobe.service.aop;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.stereotype.Component;
 
@@ -29,6 +30,7 @@ public class LoginCtrlParamCheckor implements ParamCheckHandler{
 	@SuppressWarnings("unused")
 	private Map<String, String> authCode(Object t) {
 		ParamRequest paramRequest = (ParamRequest)t;
+		CombinedParamCheckUtil.notEmptyResultMap = new ConcurrentHashMap<String,String>();
 		Map<String, String> checkEmpty = CombinedParamCheckUtil.checkEmpty(paramRequest.getCode(), "authCode",  "请求code不允许为空");
 		if(checkEmpty != null) {
 			return checkEmpty;
@@ -39,6 +41,7 @@ public class LoginCtrlParamCheckor implements ParamCheckHandler{
 	@SuppressWarnings("unused")
 	private Map<String, String> binding(Object t) {
 		ParamRequest paramRequest = (ParamRequest)t;
+		CombinedParamCheckUtil.notEmptyResultMap = new ConcurrentHashMap<String,String>();
 		Map<String, String> checkEmpty = CombinedParamCheckUtil.checkEmpty(paramRequest.getMobile(), "molibe",  "联系人电话不得为空");
 		if(checkEmpty != null) {
 			return checkEmpty;

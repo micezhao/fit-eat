@@ -1,6 +1,7 @@
 package com.f.a.kobe.service.aop;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.stereotype.Component;
 
@@ -30,6 +31,7 @@ public class CustomerCtrlParamCheckor implements ParamCheckHandler {
 	@SuppressWarnings("unused")
 	private Map<String, String> addr(Object obj) {
 		ParamRequest paramRequest = (ParamRequest) obj;
+		CombinedParamCheckUtil.notEmptyResultMap = new ConcurrentHashMap<String,String>();
 		// 要求不为空判断
 		CombinedParamCheckUtil.checkEmpty(paramRequest.getConnectorName(), "ConnectorName", "联系人不能为空");
 		CombinedParamCheckUtil.checkEmpty(paramRequest.getProvinceNo(), "ProvinceNo", "省号不能为空");
@@ -41,11 +43,10 @@ public class CustomerCtrlParamCheckor implements ParamCheckHandler {
 			return checkEmpty;
 		}
 
-		CombinedParam combinedParam = new CombinedParam();
-		ObjectTransUtils.copy(combinedParam, paramRequest);
 		// 合法性判断
 		CombinedParamCheckUtil checkor = new CombinedParamCheckUtil();
-		CombinedParamCheckor combinedParamCheckor = new CombinedParamBuilderTest().setProvinceNo(paramRequest.getProvinceNo()).setCityNo(paramRequest.getCityNo())
+		CombinedParamCheckor combinedParamCheckor = new CombinedParamBuilderTest()
+				.setProvinceNo(paramRequest.getProvinceNo()).setCityNo(paramRequest.getCityNo())
 				.setDistrictNo(paramRequest.getDistrcNo()).setStreetNo(paramRequest.getStreetNo())
 				.setRealName(paramRequest.getConnectorName()).setMobile(paramRequest.getConnectorMobile()).build();
 		checkor.setCombinedParamCheckor(combinedParamCheckor);
@@ -65,18 +66,15 @@ public class CustomerCtrlParamCheckor implements ParamCheckHandler {
 		ParamRequest paramRequest = (ParamRequest) obj;
 		// 要求不为空判断
 
-		CombinedParam combinedParam = new CombinedParam();
-		ObjectTransUtils.copy(combinedParam, paramRequest);
 		// 合法性判断
 		CombinedParamCheckUtil checkor = new CombinedParamCheckUtil();
-		checkor.setCombinedParam(combinedParam);
 		CombinedParamCheckor combinedParamCheckor = new CombinedParamBuilderTest()
 				.setRealName(paramRequest.getRealname()).setBirthday(paramRequest.getBirthday())
 				.setGender(paramRequest.getGender()).setNickName(paramRequest.getNickname())
 				.setWebUrl(paramRequest.getHeadimg()).build();
 		checkor.setCombinedParamCheckor(combinedParamCheckor);
 		try {
-			Map<String, String> checkResult = checkor.check();
+			Map<String, String> checkResult = checkor.check2();
 			if (checkResult != null) {
 				return checkResult;
 			}

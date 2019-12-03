@@ -102,7 +102,7 @@ public class CustomerCtrl {
 			record.setHeadimg(request.getHeadimg());
 		}
 		if(StringUtils.isNotBlank(request.getGender())) {
-			record.setHeadimg(request.getGender());
+			record.setGender(request.getGender());
 		}
 		customerBaseInfoService.updateCustomer(record);
 		logger.info("用户基本信息完成,当前用户基本信息:{}", record.toString());

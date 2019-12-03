@@ -226,8 +226,8 @@ public class CombinedParamCheckUtil {
 		}
 		return new Result(false, "CITYNO:" + target, ParamCheckorRuleEnumList.CITYNO.getErrMsg());	
 	}
-
-	public Result getDistrcNoCheck(Object obj) {
+	
+	public Result getDistrictNoCheck(Object obj) {
 		String target = (String)obj;
 		boolean checkResult = commonCheck(target,ParamCheckorRuleEnumList.DISTRICTNO.getRegex());
 		if(checkResult) {
@@ -285,7 +285,7 @@ public class CombinedParamCheckUtil {
 		if (StringUtils.isEmpty(value)) {
 			notEmptyResultMap.put(attrName, tip);
 		}
-		return notEmptyResultMap;
+		return notEmptyResultMap.isEmpty()?null:notEmptyResultMap;
 	}
 
 }
