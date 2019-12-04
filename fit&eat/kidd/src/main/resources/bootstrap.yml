@@ -1,7 +1,3 @@
-#server:
- #  servlet:
-  #    context-path: /kobe
-
 eureka:
   client:
     serviceUrl:
@@ -19,7 +15,7 @@ spring:
          discovery:
             enabled: true
             serviceId: david
-         name: kobe
+         name: kidd
          profile: dev
          label: master
             
