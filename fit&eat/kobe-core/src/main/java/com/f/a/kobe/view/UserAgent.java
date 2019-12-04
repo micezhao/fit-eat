@@ -1,4 +1,4 @@
-package com.f.a.kobe.pojo.view;
+package com.f.a.kobe.view;
 
 import lombok.Data;
 import lombok.ToString;

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.f.a.kobe.config.contants.SystemContanst;
+import com.f.a.kobe.contants.Contants;
 import com.f.a.kobe.exceptions.ErrEnum;
 import com.f.a.kobe.exceptions.ErrRtn;
 import com.f.a.kobe.exceptions.InvaildException;
@@ -31,7 +31,6 @@ import com.f.a.kobe.pojo.bo.DateSelection;
 import com.f.a.kobe.pojo.enums.UseDefaultEnum;
 import com.f.a.kobe.pojo.request.ParamRequest;
 import com.f.a.kobe.pojo.view.CustomerBodyInfoView;
-import com.f.a.kobe.pojo.view.UserAgent;
 import com.f.a.kobe.service.CustomerAddrService;
 import com.f.a.kobe.service.CustomerBaseInfoService;
 import com.f.a.kobe.service.CustomerBodyInfoService;
@@ -39,6 +38,7 @@ import com.f.a.kobe.service.CustomerScoreTransService;
 import com.f.a.kobe.service.aop.ParamCheck;
 import com.f.a.kobe.util.DateUtils;
 import com.f.a.kobe.util.ObjectTransUtils;
+import com.f.a.kobe.view.UserAgent;
 import com.github.pagehelper.Page;
 
 @RestController
@@ -107,7 +107,7 @@ public class CustomerCtrl {
 		customerBaseInfoService.updateCustomer(record);
 		logger.info("用户基本信息完成,当前用户基本信息:{}", record.toString());
 		ObjectTransUtils.copy(userAgent, record);
-		session.setAttribute(SystemContanst.USER_AGENT, userAgent);
+		session.setAttribute(Contants.USER_AGENT, userAgent);
 		logger.info("用户基本信息已经同步更新到session中", userAgent.toString());
 		return new ResponseEntity<Object>(record, HttpStatus.OK);
 	}
@@ -128,7 +128,7 @@ public class CustomerCtrl {
 		addrService.insertAddr(customerAddr);
 		if (StringUtils.equals(UseDefaultEnum.USE_DEFAULT.getCode(), customerAddr.getUseDefault())) {
 			userAgent.setDefaultAddrId(String.valueOf(customerAddr.getAddrId()));
-			session.setAttribute(SystemContanst.USER_AGENT, userAgent);
+			session.setAttribute(Contants.USER_AGENT, userAgent);
 		}
 		return new ResponseEntity<Object>(customerAddr, HttpStatus.OK);
 	}
@@ -155,7 +155,7 @@ public class CustomerCtrl {
 		}
 		addrService.setDefaultAddr(userAgent.getCustomerId(), addrId); // 切换默认地址
 		userAgent.setDefaultAddrId(String.valueOf(addrId));
-		session.setAttribute(SystemContanst.USER_AGENT, userAgent);
+		session.setAttribute(Contants.USER_AGENT, userAgent);
 		return new ResponseEntity<Object>(HttpStatus.OK);
 	}
 
@@ -166,7 +166,7 @@ public class CustomerCtrl {
 		try {
 			CustomerAddr defaultAddr = addrService.getCustomerDefaultAddrs(userAgent.getCustomerId());
 			userAgent.setDefaultAddrId(String.valueOf(defaultAddr.getAddrId()) );
-			session.setAttribute(SystemContanst.USER_AGENT, userAgent);
+			session.setAttribute(Contants.USER_AGENT, userAgent);
 		} catch (InvaildException ex) {
 			return new ResponseEntity<Object>(new ErrRtn(ex.getErrCode(), ex.getErrMsg()),
 					HttpStatus.INTERNAL_SERVER_ERROR);

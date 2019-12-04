@@ -417,6 +417,15 @@ fit-eat 开发过程的问题记录和经验总结
         ｜—— CookieHttpSessionIdResolver // 默认实现，从cookie中获取session信息
         ｜—— HeaderHttpSessionIdResolver // 从header中获取session信息 
 
+3、搭建kidd项目作为网关，实现在微服务架构中session的共享
+4、改造kobe项目，将其他项目中可能会用到组件进行抽离
+    >>>> 踏坑：
+        在进行公用组件抽离之时，希望将用于将userAgent的转换器配置独立成一个 UserAgentConfig.class extends WebMvcConfigurationSupport  并加上注解@Configure。
+        预期是：UserAgentConfig 仅作为配置请求参数中userAgent的转换器配置，可与其他的WebMvcConfigurationSupport共同使用。
+        实际上：一个项目中只能存在一个WebMvcConfigurationSupport
+        最后方案：只是将userAgentResolver抽离出来，并将其声明为一个bean，在各自项目中的WebMvcConfigurationSupport中加入到参数解析器列表
+        详情见：/kobe/src/main/java/com/f/a/kobe/config/webconfig/WebConfig.java
+
 
 
 

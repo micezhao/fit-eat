@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.f.a.kobe.biz.LoginBiz;
-import com.f.a.kobe.config.contants.SystemContanst;
+import com.f.a.kobe.contants.Contants;
 import com.f.a.kobe.exceptions.ErrEnum;
 import com.f.a.kobe.exceptions.ErrRtn;
 import com.f.a.kobe.exceptions.InvaildException;
@@ -27,9 +27,9 @@ import com.f.a.kobe.pojo.bo.AuthBo;
 import com.f.a.kobe.pojo.enums.LoginTypeEnum;
 import com.f.a.kobe.pojo.request.LoginRequest;
 import com.f.a.kobe.pojo.request.ParamRequest;
-import com.f.a.kobe.pojo.view.UserAgent;
 import com.f.a.kobe.service.CustomerCredentialService;
 import com.f.a.kobe.service.aop.ParamCheck;
+import com.f.a.kobe.view.UserAgent;
 
 @RestController
 @RequestMapping("/login")
@@ -56,7 +56,7 @@ public class LoginCtrl {
 	public ResponseEntity<Object>  login(@PathVariable("loginType") String loginType,@PathVariable("thirdAuthId") String thirdAuthId,HttpSession session){
 		try {
 			UserAgent userAgent = loginBiz.generateUserAgent(loginType, thirdAuthId);
-			session.setAttribute(SystemContanst.USER_AGENT, userAgent);
+			session.setAttribute(Contants.USER_AGENT, userAgent);
 		}catch (InvaildException ex) {
 			return new ResponseEntity<Object>(
 					new ErrRtn(ex.getErrCode(), ex.getErrMsg()),
@@ -85,7 +85,7 @@ public class LoginCtrl {
 		}
 		UserAgent userAgent = loginBiz.registerByThirdPart(thirdAuthId, loginType);
 		userAgent.setLoginType(loginType);
-		session.setAttribute(SystemContanst.USER_AGENT, userAgent); // 将这个用户凭证存入到session中
+		session.setAttribute(Contants.USER_AGENT, userAgent); // 将这个用户凭证存入到session中
 		
 		return new ResponseEntity<Object>(userAgent,HttpStatus.OK);
 	}
@@ -110,7 +110,7 @@ public class LoginCtrl {
 		}
 		UserAgent userAgent = loginBiz.registerByThirdPart(thirdAuthId, loginType);
 		userAgent.setLoginType(loginType);
-		session.setAttribute(SystemContanst.USER_AGENT, userAgent); // 将这个用户凭证存入到session中
+		session.setAttribute(Contants.USER_AGENT, userAgent); // 将这个用户凭证存入到session中
 //		MultiValueMap<String, String> headers = 
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("sessionId", session.getId());
@@ -160,7 +160,7 @@ public class LoginCtrl {
 		} else if (LoginTypeEnum.getLoginTypeEnum(loginType) == LoginTypeEnum.ALI_PAY) {
 			userAgent.setAliOpenid(userCredential.getAliOpenid());
 		}
-		session.setAttribute(SystemContanst.USER_AGENT, userAgent); // 绑定后更新手机号
+		session.setAttribute(Contants.USER_AGENT, userAgent); // 绑定后更新手机号
 		return new ResponseEntity<Object>(userAgent, HttpStatus.OK);
 	}
 
@@ -170,7 +170,7 @@ public class LoginCtrl {
 			throw new InvaildException(ErrEnum.UNLOGIN_ERROR.getErrCode(), ErrEnum.UNLOGIN_ERROR.getErrMsg());
 		}
 		boolean logouted = false;
-		session.setAttribute(SystemContanst.USER_AGENT, null);
+		session.setAttribute(Contants.USER_AGENT, null);
 		logouted = true;
 		logger.info("用户id：[{}]执行登出操作，已清空会话", userAgent.getCustomerId());
 		return new ResponseEntity<Boolean>(logouted, HttpStatus.OK);

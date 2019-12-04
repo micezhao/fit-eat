@@ -3,22 +3,23 @@ package com.f.a.kobe.config.webconfig;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.format.Formatter;
-import org.springframework.format.FormatterRegistry;
-import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
-import com.f.a.kobe.config.webconfig.interceptor.UserAgentResolver;
 import com.f.a.kobe.config.webconfig.interceptor.UserSessionInterceptor;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,13 +27,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Configuration
 public class WebConfig extends WebMvcConfigurationSupport {
 	
-	// 自定义的参数解析器
+	private static final Logger logger = LoggerFactory.getLogger(WebConfig.class);
+	
+	@Autowired
+	private Map<String,HandlerMethodArgumentResolver> resolverMap = new HashMap<String,HandlerMethodArgumentResolver>();
+	
 	@Bean
-	public List<HandlerMethodArgumentResolver>  initResolvers() {
+	protected List<HandlerMethodArgumentResolver> initResolvers(){
 		List<HandlerMethodArgumentResolver> list = new ArrayList<HandlerMethodArgumentResolver>();
-		list.add(new UserAgentResolver());
+		for (Entry<String,HandlerMethodArgumentResolver> entry : this.resolverMap.entrySet()) {
+			list.add(entry.getValue());
+			logger.info("----->>> 读取并加载请求参数解析器:{}",entry.getKey());
+		}
 		return list;
 	}
+
 	
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
@@ -46,7 +55,9 @@ public class WebConfig extends WebMvcConfigurationSupport {
 	@Override
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
 		argumentResolvers.addAll(initResolvers());
+		logger.info("----->>> 参数转换器注入完成,注入数量:{}",initResolvers().size());
 	}
+	
 	
 	/**
      *扩展消息转换器，防止中文乱码

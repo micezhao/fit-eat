@@ -11,8 +11,8 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import com.alibaba.fastjson.JSONObject;
-import com.f.a.kobe.config.contants.SystemContanst;
-import com.f.a.kobe.pojo.view.UserAgent;
+import com.f.a.kobe.contants.Contants;
+import com.f.a.kobe.view.UserAgent;
 
 public class UserSessionInterceptor implements HandlerInterceptor {	
 	
@@ -30,7 +30,7 @@ public class UserSessionInterceptor implements HandlerInterceptor {
 //			writer.write(json.toJSONString());
 //			return false;
 //		}
-		Object object = request.getSession().getAttribute(SystemContanst.USER_AGENT);
+		Object object = request.getSession().getAttribute(Contants.USER_AGENT);
 		UserAgent userAgent = JSONObject.parseObject(JSONObject.toJSONString(object), UserAgent.class);
 		String name = ((HandlerMethod)handler).getMethod().getName();
 		if(!("binding".equals(name)||"logout".equals(name))) {

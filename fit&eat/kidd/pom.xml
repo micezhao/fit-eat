@@ -14,6 +14,11 @@
 	<description>网关系统</description>
 
 	<dependencies>
+		<dependency>
+			<groupId>com.f.a</groupId>
+			<artifactId>kobe-core</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 		<!-- 网关依赖组件 -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>

@@ -15,12 +15,12 @@ import com.f.a.kobe.pojo.CustomerCredential;
 import com.f.a.kobe.pojo.bo.AuthBo;
 import com.f.a.kobe.pojo.enums.LoginTypeEnum;
 import com.f.a.kobe.pojo.request.ParamRequest;
-import com.f.a.kobe.pojo.view.UserAgent;
 import com.f.a.kobe.service.CustomerBaseInfoService;
 import com.f.a.kobe.service.CustomerCredentialService;
 import com.f.a.kobe.service.CustomerLogService;
 import com.f.a.kobe.service.MobileValidateCodeService;
 import com.f.a.kobe.util.ObjectTransUtils;
+import com.f.a.kobe.view.UserAgent;
 
 @Service
 public class LoginBiz {
