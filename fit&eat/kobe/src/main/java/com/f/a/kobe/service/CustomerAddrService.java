@@ -138,7 +138,7 @@ public class CustomerAddrService {
 		String areaBefore = regionService.getAreaName(idList);
 		areaDetailBuffer.append(areaBefore).append(addr.getAddrDetail()); // 组合详细地址信息
 		addr.setAddrDetail(areaDetailBuffer.toString());
-		manager.update(addr);
+		manager.updateByBizId(addr);
 	} 
 	
 	/**

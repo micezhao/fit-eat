@@ -68,6 +68,13 @@ public class CustomerAddrManager implements BaseManager<CustomerAddr> {
 		return customerAddrMapper.updateByPrimaryKeySelective(t);
 	}
 	
+	public int updateByBizId (CustomerAddr t) {
+		t.setMdt(Calendar.getInstance().getTime());
+		CustomerAddrExample example = new CustomerAddrExample();
+		example.createCriteria().andAddrIdEqualTo(t.getAddrId());
+		return customerAddrMapper.updateByExampleSelective(t, example );
+	}
+	
 	//@ToMongoDB
 	@Override
 	public int delete(Long id) {
