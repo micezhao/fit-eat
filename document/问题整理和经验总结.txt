@@ -389,7 +389,7 @@ fit-eat 开发过程的问题记录和经验总结
     由class s SessionRepositoryFilterConfiguration.FilterRegistrationBean 将被选中的SessionRepository的实现注册到filter中
     那么SessionRepositoryFilter 又是如何选中 SessionRepository的具体实现方案的呢？
     >>>>>> sessionRepository选中流程
-    【重点：@EnableRedisHttpSession】这个注解是使用redis作为sessionRepository的开关
+    【重点：@EnableRedisHttpSession】这个注解是使用默认的RedisSessionRepository的开关,如果不使用的配置，就需要在配置文件中声明
     @EnableRedisHttpSession -> @Import(RedisHttpSessionConfiguration.class) 
     - > RedisHttpSessionConfiguration implements SpringHttpSessionConfiguration,BeanClassLoaderAware
                 |—— @Override BeanClassLoaderAware.setBeanClassLoader () // 在项目启动时将当前类初始化成一个bean
@@ -425,6 +425,31 @@ fit-eat 开发过程的问题记录和经验总结
         实际上：一个项目中只能存在一个WebMvcConfigurationSupport
         最后方案：只是将userAgentResolver抽离出来，并将其声明为一个bean，在各自项目中的WebMvcConfigurationSupport中加入到参数解析器列表
         详情见：/kobe/src/main/java/com/f/a/kobe/config/webconfig/WebConfig.java
+5、商场系统规划：
+    5.1 商城系统的主要功能：
+            用户界面：查看商品、选购商品、评价商品、加入购物车、生成订单、申请退换、商品比对;
+            商户界面：申请入驻，申请撤离、上报商品、维护商品、受理退换、评价回复、商户店铺维护;
+            平台界面：系统项维护(商户类型[自营、三方商户]，商品大类别[外卖、运动装备、食品补计、生活用品、其他])、商户管理;
+    5.2 商城系统主要的业务流程：
+            5.2.1 平台业务：审批商户申请与撤离流程
+            5.2.2 商户业务：商户申请入驻与撤离流程
+            5.2.3 用户业务：购买商品流程，退货换货流程
+    5.3 商城系统中主要的模型：
+            5.3.1 商户相关模型：商户基本信息、商户详情信息、商户类型
+            5.3.2 商品相关模型：商品基本信息、商品详情，商品评价、商品分类
+            5.3.3 订单相关模型：购物车、订单基本信息、订单详情、退换申请
+    5.4 商城系统需要实践的主要技术：
+            5.4.1 垂直分表技术的运用
+            5.4.2 水平分表技术的实践
+                    ｜—— 水平分表的聚合查询
+                    ｜—— 自动化建表技术的实践
+            5.4.3 读写分离技术实践
+                    ｜—— mysql proxy
+                    ｜—— mycat
+                    ｜—— sharding
+            5.4.4 通过redis来实现热销产品的排名
+            5.4.5 消息处理与事物的一致性的处理
+    
 
 
 

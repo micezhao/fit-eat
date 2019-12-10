@@ -107,6 +107,7 @@
 		<module>kobe</module>
 		<module>kidd</module>
    		<module>kobe-core</module>
+   		<module>allan</module>
   </modules>
 
 </project>
