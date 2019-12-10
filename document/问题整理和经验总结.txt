@@ -449,8 +449,18 @@ fit-eat 开发过程的问题记录和经验总结
                     ｜—— sharding
             5.4.4 通过redis来实现热销产品的排名
             5.4.5 消息处理与事物的一致性的处理
-    
-
+6、商城系统搭建
+    6.1 集成mybatis-plus：是mybatis的加强版
+        6.1.1 通过代码配置的方式灵活的配置逆向生成的代码内容
+        6.1.2 提供了多种注解，来对表或者字段提供加强的功能：源代码位置：package com.baomidou.mybatisplus.annotation
+                例如：@TableName("`Order`") -> 转译表名为关键字的情况
+                     @TableField("`status`") -> 转译字段名为关键字的情况
+                     @TableId(value = "id", type = IdType.AUTO) -> 设置主键的情况
+        6.1.3 mybatis-plus最大的特点是可以自动生成service的代码，进一步释放编写底层代码，进行复杂条件判断的工作量。
+        6.1.4 如果不能满足要求，可以在xml加入自定义的sql，或者在service中对已有的方法进行重写
+        6.1.5 关于LocalDateTime前端显示的问题：在被声明为LocalDateTime类型的字段上加上  
+            @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") // 格式化注解
+            @JsonSerialize(using = LocalDateTimeSerializer.class) // 序列化注解
 
 
 
