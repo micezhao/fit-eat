@@ -9,7 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableEurekaClient
 @SpringBootApplication
 @EnableFeignClients
-@ComponentScan("com.f.a.allan")
+@ComponentScan("com.f.a.*")
 public class AllanApplication {
 
 	public static void main(String[] args) {

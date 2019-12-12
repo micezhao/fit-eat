@@ -1,17 +1,21 @@
 package com.f.a.allan.ctrl;
 
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import java.util.List;
 
-import com.f.a.allan.pojo.Goods;
-import com.f.a.allan.service.impl.GoodsServiceImpl;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.f.a.allan.pojo.Goods;
+import com.f.a.allan.service.impl.GoodsServiceImpl;
+import com.f.a.kobe.view.UserAgent;
 
 /**
  * <p>
@@ -25,11 +29,14 @@ import org.springframework.stereotype.Controller;
 @RequestMapping("/goods")
 public class GoodsController {
 	
+	private static final Logger logger = LoggerFactory.getLogger(GoodsController.class);
+	
 	@Autowired
 	private GoodsServiceImpl goodsService;
 	
 	@PostMapping
-	public ResponseEntity<Goods> add(){
+	public ResponseEntity<Goods> add(UserAgent userAgent){
+		logger.info("登陆用户信息："+userAgent);
 		Goods goods = new Goods();
 		goods.setGoodsId("adb");
 		goods.setName("ccc");
@@ -39,6 +46,13 @@ public class GoodsController {
 		goods.setType("a");
 		 goodsService.save(goods);
 		return new ResponseEntity<Goods>(goods, HttpStatus.OK);
+	}
+	
+	@GetMapping
+	public ResponseEntity<Object> get(UserAgent userAgent){
+		logger.info("登陆用户信息："+userAgent);
+		List<Goods> list	=  goodsService.list();
+		return new ResponseEntity<Object>(list, HttpStatus.OK);
 	}
 	
 }

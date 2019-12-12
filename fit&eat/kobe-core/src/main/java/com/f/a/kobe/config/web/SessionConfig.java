@@ -1,4 +1,4 @@
-package com.f.a.kobe.config;
+package com.f.a.kobe.config.web;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +10,7 @@ import org.springframework.session.web.http.HttpSessionIdResolver;
 
 import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
 
-//@Configuration
+@Configuration
 public class SessionConfig {
 	
 	private static final Logger log = LoggerFactory.getLogger(SessionConfig.class);

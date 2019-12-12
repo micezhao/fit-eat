@@ -63,10 +63,5 @@ public class UserSessionFilter extends ZuulFilter {
 		return 0;
 	}
 	
-	public static void main(String[] args) {
-		AntPathMatcher pathMatcher = new AntPathMatcher();
-		boolean flag = pathMatcher.match("/login/**", "/login/test/123333");
-		System.out.println(flag);
-	}
-	
+
 }

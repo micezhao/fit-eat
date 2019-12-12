@@ -376,7 +376,7 @@ fit-eat 开发过程的问题记录和经验总结
 
 5、开发chart数据视图功能
 
-第四周(2019/12/01 - 2019/12/06)
+第五周(2019/12/01 - 2019/12/06)
 1、SpringSession实现会话信息共享的机制的分析
   1.1 SpringSession 是一个用于分布式系统共享会话信息的一种技术方案，可以解决微服务系统架构中用户请求会话共享的难题
   1.2 SpringSession 对系统而言，是一个代替传统由网络服务器存放和维护会话管理的机制，SpringSession中提供了一个用来存储和维护会话信息的接口，SessionRepository
@@ -450,7 +450,8 @@ fit-eat 开发过程的问题记录和经验总结
             5.4.4 通过redis来实现热销产品的排名
             5.4.5 消息处理与事物的一致性的处理
 6、商城系统搭建
-    6.1 集成mybatis-plus：是mybatis的加强版
+第六周(2019/12/09 - 2019/12/13)
+    1、集成mybatis-plus：是mybatis的加强版
         6.1.1 通过代码配置的方式灵活的配置逆向生成的代码内容
         6.1.2 提供了多种注解，来对表或者字段提供加强的功能：源代码位置：package com.baomidou.mybatisplus.annotation
                 例如：@TableName("`Order`") -> 转译表名为关键字的情况
@@ -461,6 +462,93 @@ fit-eat 开发过程的问题记录和经验总结
         6.1.5 关于LocalDateTime前端显示的问题：在被声明为LocalDateTime类型的字段上加上  
             @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") // 格式化注解
             @JsonSerialize(using = LocalDateTimeSerializer.class) // 序列化注解
+    2、zuul+fegin+redisSessionRepository 方式下：请求转发过程中的用户信息的共享
+        请求通过zuul转发时，会将sessionId转发到对应的服务，然后后置的服务通过sessionId到对应sessionRepository中去获取session中的信息
+
+    3、订单数据采用垂直分表的方案存储数据，将订单的可变数据与不可变数据分别写入order/order_detail中
+    4、通过mysql的事件调度器（Event Scheduler）实现自动化建表
+        创建过程如下：
+        -- 查看当前数据库的事件
+        show events;
+        -- 开启事件调度器 on/off 或 （1/0）
+        SET GLOBAL event_scheduler = on;
+
+        -- 查看事件调度器的状态
+        SELECT @@event_scheduler;
+
+        -- 删除存储过程
+        DROP PROCEDURE IF EXISTS order_create_by_day;
+
+        -- 添加; 的转义
+        DELIMITER ;;
+        create procedure order_create_by_day()
+        begin
+        DECLARE tblname VARCHAR(32);
+        set tblname =  CONCAT('order_', date_format(now(),'%Y%m%d'));
+        set @sql_t = concat("create table ",tblname,'(
+          `id` bigint(16) NOT NULL AUTO_INCREMENT COMMENT \'主键\',
+          `order_id` varchar(32) NOT NULL COMMENT \'订单编号\',
+          `customer_id` varchar(32) NOT NULL COMMENT \'用户编号\',
+          `total` varchar(16) NOT NULL COMMENT \'订单总价\',
+          `discount_price` varchar(16) DEFAULT NULL COMMENT \'优惠金额\',
+          `settlement_price` varchar(16) NOT NULL COMMENT \'结算金额\',
+          `order_time` datetime DEFAULT NULL COMMENT \'下单时间\',
+          `expire_time` datetime DEFAULT NULL COMMENT \'订单过期时间\',
+          `close_time` datetime DEFAULT NULL COMMENT \'订单关闭时间\',
+          `finish_time` datetime DEFAULT NULL COMMENT \'订单完成时间\',
+          `status` varchar(8) NOT NULL COMMENT \'订单状态\',
+          `cdt` datetime DEFAULT NULL COMMENT \'创建时间\',
+          `mdt` datetime DEFAULT NULL COMMENT \'修改时间\',
+          PRIMARY KEY (`id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
+        prepare sql_t from @sql_t;
+        execute sql_t;
+        end;
+
+        DROP EVENT IF EXISTS table_auto_create_by_day;
+
+        -- 定义执行计划
+        CREATE EVENT table_auto_create_by_day
+        ON SCHEDULE every 1 day 
+        starts timestamp(current_date,'09:32:00')
+        on completion PRESERVE
+        DO  call order_create_by_day();
+
+    5、通过mybatis-plus实现动态表名的机制：
+        当系统中某些表中的数据增量很大，就需要对这个表进行水平切分。而通过程序进行数据的读写操作，就需要克服动态表名带来的问题，实现原理是通过拦截器，在进行prestatement操作是对sql进行改写。
+        通过mybatis-plus可以通过较少的配置来解决这个问题：
+        解决步骤如下：
+        5.1 声明一个配置类，用于进行mybatis的配置
+        5.2 在这个配置类中，声明一个 PaginationInterceptor 的@Bean
+        5.3 在这个bean中进行DynamicTableNameParser.setTableNameHandlerMap()中的ITableNameHandler的实现,最后加入到PaginationInterceptor的sqlparse中
+        @Bean
+        public PaginationInterceptor paginationInterceptor() {
+		    logger.info(">>>>>加载动态订单表表名的策略: order_yyyyMMdd");
+            PaginationInterceptor paginationInterceptor = new PaginationInterceptor();
+            DynamicTableNameParser orderdynamicParser = new DynamicTableNameParser();
+            //设置动态表名的策略,注意表名如果是sql关键字要加上``
+            orderdynamicParser.setTableNameHandlerMap(new HashMap<String, ITableNameHandler>(2) {{
+              put("`order`", new ITableNameHandler() {
+			    	@Override
+				    public String dynamicTableName(MetaObject metaObject, String sql, String tableName) {
+				    	String dynamicDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+	                   return TABLE_ORDER+"_"+ dynamicDate;
+				    }
+                });
+            }});
+            paginationInterceptor.setSqlParserList(Collections.singletonList(orderdynamicParser));
+            return paginationInterceptor;
+        }
+        PaginationInterceptor 是mybatis的拦截器，通过这个拦截器可以完成分页配置，sql改写等操作；
+        paginationInterceptor.setSqlParserList 是添加一个动态sql解析器
+        动态sql的编译和执行过程的入口是DynamicTableNameParser.parser方法，在这个方法中会获取需要改写的表名和对应改写规则
+        【这个规则来源于对ITableNameHandler接口dynamicTableName方法的实现】>>>【最后执行ITableNameHandler接口中的process方法来改写sql】
+        但是如果面临需要进行数据进行跨表的聚合查询时候，mybatis-plus就无能为力了。。。需要引入其他框架来解决这个问题。
+
+        6、灵活的使用mybatis中提供的@Select等注解，实现jdbc操作，可以有效的降低编写xml的复杂度
+
+
+
 
 
 
