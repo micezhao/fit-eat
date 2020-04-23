@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.f.a.allan.pojo.Order;
+import com.f.a.allan.entity.pojo.Order;
 import com.f.a.allan.service.impl.OrderServiceImpl;
 
 /**

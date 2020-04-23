@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.f.a.allan.pojo.Goods;
+import com.f.a.allan.entity.pojo.Goods;
 import com.f.a.allan.service.impl.GoodsServiceImpl;
 import com.f.a.kobe.view.UserAgent;
 

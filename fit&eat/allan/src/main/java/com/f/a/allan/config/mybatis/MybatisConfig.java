@@ -16,7 +16,12 @@ import com.baomidou.mybatisplus.extension.parsers.DynamicTableNameParser;
 import com.baomidou.mybatisplus.extension.parsers.ITableNameHandler;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 
-@Configuration
+/**
+ * mybatis动态表名配置，暂时不开启
+ * @author micezhao
+ *
+ */
+//@Configuration
 @MapperScan("com.f.a.allan.dao.*")
 public class MybatisConfig {
 	
@@ -25,7 +30,7 @@ public class MybatisConfig {
 	private static final String TABLE_ORDER = "order";
 	
 	// 动态表名解析器
-	@Bean
+//	@Bean
     public PaginationInterceptor paginationInterceptor() {
 		logger.info(">>>>>加载动态订单表表名的策略: order_yyyyMMdd");
         PaginationInterceptor paginationInterceptor = new PaginationInterceptor();
@@ -43,10 +48,4 @@ public class MybatisConfig {
         paginationInterceptor.setSqlParserList(Collections.singletonList(orderdynamicParser));
         return paginationInterceptor;
     }
-	
-//	(metaObject, sql, tableName) -> {
-//String dynamicDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-//return TABLE_ORDER+"_"+ dynamicDate;
-//}
-
 }

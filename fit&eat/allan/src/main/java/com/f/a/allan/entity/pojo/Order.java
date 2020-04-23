@@ -1,4 +1,4 @@
-package com.f.a.allan.pojo;
+package com.f.a.allan.entity.pojo;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;

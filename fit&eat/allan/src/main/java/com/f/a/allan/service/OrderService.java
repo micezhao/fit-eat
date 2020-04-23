@@ -1,7 +1,7 @@
 package com.f.a.allan.service;
 
-import com.f.a.allan.pojo.Order;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.f.a.allan.entity.pojo.Order;
 
 /**
  * <p>

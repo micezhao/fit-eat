@@ -1,7 +1,7 @@
 package com.f.a.allan.service.impl;
 
-import com.f.a.allan.pojo.Merchant;
 import com.f.a.allan.dao.MerchantMapper;
+import com.f.a.allan.entity.pojo.Merchant;
 import com.f.a.allan.service.MerchantService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;

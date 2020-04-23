@@ -15,7 +15,7 @@ DELIMITER ;;
 create procedure order_create_by_day()
 begin
 DECLARE tblname VARCHAR(32);
-set tblname =  CONCAT('order_', date_format(now(),'%Y%m%d'));
+set tblname =  CONCAT('order_', date_format(now(),'%Y%m%d%'));
 set @sql_t = concat("create table ",tblname,'(
   `id` bigint(16) NOT NULL AUTO_INCREMENT COMMENT \'主键\',
   `order_id` varchar(32) NOT NULL COMMENT \'订单编号\',
@@ -36,9 +36,11 @@ prepare sql_t from @sql_t;
 execute sql_t;
 end;
 
+DROP EVENT IF EXISTS table_auto_create_by_day;
+
 -- 定义执行计划
 CREATE EVENT table_auto_create_by_day
-ON SCHEDULE every 1 day 
-starts timestamp(current_date,'09:32:00')
+ON SCHEDULE every 1 day
+starts timestamp(current_date,'00:00:00')
 on completion PRESERVE
 DO  call order_create_by_day();

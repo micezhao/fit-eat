@@ -1,10 +1,9 @@
 package com.f.a.allan.dao;
 
-import com.f.a.allan.pojo.Merchant;
-
 import org.apache.ibatis.annotations.Mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.f.a.allan.entity.pojo.Merchant;
 
 /**
  * <p>

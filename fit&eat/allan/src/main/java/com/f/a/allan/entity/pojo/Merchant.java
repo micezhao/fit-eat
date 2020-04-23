@@ -1,16 +1,14 @@
-package com.f.a.allan.pojo;
-
-import java.io.Serializable;
-import java.time.LocalDateTime;
+package com.f.a.allan.entity.pojo;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-
+import com.baomidou.mybatisplus.annotation.TableId;
+import java.time.LocalDateTime;
+import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -26,42 +24,45 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-
-public class Goods extends Model<Goods> {
+public class Merchant extends Model<Merchant> {
 
     private static final long serialVersionUID=1L;
 
     /**
      * 主键
      */
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
-    
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
-     * 商品编号
-     */
-    private String goodsId;
-
-    /**
-     * 商品名称
-     */
-    private String name;
-
-    /**
-     * 所属商户编号
+     * 商户编号
      */
     private String merchantNo;
 
     /**
-     * 商品分类
+     * 商户名称
+     */
+    private String name;
+
+    /**
+     * 注册时间
+     */
+    private String registerDate;
+
+    /**
+     * 商户类型
      */
     private String type;
 
     /**
-     * 商品价格
+     * 联系人
      */
-    private String price;
+    private String contacter;
+
+    /**
+     * 联系电话
+     */
+    private String contactPhone;
 
     /**
      * 商户状态

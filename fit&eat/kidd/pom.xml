@@ -11,7 +11,7 @@
 
 	<artifactId>kidd</artifactId>
 	<name>kidd</name>
-	<description>网关系统</description>
+	<description>系统网关系统</description>
 
 	<dependencies>
 		<dependency>

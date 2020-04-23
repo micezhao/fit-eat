@@ -1,7 +1,7 @@
 package com.f.a.allan.service.impl;
 
-import com.f.a.allan.pojo.Goods;
 import com.f.a.allan.dao.GoodsMapper;
+import com.f.a.allan.entity.pojo.Goods;
 import com.f.a.allan.service.GoodsService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;

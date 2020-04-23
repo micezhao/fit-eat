@@ -69,5 +69,7 @@ public class MongoTransConfig {
 		MongoTemplate mongoTemplate = new MongoTemplate(mongoDbFactory(), mappingMongoConverter);
 		return mongoTemplate;
 	}
+	
+	
 	 
 }
