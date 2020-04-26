@@ -1,0 +1,66 @@
+appname: kobe
+
+server:
+  port: 8764
+
+spring:
+  http:
+    encoding:
+      enabled: true
+      charset: UTF-8
+  application:
+    name: kobe
+  datasource:
+    #driverClassName: com.mysql.jdbc.Driver
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://118.190.53.214:3386/fa_kobe2?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
+    username: root
+    password: 891122
+  rabbitmq:
+    host: 118.190.53.214
+    port: 5682
+    virtual-host: /
+  redis:
+    database: 0
+    host: 118.190.53.214
+    port: 16379
+    password: 891122
+  mongo:
+    host: 118.190.53.214
+    port: 27817
+    dbName: fit-eat
+    username: zcmac
+    password: 891122
+    url: ${spring.mongo.username}:${spring.mongo.password}@${spring.mongo.host}:${spring.mongo.port}/${spring.mongo.dbName}
+  session:
+    store-type: redis
+    timeout: 3600 #seconds in used
+    redis:
+      flush-mode: on-save  # Sessions flush mode.
+      namespace: kobe # Namespace for keys used to store sessions.
+      database: 5
+
+redis:
+  region:
+    database: 5
+  lettuce:
+    pool:
+      max-active: 8
+      max-wait: 10000
+      max-idle: 4
+      min-idle: 0
+    timeout: 1000000
+    shutdown-timeout: 400
+
+mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+credential:
+  wechat:
+    appId: wx492bfcf10245c5d1
+    appSecret: d9bb70c779a7cabd6ec7d11c5034e239
+    urlPattern: https://api.weixin.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={2}&grant_type=authorization_code
+    errtag: errcode
+
