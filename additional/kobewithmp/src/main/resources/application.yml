@@ -37,7 +37,7 @@ spring:
     timeout: 3600 #seconds in used
     redis:
       flush-mode: on-save  # Sessions flush mode.
-      namespace: kobe # Namespace for keys used to store sessions.
+      namespace: kobe2 # Namespace for keys used to store sessions.
       database: 5
 
 redis:

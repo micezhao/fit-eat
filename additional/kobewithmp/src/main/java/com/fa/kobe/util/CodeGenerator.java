@@ -53,7 +53,7 @@ public class CodeGenerator {
 
         // 策略配置
         StrategyConfig strategy = new StrategyConfig();
-        strategy.setInclude("agent_score_transfer","agent_vs_user","user_info","login_info","users_score_transfer");
+        strategy.setInclude("credential","user_info","login_info");
         strategy.setNaming(NamingStrategy.underline_to_camel);
 
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);

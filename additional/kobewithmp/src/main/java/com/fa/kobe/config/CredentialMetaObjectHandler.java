@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
+
+//指定时间插入字段
 @Slf4j
 @Component
 public class CredentialMetaObjectHandler  implements MetaObjectHandler {

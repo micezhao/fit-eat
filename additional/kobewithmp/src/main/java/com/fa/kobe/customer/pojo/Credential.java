@@ -2,7 +2,6 @@ package com.fa.kobe.customer.pojo;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import java.util.Date;
-
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableLogic;
@@ -18,7 +17,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author jxh
- * @since 2020-04-26
+ * @since 2020-04-27
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
