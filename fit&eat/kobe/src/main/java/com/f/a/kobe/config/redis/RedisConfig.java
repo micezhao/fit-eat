@@ -36,25 +36,25 @@ public class RedisConfig extends CachingConfigurerSupport {
 	RedisProperties redisProperties;
 
 	@Value("${redis.region.database}")
-	private int regionDatabase = 5;
+	private int regionDatabase ;
 	
 	@Value("${redis.lettuce.pool.max-active}")
-	private int maxActive = 8;
+	private int maxActive ;
 	
 	@Value("${redis.lettuce.pool.max-wait}")
-	private Long maxWait = 10000L;
+	private Long maxWait ;
 	
 	@Value("${redis.lettuce.pool.max-idle}")
-	private int maxIdle = 4;
+	private int maxIdle;
 	
 	@Value("${redis.lettuce.pool.min-idle}")
-	private int minIdle = 0;
+	private int minIdle ;
 	
 	@Value("${redis.lettuce.timeout}")
-	private Long timeOut = 1000000L;
+	private Long timeOut ;
 	
 	@Value("${redis.lettuce.shutdown-timeout}")
-	private Long shutdown = 400L ;
+	private Long shutdown  ;
 
 	@Bean(name = "regionRedisTemplate")
 	public RedisTemplate<String, Object> regionRedisTemplate(RedisConnectionFactory connectionFactory) {
