@@ -622,6 +622,9 @@ fit-eat 开发过程的问题记录和经验总结
     客户端的最大连接数取决于客户端自己的限制，例如：chrome max = 256 / safari max = 1400+
     服务端的最大连接数，取决于部署服务器的配置 max_thread 
 
+
+【关于too many connections error的解决方案：https://www.jianshu.com/p/fc40067c4dc9 /
+     springboot 数据库连接池的配置 https://www.cnblogs.com/hugb/p/10493101.html】
     
         
 
