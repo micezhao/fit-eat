@@ -8,12 +8,12 @@ import org.springframework.util.StringUtils;
 
 import com.f.a.kobe.exceptions.ErrEnum;
 import com.f.a.kobe.exceptions.InvaildException;
-import com.f.a.kobe.pojo.CustomerCredential;
 import com.f.a.kobe.pojo.bo.AuthBo;
 import com.f.a.kobe.pojo.enums.DrEnum;
+import com.f.a.kobe.pojo.previous.CustomerCredential;
 import com.f.a.kobe.pojo.request.ParamRequest;
-import com.f.a.kobe.service.CustomerCredentialService;
-import com.f.a.kobe.service.MobileValidateCodeService;
+import com.f.a.kobe.service.previous.CustomerCredentialService;
+import com.f.a.kobe.service.previous.MobileValidateCodeService;
 
 @Component("appCustomerCredentialService")
 public class AppCustomerCredentialService extends CustomerCredentialService {

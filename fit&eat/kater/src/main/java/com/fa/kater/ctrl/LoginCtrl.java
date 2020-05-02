@@ -36,10 +36,11 @@ public class LoginCtrl {
 
 
     //这是一种模拟从微信服务端获取授权码的伪实现
-    @GetMapping("/authCode")
-    public ResponseEntity<AuthBo> getAuthCode(@RequestBody ParamRequest request) {
+    @GetMapping("/authCode/{code}/{loginType}")
+    public ResponseEntity<AuthBo> getAuthCode(@PathVariable("code") String code,@PathVariable("loginType") String loginType) {
         //2.获取授权结果
-        AuthBo authResult = loginBiz.getServiceInstance(request.getLoginType()).getAuthInfoByLoginRequest(request);
+    	ParamRequest request=ParamRequest.builder().code(code).loginType(loginType).build(); 
+        AuthBo authResult = loginBiz.getServiceInstance(loginType).getAuthInfoByLoginRequest(request);
         logger.info("获取到的第三方code为{}",authResult.getOpenid());
         return new ResponseEntity<AuthBo>(authResult, HttpStatus.OK);
     }

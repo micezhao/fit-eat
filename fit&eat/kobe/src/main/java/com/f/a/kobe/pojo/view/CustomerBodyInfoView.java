@@ -2,7 +2,7 @@ package com.f.a.kobe.pojo.view;
 
 import java.math.BigDecimal;
 
-import com.f.a.kobe.pojo.CustomerBodyInfo;
+import com.f.a.kobe.pojo.previous.CustomerBodyInfo;
 import com.f.a.kobe.service.handler.offset.OffsetHandler;
 import com.f.a.kobe.service.handler.offset.OffsetStrategy;
 

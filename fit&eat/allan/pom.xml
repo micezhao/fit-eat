@@ -69,7 +69,6 @@
 				</exclusion>
 			</exclusions>
 			<version>${pagehelper.version}</version>
-			
 		</dependency>
 		<dependency>
 			<groupId>org.apache.velocity</groupId>

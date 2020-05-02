@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.f.a.kobe.customer.dao.UserInfoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.f.a.kobe.customer.pojo.UserInfo">
+        <id column="id" property="id" />
+        <result column="user_account" property="userAccount" />
+        <result column="realname" property="realname" />
+        <result column="birthday" property="birthday" />
+        <result column="age" property="age" />
+        <result column="gender" property="gender" />
+        <result column="nickname" property="nickname" />
+        <result column="headimg_url" property="headimgUrl" />
+        <result column="score" property="score" />
+        <result column="mobile" property="mobile" />
+        <result column="deleted" property="deleted" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, user_account, realname, birthday, age, gender, nickname, headimg_url, score, mobile, deleted, gmt_create, gmt_modified
+    </sql>
+
+</mapper>

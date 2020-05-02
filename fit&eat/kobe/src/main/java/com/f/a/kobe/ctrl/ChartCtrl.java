@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.f.a.kobe.pojo.bo.DateSelection;
 import com.f.a.kobe.pojo.response.chart.LineChart;
 import com.f.a.kobe.pojo.response.chart.WeightChart;
-import com.f.a.kobe.service.CustomerBodyInfoService;
+import com.f.a.kobe.service.previous.CustomerBodyInfoService;
 import com.f.a.kobe.util.DateUtils;
 import com.f.a.kobe.view.UserAgent;
 

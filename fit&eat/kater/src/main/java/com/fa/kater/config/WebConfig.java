@@ -44,7 +44,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(new UserSessionInterceptor()).addPathPatterns("/**").
-		excludePathPatterns("/login/authCode","/login/registerByThird","/login/thirdPart/**","/login/registerTest");
+		excludePathPatterns("/login/authCode/**","/login/registerByThird","/login/thirdPart/**","/login/registerTest");
 	}
 	
 	/**
