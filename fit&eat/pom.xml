@@ -79,7 +79,7 @@
             <artifactId>velocity-engine-core</artifactId>
             <version>2.2</version>
         </dependency>
->>>>>>> 22246ad9b423fed822b9d84c9838aced4ddd0946
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
