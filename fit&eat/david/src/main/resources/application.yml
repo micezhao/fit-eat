@@ -23,8 +23,8 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://118.190.53.214:8761/eureka/   ## 注册中心eurka地址
-      #defaultZone: http://localhost:8761/eureka/
+      #defaultZone: http://118.190.53.214:8761/eureka/   ## 注册中心eurka地址
+      defaultZone: http://localhost:8761/eureka/
   instance:
     hostname: imac-david ## 通过hostname注册到eureka
     lease-expiration-duration-in-seconds: 5 #设置心跳的周期间隔(默认90s)[如果5s没响应默认服务宕机]
