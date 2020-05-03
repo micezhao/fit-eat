@@ -1,4 +1,4 @@
-fit-eat 开发过程的问题记录和经验总结
+++fit-eat 开发过程的问题记录和经验总结
 
 第一周（2019/10/21 - 2019/10/27）
 已完成任务：
@@ -469,7 +469,7 @@ fit-eat 开发过程的问题记录和经验总结
     4、通过mysql的事件调度器（Event Scheduler）实现自动化建表
         创建过程如下：
         -- 查看当前数据库的事件
-        show events;
+        SHOW VARIABLES LIKE 'event_scheduler';
         -- 开启事件调度器 on/off 或 （1/0）
         SET GLOBAL event_scheduler = on;
 
@@ -486,28 +486,29 @@ fit-eat 开发过程的问题记录和经验总结
         DECLARE tblname VARCHAR(32);
         set tblname =  CONCAT('order_', date_format(now(),'%Y%m%d'));
         set @sql_t = concat("create table ",tblname,'(
-          `id` bigint(16) NOT NULL AUTO_INCREMENT COMMENT \'主键\',
-          `order_id` varchar(32) NOT NULL COMMENT \'订单编号\',
-          `customer_id` varchar(32) NOT NULL COMMENT \'用户编号\',
-          `total` varchar(16) NOT NULL COMMENT \'订单总价\',
-          `discount_price` varchar(16) DEFAULT NULL COMMENT \'优惠金额\',
-          `settlement_price` varchar(16) NOT NULL COMMENT \'结算金额\',
-          `order_time` datetime DEFAULT NULL COMMENT \'下单时间\',
-          `expire_time` datetime DEFAULT NULL COMMENT \'订单过期时间\',
-          `close_time` datetime DEFAULT NULL COMMENT \'订单关闭时间\',
-          `finish_time` datetime DEFAULT NULL COMMENT \'订单完成时间\',
-          `status` varchar(8) NOT NULL COMMENT \'订单状态\',
-          `cdt` datetime DEFAULT NULL COMMENT \'创建时间\',
-          `mdt` datetime DEFAULT NULL COMMENT \'修改时间\',
+               `id` bigint(16) NOT NULL AUTO_INCREMENT COMMENT \'主键\',
+          	 `order_id` varchar(32) NOT NULL COMMENT \'订单编号\',
+          	 `user_account` varchar(32) NOT NULL COMMENT \'用户编号\',
+          	 `goods_id` varchar(32) NOT NULL COMMENT \'商品编号\',
+          	 `category` varchar(16) NOT NULL COMMENT \'商品类型\',
+          	 `num` int NOT NULL COMMENT \'商品数量\',
+          	 `price` varchar(32) DEFAULT NULL COMMENT \'应付总价\',
+          	 `discount_price` varchar(32) DEFAULT NULL COMMENT \'优惠价格\',
+		 `settlement_price` varchar(32) DEFAULT NULL COMMENT \'结算价格\',
+          	 `merchant_id` varchar(32) DEFAULT NULL COMMENT \'商户号\',
+		 `status` varchar(8) NOT NULL COMMENT \'订单状态\',
+		 `order_time` datetime DEFAULT NULL COMMENT \'订单创建时间\',
+          	 `finish_time` datetime DEFAULT NULL COMMENT \'订单完成时间\',
+          	 `cdt` datetime DEFAULT NULL COMMENT \'创建时间\',
+          	 `mdt` datetime DEFAULT NULL COMMENT \'修改时间\',
           PRIMARY KEY (`id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
         prepare sql_t from @sql_t;
         execute sql_t;
         end;
-
-        DROP EVENT IF EXISTS table_auto_create_by_day;
-
+	
         -- 定义执行计划
+	 DROP EVENT IF EXISTS table_auto_create_by_day;	
         CREATE EVENT table_auto_create_by_day
         ON SCHEDULE every 1 day 
         starts timestamp(current_date,'09:32:00')
