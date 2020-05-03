@@ -2,7 +2,7 @@
 <!-- 注意，文件被命名为logback-spring.xml 才可以使用profile来指定环境 -->
 <configuration scan="true" scanPeriod="60 seconds" debug="false">
 	<property name="app_name" value="kater" />
-	<property name="log_path" value="D:/fiteat1/fit_eat_logs"/>
+	<property name="log_path" value="/Users/micezhao/fit_eat_logs"/>
 	<contextName>${app_name}</contextName>
 <!-- 控制台输出 -->
 	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">

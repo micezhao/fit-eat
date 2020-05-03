@@ -20,6 +20,7 @@ public class CredentialMetaObjectHandler  implements MetaObjectHandler {
         this.setFieldValByName("updateTime",new Date(),metaObject);
         this.setFieldValByName("gmtCreate",new Date(),metaObject);
         this.setFieldValByName("gmtModified",new Date(),metaObject);
+        log.info("");
     }
 
     @Override

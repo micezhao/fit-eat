@@ -24,13 +24,13 @@ import org.springframework.web.client.RestTemplate;
 import com.alibaba.fastjson.JSONObject;
 import com.f.a.kobe.config.credential.WeChatConfigProperties;
 import com.f.a.kobe.exceptions.ErrEnum;
-import com.f.a.kobe.manager.CustomerBaseInfoManager;
-import com.f.a.kobe.pojo.CustomerCredential;
+import com.f.a.kobe.manager.previous.CustomerBaseInfoManager;
 import com.f.a.kobe.pojo.bo.AuthBo;
 import com.f.a.kobe.pojo.enums.DrEnum;
 import com.f.a.kobe.pojo.enums.LoginTypeEnum;
+import com.f.a.kobe.pojo.previous.CustomerCredential;
 import com.f.a.kobe.pojo.request.ParamRequest;
-import com.f.a.kobe.service.CustomerCredentialService;
+import com.f.a.kobe.service.previous.CustomerCredentialService;
 
 @Component(value="wxCustomerCredentialService")
 public class WxCustomerCredentialService extends CustomerCredentialService {

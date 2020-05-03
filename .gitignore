@@ -4,6 +4,5 @@
 *.DS_Store  
 *.DS_Store?
 */bin/*
-fit&eat/kobe/src/main/.DS_Store
-*.class
-*.class
+additional/kobewithmp/.classpath
+additional/kobewithmp/fitesttest/kobe/.classpath

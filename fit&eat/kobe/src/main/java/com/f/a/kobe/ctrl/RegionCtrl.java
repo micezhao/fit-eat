@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
-import com.f.a.kobe.pojo.Areas;
-import com.f.a.kobe.service.RegionService;
+import com.f.a.kobe.pojo.region.Areas;
+import com.f.a.kobe.service.previous.RegionService;
 
 
 @RestController
