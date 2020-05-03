@@ -12,7 +12,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.f.a.kobe.contants.Contants;
 import com.f.a.kobe.view.UserAgent;
 
-@Component
+//@Component
 public class UserAgentResolver implements HandlerMethodArgumentResolver {
 	
 	@Override

@@ -53,11 +53,14 @@
 			<version>${commons-beanutils.version}</version>
 		</dependency>
 
-	<!-- 	<dependency>
+
+		<!--<dependency>
 			<groupId>com.github.pagehelper</groupId>
 			<artifactId>pagehelper-spring-boot-starter</artifactId>
 			<version>${pagehelper.version}</version>
-		</dependency> -->
+		</dependency>-->
+
+
 		
 			<!-- mybatis-plus -->
 		<dependency>
@@ -76,6 +79,7 @@
             <artifactId>velocity-engine-core</artifactId>
             <version>2.2</version>
         </dependency>
+>>>>>>> 22246ad9b423fed822b9d84c9838aced4ddd0946
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -122,10 +126,10 @@
 		<module>jordan</module>
 		<module>david</module>
 		<module>kobe</module>
-		<module>kater</module>
 		<module>kidd</module>
    		<module>kobe-core</module>
    		<module>allan</module>
-  </modules>
+        <module>kater</module>
+    </modules>
 
 </project>
