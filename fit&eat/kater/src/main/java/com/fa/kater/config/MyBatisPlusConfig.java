@@ -20,7 +20,6 @@ import com.baomidou.mybatisplus.core.injector.methods.SelectOne;
 import com.baomidou.mybatisplus.core.injector.methods.SelectPage;
 import com.baomidou.mybatisplus.core.injector.methods.Update;
 import com.baomidou.mybatisplus.core.injector.methods.UpdateById;
-import com.baomidou.mybatisplus.extension.injector.LogicSqlInjector;
 import com.baomidou.mybatisplus.extension.injector.methods.LogicDeleteByIdWithFill;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 
