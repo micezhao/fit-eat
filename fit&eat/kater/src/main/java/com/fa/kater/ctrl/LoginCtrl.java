@@ -8,6 +8,7 @@ import com.fa.kater.biz.LoginBiz;
 import com.fa.kater.customer.pojo.Credential;
 import com.fa.kater.customer.pojo.bo.AuthBo;
 import com.fa.kater.customer.pojo.bo.ParamRequest;
+import com.fa.kater.customer.pojo.bo.WxRequest;
 import com.fa.kater.customer.pojo.enums.LoginTypeEnum;
 import com.fa.kater.exceptions.ErrEnum;
 import com.fa.kater.exceptions.ErrRtn;
@@ -32,7 +33,17 @@ public class LoginCtrl {
     @Autowired
     LoginBiz loginBiz;
 
+    @Autowired
+    WxRequest wxRequest;
+
     private static final Logger logger = LoggerFactory.getLogger(LoginCtrl.class);
+
+    @GetMapping("wxrequest")
+    public String getWx(){
+
+        System.out.println(wxRequest);
+       return "hello wxrequest";
+    }
 
 
     //这是一种模拟从微信服务端获取授权码的伪实现
