@@ -18,7 +18,7 @@ public class CodeGenerator {
 	private static String basePackage = "com.f.a.allan";
 	//数据库配置四要素
 	private static String driverName = "com.mysql.cj.jdbc.Driver";
-	private static String url = "jdbc:mysql://118.190.53.214:3386/fa_kobe?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8";
+	private static String url = "jdbc:mysql://118.190.53.214:3386/fa_kobe2?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8";
 	private static String username = "root";
 	private static String password = "891122";
 	
@@ -51,7 +51,7 @@ public class CodeGenerator {
     			 );
     	 gen.setStrategy(new StrategyConfig()
     			 .setNaming(NamingStrategy.underline_to_camel)// 表名生成策略:下划线转驼峰命名
-    			 .setInclude("goods","merchant","order") // 【注意：】需要生成的表 
+    			 .setInclude("order") // 【注意：】需要生成的表 
     			 .setEntityLombokModel(true)
     			 );
     	 gen.setPackageInfo(new PackageConfig()
