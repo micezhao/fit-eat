@@ -31,16 +31,14 @@ import lombok.experimental.Accessors;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName(value = "`order`")
-public class Order extends Model<Order>  {
+public class Order2 implements Serializable{
 
     private static final long serialVersionUID=1L;
 
     /**
      * 主键
      */
-    @TableId(type = IdType.ASSIGN_ID)
-    private Long id;
+    private String id;
 
     /**
      * 订单编号
@@ -90,13 +88,11 @@ public class Order extends Model<Order>  {
     /**
      * 订单状态
      */
-    @TableField(value = "`status`" )
     private String status;
 
     /**
      * 订单创建时间
      */
-    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime orderTime;
 
     /**
@@ -107,18 +103,11 @@ public class Order extends Model<Order>  {
     /**
      * 创建时间
      */
-    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime cdt;
 
     /**
      * 修改时间
      */
-    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime mdt;
-
-    @Override
-    protected Serializable pkVal() {
-        return this.id;
-    }
 
 }

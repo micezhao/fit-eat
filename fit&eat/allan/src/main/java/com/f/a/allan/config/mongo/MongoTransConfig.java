@@ -1,10 +1,19 @@
 package com.f.a.allan.config.mongo;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.data.convert.CustomConversions;
+import org.springframework.data.convert.ReadingConverter;
+import org.springframework.data.convert.WritingConverter;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoClientDbFactory;
@@ -12,12 +21,15 @@ import org.springframework.data.mongodb.core.convert.DbRefResolver;
 import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
 import org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
+import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * mongodb 配置类
@@ -66,10 +78,39 @@ public class MongoTransConfig {
 		MappingMongoConverter mappingMongoConverter = new MappingMongoConverter(dbRefResolver, new MongoMappingContext());
 		//实现在向mongodb中插入数据是，不写入 _class : xxx 字段
 		mappingMongoConverter.setTypeMapper( new DefaultMongoTypeMapper(null));
+		mappingMongoConverter.setCustomConversions(customConversions());
+		mappingMongoConverter.afterPropertiesSet();
 		MongoTemplate mongoTemplate = new MongoTemplate(mongoDbFactory(), mappingMongoConverter);
+//		MappingMongoConverter mongoMapping = (MappingMongoConverter) mongoTemplate.getConverter(); 
+//	    mongoMapping.setCustomConversions(customConversions()); // tell mongodb to use the custom converters 
+//	    mongoMapping.afterPropertiesSet(); 
 		return mongoTemplate;
 	}
 	
+	// Direction: Java -> MongoDB
+	@WritingConverter 
+	public class DateToString implements Converter<LocalDateTime, String> {
+	    @Override
+	    public String convert(LocalDateTime source) {
+	        return source.toString() + 'Z';
+	    }
+	}
+
+	// Direction: MongoDB -> Java
+	@ReadingConverter 
+	public class StringToDate implements Converter<String, LocalDateTime> {
+		
+	    @Override
+	    public LocalDateTime convert(String source) {
+	        return LocalDateTime.parse(source,DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+	    }
+	}
 	
+    public CustomConversions customConversions() {
+        List<Converter<?, ?>> converterList = new ArrayList<Converter<?, ?>>();
+        converterList.add(new DateToString());
+        converterList.add(new StringToDate());
+        return new MongoCustomConversions(converterList);
+    }
 	 
 }

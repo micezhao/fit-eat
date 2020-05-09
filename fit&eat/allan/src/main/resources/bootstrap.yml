@@ -1,6 +1,3 @@
-#server:
- #  servlet:
-  #    context-path: /kobe
 
 eureka:
   client:
@@ -13,13 +10,13 @@ eureka:
     instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${server.port}
 
 
-#spring:
-#   cloud:
-#      config:
-#         discovery:
-#            enabled: true
-#            serviceId: david
-#         name: allan
-#         profile: dev
-#         label: master
+spring:
+   cloud:
+      config:
+         discovery:
+            enabled: true
+            serviceId: david
+         name: allan
+         profile: dev
+         label: master
             
