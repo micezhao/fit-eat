@@ -16,7 +16,7 @@ import org.springframework.data.mongodb.core.query.Query;
 public class MongoBaseMapper<T> {
 	
 	@Autowired
-	private MongoTemplate template;
+	protected MongoTemplate template;
 	
 	/**
 	 * 

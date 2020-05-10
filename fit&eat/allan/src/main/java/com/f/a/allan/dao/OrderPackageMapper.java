@@ -7,5 +7,6 @@ import com.f.a.allan.entity.pojo.OrderPackage;
 
 @Service
 public class OrderPackageMapper extends MongoBaseMapper<OrderPackage> {
-
+	
+	
 }

@@ -25,17 +25,21 @@ import lombok.experimental.Accessors;
 public class OrderPackage {
 	
 	@Id
-	private String id;
-	
 	private String OrderPackageId;
 	
 	private String cartId;
 	
-	private List<Order> orderList;
+	private List<GoodsItem> itemList;
 	
 	private String userAccount;
-	
+
 	private String totalAmount;
+	
+	private String discountPrice;
+	
+	private String settlePrice;
+	
+	private String packageStatus;
 	
 	private LocalDateTime expireTime;
 	

@@ -29,8 +29,6 @@ import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 
-import lombok.extern.slf4j.Slf4j;
-
 /**
  * mongodb 配置类
  * @author micezhao
