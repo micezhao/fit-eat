@@ -3,35 +3,18 @@ package com.fa.kater.config;
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.injector.AbstractSqlInjector;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
-import com.baomidou.mybatisplus.core.injector.methods.Delete;
-import com.baomidou.mybatisplus.core.injector.methods.DeleteBatchByIds;
-import com.baomidou.mybatisplus.core.injector.methods.DeleteById;
-import com.baomidou.mybatisplus.core.injector.methods.DeleteByMap;
-import com.baomidou.mybatisplus.core.injector.methods.Insert;
-import com.baomidou.mybatisplus.core.injector.methods.SelectBatchByIds;
-import com.baomidou.mybatisplus.core.injector.methods.SelectById;
-import com.baomidou.mybatisplus.core.injector.methods.SelectByMap;
-import com.baomidou.mybatisplus.core.injector.methods.SelectCount;
-import com.baomidou.mybatisplus.core.injector.methods.SelectList;
-import com.baomidou.mybatisplus.core.injector.methods.SelectMaps;
-import com.baomidou.mybatisplus.core.injector.methods.SelectMapsPage;
-import com.baomidou.mybatisplus.core.injector.methods.SelectObjs;
-import com.baomidou.mybatisplus.core.injector.methods.SelectOne;
-import com.baomidou.mybatisplus.core.injector.methods.SelectPage;
-import com.baomidou.mybatisplus.core.injector.methods.Update;
-import com.baomidou.mybatisplus.core.injector.methods.UpdateById;
+import com.baomidou.mybatisplus.core.injector.methods.*;
 import com.baomidou.mybatisplus.extension.injector.methods.LogicDeleteByIdWithFill;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
-
-import static java.util.stream.Collectors.toList;
-
-import java.util.List;
-import java.util.stream.Stream;
-
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import java.util.List;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 @Configuration
 @EnableTransactionManagement
@@ -72,5 +55,6 @@ public class MyBatisPlusConfig {
 				        ).collect(toList());
 				    };
         };
+    	//return new LogicSqlInjector();
     }
 }
