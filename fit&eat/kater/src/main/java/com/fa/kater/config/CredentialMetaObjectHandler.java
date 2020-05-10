@@ -16,18 +16,10 @@ public class CredentialMetaObjectHandler  implements MetaObjectHandler {
 
     @Override
     public void insertFill(MetaObject metaObject) {
-//        log.info("插入时间插入");
+        log.info("插入时间插入");
         if(metaObject.getOriginalObject() instanceof LoginInfo){
             this.setFieldValByName("createTime",new Date(),metaObject);
         }
-//        Object createTime = this.getFieldValByName("createTime", metaObject);
-//        if(createTime != null){
-//            this.setFieldValByName("createTime",new Date(),metaObject);
-//        }
-//        Object updateTime = this.getFieldValByName("updateTime", metaObject);
-//        if(updateTime != null){
-//            this.setFieldValByName("updateTime",new Date(),metaObject);
-//        }
 
 
         this.setFieldValByName("gmtCreate",new Date(),metaObject);
