@@ -9,8 +9,6 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import com.baomidou.mybatisplus.extension.parsers.DynamicTableNameParser;
 import com.baomidou.mybatisplus.extension.parsers.ITableNameHandler;

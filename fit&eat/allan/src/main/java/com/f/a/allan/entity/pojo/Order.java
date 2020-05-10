@@ -1,40 +1,45 @@
 package com.f.a.allan.entity.pojo;
 
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 
-import java.time.LocalDateTime;
-import java.io.Serializable;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 
+ * 订单处理对象
  * </p>
  *
  * @author micezhao
- * @since 2019-12-09
+ * @since 2020-05-06
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("`order`") // 如果表名或者字段名有关键字，就通过注解解决
-public class Order extends Model<Order> {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@TableName(value = "`order`")
+public class Order extends Model<Order>  {
 
     private static final long serialVersionUID=1L;
 
     /**
      * 主键
      */
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
+    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
@@ -45,71 +50,71 @@ public class Order extends Model<Order> {
     /**
      * 用户编号
      */
-    private String customerId;
+    private String userAccount;
 
     /**
-     * 订单总价
+     * 商品编号
      */
-    private String total;
+    private String goodsId;
 
     /**
-     * 优惠金额
+     * 商品类型
+     */
+    private String category;
+
+    /**
+     * 商品数量
+     */
+    private Integer num;
+
+    /**
+     * 应付总价
+     */
+    private String price;
+
+    /**
+     * 优惠价格
      */
     private String discountPrice;
 
     /**
-     * 结算金额
+     * 结算价格
      */
     private String settlementPrice;
 
     /**
-     * 下单时间
+     * 商户号
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime orderTime;
-
-    /**
-     * 订单过期时间
-     */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime expireTime;
-
-    /**
-     * 订单关闭时间
-     */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime closeTime;
-
-    /**
-     * 订单完成时间
-     */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime finishTime;
+    private String merchantId;
 
     /**
      * 订单状态
      */
-    @TableField("`status`")
+    @TableField(value = "`status`" )
     private String status;
+
+    /**
+     * 订单创建时间
+     */
+    @TableField(fill = FieldFill.INSERT)
+    private LocalDateTime orderTime;
+
+    /**
+     * 订单完成时间
+     */
+    private LocalDateTime finishTime;
 
     /**
      * 创建时间
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime cdt;
 
     /**
      * 修改时间
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime mdt;
-
 
     @Override
     protected Serializable pkVal() {

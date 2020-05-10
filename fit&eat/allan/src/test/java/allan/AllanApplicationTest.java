@@ -1,13 +1,14 @@
 package allan;
 
-import java.util.List;
-
-import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 
+import com.f.a.allan.AllanApplication;
+import com.f.a.allan.dao.OrderPackageMapper;
 import com.f.a.allan.entity.pojo.Order;
 import com.f.a.allan.service.impl.OrderServiceImpl;
 
@@ -16,17 +17,28 @@ import com.f.a.allan.service.impl.OrderServiceImpl;
  */
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {AllanApplicationTest.class})
+@SpringBootTest(classes = AllanApplication.class)
+@WebAppConfiguration
 public class AllanApplicationTest {
 	
+	@Autowired
+	OrderServiceImpl service;
 	
 	@Autowired
-	OrderServiceImpl impl;
+	OrderPackageMapper orderPackageMapper;
 	
-	@Test
+	@Autowired
+	MongoTemplate template;
+	
+	@org.junit.Test
 	public void test1() {
-//		OrderServiceImpl impl = new OrderServiceImpl();
-		List<Order> list= impl.list();
-		System.out.println(list.toString());
+		
+	}
+	
+	
+	
+	@org.junit.Test
+	public void test4() {
+		 
 	}
 }

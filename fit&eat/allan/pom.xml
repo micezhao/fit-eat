@@ -47,37 +47,24 @@
 			<artifactId>mysql-connector-java</artifactId>
 		</dependency>
 		<!-- mybatis-plus -->
-	<!-- 	<dependency>
+		<dependency>
 			<groupId>com.baomidou</groupId>
 			<artifactId>mybatis-plus-boot-starter</artifactId>
-			<version>3.3.0</version>
-		</dependency> -->
+		</dependency>
 		<!-- mybatis-plus-generator 逆向工程代码生成器 -->
-		<!-- <dependency>
+		<dependency>
 			<groupId>com.baomidou</groupId>
 			<artifactId>mybatis-plus-generator</artifactId>
-			<version>3.3.0</version>
-		</dependency> -->
-		<!-- 使用mybatis-plus 时要排除mybatis的冲突 -->
-		<!-- <dependency>
-			<groupId>com.github.pagehelper</groupId>
-			<artifactId>pagehelper-spring-boot-starter</artifactId>
-			<exclusions>
-				<exclusion>
-					 <groupId>org.mybatis</groupId>
-					 <artifactId>mybatis</artifactId>
-				</exclusion>
-			</exclusions>
-			<version>${pagehelper.version}</version>
 		</dependency>
-		 -->
-		<!-- <dependency>
+		<!-- 使用mybatis-plus 时要排除mybatis的冲突 -->
+		<dependency>
 			<groupId>org.apache.velocity</groupId>
 			<artifactId>velocity-engine-core</artifactId>
 			<version>2.1</version>
 			<scope>compile</scope>
 			<optional>true</optional>
-		</dependency> -->
+		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
