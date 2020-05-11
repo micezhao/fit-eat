@@ -6,7 +6,7 @@ import com.f.a.allan.entity.pojo.Order;
 
 /**
  * <p>
- *  Mapper 接口
+ *  Mapper 接口 
  * </p>
  *
  * @author micezhao

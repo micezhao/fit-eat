@@ -1,10 +1,13 @@
 package com.f.a.allan.enums;
 
+import org.apache.commons.lang3.StringUtils;
+
 public enum PackageStatusEnum {
 	
 	CTEATE("create","已创建"),
-	PAYED("payed","已支付"),
-	CLOSED("closed","已关闭");
+	PAID("paid","已支付"),
+	CLOSED("closed","已关闭"),
+	ALL("all","全部");
 	
 	private String code;
 	
@@ -31,5 +34,16 @@ public enum PackageStatusEnum {
 		this.description = description;
 	}
 	
-	
+	public static PackageStatusEnum getEnumByCode(String code) {
+		if(StringUtils.isEmpty(code)) {
+			return null;
+		}else {
+			for (PackageStatusEnum item : PackageStatusEnum.values()) {
+				if(StringUtils.equals(item.getCode(), code)) {
+					return item;
+				}
+			}
+		}
+		return null;
+	}
 }

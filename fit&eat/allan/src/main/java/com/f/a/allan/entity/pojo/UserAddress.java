@@ -1,7 +1,6 @@
 package com.f.a.allan.entity.pojo;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -11,44 +10,39 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import lombok.experimental.Accessors;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
+//@Accessors(chain = true)
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection="orderPackage")
-@ToString
-public class OrderPackage {
+@Document("userAddress")
+/**
+ * 用户收货地址
+ * @author micezhao
+ *
+ */
+public class UserAddress {
 	
 	@Id
-	private String OrderPackageId;
-	
-	private String cartId;
-	
-	private DeliveryInfo delivery;
-		
-	private List<GoodsItem> itemList;
+	private String userAddressId;
 	
 	private String userAccount;
-
-	private String totalAmount;
 	
-	private String discountPrice;
+	private String contactName;
 	
-	private String settlePrice;
+	private String contactPhone;
 	
-	private String packageStatus;
+	private String addrDetail;
 	
-	private LocalDateTime expireTime;
+	private String merchantId;
 	
-	private LocalDateTime payTime;
+	private String dr; // 是否禁用
 	
 	private LocalDateTime cdt;
 	
-	private LocalDateTime mdt;
-
+	private LocalDateTime mdt ; 
+	
 }

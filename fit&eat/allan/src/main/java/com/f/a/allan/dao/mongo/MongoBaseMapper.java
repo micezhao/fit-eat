@@ -15,6 +15,10 @@ import org.springframework.data.mongodb.core.query.Query;
 
 public class MongoBaseMapper<T> {
 	
+	public static final String MDT = "mdt";
+	
+	public static final String CDT = "cdt";
+	
 	@Autowired
 	protected MongoTemplate template;
 	
