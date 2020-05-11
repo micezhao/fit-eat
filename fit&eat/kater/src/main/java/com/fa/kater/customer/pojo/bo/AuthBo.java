@@ -16,4 +16,7 @@ public class AuthBo {
     private String userAccount;
 
     private String mobile;
+
+    private Integer isBindMobile = 0;
+
 }

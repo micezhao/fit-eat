@@ -1,20 +1,17 @@
 package com.fa.kater.customer.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
-import com.fa.kater.customer.pojo.Credential;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fa.kater.customer.mapper.CredentialMapper;
+import com.fa.kater.customer.pojo.Credential;
 import com.fa.kater.customer.pojo.bo.AuthBo;
 import com.fa.kater.customer.pojo.bo.ParamRequest;
-import com.fa.kater.customer.pojo.bo.WxLoginSuccess;
 import com.fa.kater.customer.pojo.enums.LoginTypeEnum;
 import com.fa.kater.customer.service.CredentialService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fa.kater.exceptions.ErrEnum;
 import com.fa.kater.exceptions.InvaildException;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.TimeUnit;
+import javax.servlet.http.HttpSession;
 
 /**
  * <p>
@@ -46,7 +43,7 @@ public class CredentialServiceImpl extends ServiceImpl<CredentialMapper, Credent
         this.removeById(source);
     }
 
-    public AuthBo getAuthInfoByLoginRequest(ParamRequest requestAuth) {
+    public AuthBo getAuthInfoByLoginRequest(ParamRequest requestAuth,  HttpSession httpSession) {
        return null;
     }
 

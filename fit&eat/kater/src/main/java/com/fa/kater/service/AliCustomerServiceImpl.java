@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -39,7 +40,7 @@ public class AliCustomerServiceImpl extends CredentialServiceImpl {
         return true;
     }
 
-    public AuthBo getAuthInfoByLoginRequest(ParamRequest requestAuth) {
+    public AuthBo getAuthInfoByLoginRequest(ParamRequest requestAuth, HttpSession httpSession) {
         String code = requestAuth.getCode();
         String result = requestAliAuthInfoByCode1(code);
         AliLoginSuccess aliLoginSuccess = JSONObject.parseObject(result, AliLoginSuccess.class);
