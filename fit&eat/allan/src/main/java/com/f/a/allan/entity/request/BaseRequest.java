@@ -16,6 +16,6 @@ public class BaseRequest {
 	
 	private Long pageNum = 1L;
 	
-	private String status;
+	
 	
 }
