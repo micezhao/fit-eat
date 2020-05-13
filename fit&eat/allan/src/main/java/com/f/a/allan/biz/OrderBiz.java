@@ -126,7 +126,7 @@ public class OrderBiz {
 		String objStr = JSONObject.toJSONString(obj);
 		DeliveryInfo deliveryInfo = JSONObject.parseObject(objStr, DeliveryInfo.class);
 		List<Order> orderItemList = orderServiceImpl.batchDistribute(goodsItemList, userAccount, orderTime);
-		orderDetailService.insertBatch(orderItemList, deliveryInfo);
+		orderDetailService.insertBatch(orderItemList, deliveryInfo); // 批量插入订单详情
 		removeTempDelivery(packageItem.getOrderPackageId());
 	}
 

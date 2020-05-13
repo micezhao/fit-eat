@@ -47,8 +47,8 @@ public class AllanApplicationTest {
 		JSONObject json = new JSONObject();
 		json.put("规格", "18cm");
 		List<GoodsItem> list = new ArrayList<GoodsItem>();
-		GoodsItem g1 = new GoodsItem("123", "virtual", json.toJSONString(), 2, "2.3", "18", "000000", "测试商户");
-		GoodsItem g2 = new GoodsItem("456", "substance", json.toJSONString(), 2, "2.3", "18", "000000", "测试商户");
+		GoodsItem g1 = new GoodsItem("123", "virtual", json.toJSONString(), 2, "2.3", "18", "7777", "测试商户777");
+		GoodsItem g2 = new GoodsItem("456", "substance", json.toJSONString(), 2, "2.3", "18", "8888", "测试商户8888");
 		GoodsItem g3 = new GoodsItem("789", "virtual", json.toJSONString(), 2, "2.3", "18", "000000", "测试商户");
 		GoodsItem g4 = new GoodsItem("001", "substance", json.toJSONString(), 2, "2.3", "18", "000000", "测试商户");
 		list.add(g1);
@@ -123,7 +123,7 @@ public class AllanApplicationTest {
 	
 	@org.junit.Test
 	public void test10() {
-		orderBiz.paySucccessed("5ebb4b30f47160403030c4d5");
+		orderBiz.paySucccessed("5ebbf8aaf391bf31ec296e0a");
 	}
 	
 	@org.junit.Test
