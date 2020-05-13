@@ -39,5 +39,8 @@ public class OrderDetail {
 	
 	private String imgUrl;
 	
+	// 支付的订单号
+	private String fundTransferId;
+	
 	
 }

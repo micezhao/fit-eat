@@ -1,7 +1,9 @@
 package com.f.a.allan.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -47,22 +49,29 @@ public class OrderDetailService {
 	
 	/**
 	 * 批量插入
+	 * 存在多条商品订单记录共享一个订单号的情况，但是一个订单信息只需要对应一条配送信息即可，因此通过set对orderList 对orderId进行去重
 	 * @param list
 	 */
-	public void insertBatch(List<Order> list,DeliveryInfo delivery) {
+	public void insertBatch(List<Order> list,DeliveryInfo delivery,String fundTransferId) {
 		List<OrderDetail> orderDetailList = new ArrayList<OrderDetail>();
-		OrderDetail orderDetail = null;
+		Set<String> orderIdSet = new HashSet<String>();
 		for (Order order : list) {
-			orderDetail = buildOrderDetail(order, delivery);
+			orderIdSet.add(order.getOrderId());
+		}
+		
+		OrderDetail orderDetail = null;
+		for (String os : orderIdSet) {
+			
+			orderDetail = buildOrderDetail(os, delivery,fundTransferId);
 			orderDetailList.add(orderDetail);
 		}
 		mongoTemplate.insertAll(orderDetailList);
 	}
 	
-	public OrderDetail buildOrderDetail(Order order, DeliveryInfo delivery) {
+	public OrderDetail buildOrderDetail(String orderId, DeliveryInfo delivery,String fundTransferId) {
 		// TODO 查询商品详情 （方案一：调用接口查询产品 / 方案二：从请求中获取）
 		
-		OrderDetailBuilder odb = OrderDetail.builder().goodsName("测试商品名称").orderId(order.getOrderId()).imgUrl("wwww.baidu.com")
+		OrderDetailBuilder odb = OrderDetail.builder().goodsName("测试商品名称").orderId(orderId).fundTransferId(fundTransferId)
 							.recevierName(delivery.getRecevierName())
 							.receiveAddr(delivery.getReceiveAddr())
 							.recevierPhone(delivery.getRecevierPhone())

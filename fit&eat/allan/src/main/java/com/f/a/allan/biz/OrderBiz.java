@@ -114,26 +114,30 @@ public class OrderBiz {
 		return new PackagePriceProccessor(total.toString(), discountTotal.toString(), settlePrice.toString());
 	}
 	
-	private void distributOrder(OrderPackage packageItem) {
+	private List<Order>  distributOrder(OrderPackage packageItem) {
 		List<GoodsItem> goodsItemList = packageItem.getItemList();
 		if (goodsItemList.isEmpty()) {
 			log.debug("orderPackageId:{} has no goodsItem ", packageItem.getOrderPackageId());
-			return ;
+			throw new RuntimeException("订单商品列表为空");
 		}
 		String userAccount = packageItem.getUserAccount();
 		LocalDateTime orderTime = packageItem.getPayTime();
-		Object obj = redisTemplate.opsForHash().get(TEMP_DELIVERY, packageItem.getOrderPackageId());
+		List<Order> orderItemList = orderServiceImpl.batchDistribute(goodsItemList, userAccount, orderTime);
+		return orderItemList;
+	}
+	
+	private DeliveryInfo getDeliveryInfo(String orderPackageId) {
+		Object obj = redisTemplate.opsForHash().get(TEMP_DELIVERY, orderPackageId);
 		String objStr = JSONObject.toJSONString(obj);
 		DeliveryInfo deliveryInfo = JSONObject.parseObject(objStr, DeliveryInfo.class);
-		List<Order> orderItemList = orderServiceImpl.batchDistribute(goodsItemList, userAccount, orderTime);
-		orderDetailService.insertBatch(orderItemList, deliveryInfo); // 批量插入订单详情
-		removeTempDelivery(packageItem.getOrderPackageId());
+		removeTempDelivery(orderPackageId); // 从redis中删除这条记录
+		return deliveryInfo;
 	}
 
 	// 支付成功后：更新订单包 -> 分配子订单 -> 回传结果，从购物车中清除已购买的商品
-	// TODO 从mongo 到 mysql 的事务一致性问题
+	// TODO 从 mongo 到 mysql 的事务一致性问题
 	//	@Transactional  此注解，在 多类型数据源情况下，不生效
-	public OrderPackage paySucccessed(String orderPackageId) {
+	public OrderPackage paySucccessed(String orderPackageId,String fundTransferId) {
 		OrderPackage item = mongoTemplate.findOne(Query.query(Criteria.where(OrderPackageMapper.ORDER_PACKAGE_ID).is(orderPackageId))
 								.addCriteria(Criteria.where(OrderPackageMapper.PACKAGE_STATUS).is(PackageStatusEnum.PAID.getCode()))
 								, OrderPackage.class);
@@ -150,7 +154,9 @@ public class OrderBiz {
 		update.set(OrderPackageMapper.PACKAGE_STATUS, PackageStatusEnum.PAID.getCode());
 		update.set(OrderPackageMapper.MDT, LocalDateTime.now());
 		OrderPackage packageItem  = mongoTemplate.findAndModify(query, update,new FindAndModifyOptions().returnNew(true), OrderPackage.class);
-		distributOrder(packageItem); // 分配子订单
+		List<Order> orderItemList = distributOrder(packageItem); // 分配子订单
+		DeliveryInfo deliveryInfo= getDeliveryInfo(orderPackageId);
+		orderDetailService.insertBatch(orderItemList, deliveryInfo,fundTransferId); // 批量插入订单详情
 		
 		return packageItem;
 	}
