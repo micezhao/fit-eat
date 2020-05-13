@@ -36,22 +36,12 @@ public class LoginCtrl {
 
     private static final Logger logger = LoggerFactory.getLogger(LoginCtrl.class);
 
-    //这是一种模拟从微信服务端获取授权码的伪实现
-    @GetMapping("wxrequest")
-    public WxAuthRtn wxrequest(){
-        WxAuthRtn build = new WxAuthRtn().builder().access_token("access_token").expires_in("7000").refresh_token("7789")
-                .openid("adasdsa").scope("SCOPE").build();
-        return build;
-
-    }
-
     //根据code获取wx或者ali的openid
     @GetMapping("/authCode/{code}/{loginType}")
     public ResponseEntity<AuthBo> getAuthCode(@PathVariable("code") String code,@PathVariable("loginType") String loginType,HttpSession httpSession) {
         //2.获取授权结果
 
         ParamRequest request = new ParamRequest(loginType,code);
-    	//ParamRequest request = ParamRequest.builder().code(code).loginType(loginType).build();
         AuthBo authResult = loginBiz.getServiceInstance(loginType).getAuthInfoByLoginRequest(request,httpSession);
         logger.info("获取到的第三方code为{}",authResult.getOpenid());
         return new ResponseEntity<AuthBo>(authResult, HttpStatus.OK);

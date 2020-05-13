@@ -7,24 +7,25 @@ import com.f.a.kobe.view.UserAgent;
 import com.fa.kater.biz.LoginBiz;
 import com.fa.kater.customer.pojo.Credential;
 import com.fa.kater.customer.pojo.UserInfo;
-import com.fa.kater.customer.pojo.bo.*;
-import com.fa.kater.customer.pojo.enums.LoginTypeEnum;
-import com.fa.kater.customer.service.CredentialService;
+import com.fa.kater.customer.pojo.bo.AuthBo;
+import com.fa.kater.customer.pojo.bo.ParamRequest;
+import com.fa.kater.customer.pojo.bo.WxRequest;
 import com.fa.kater.customer.service.impl.CredentialServiceImpl;
 import com.fa.kater.customer.service.impl.UserInfoServiceImpl;
+import com.fa.kater.exceptions.ErrEnum;
+import com.fa.kater.exceptions.InvaildException;
 import com.fa.kater.util.ObjectTransUtils;
-import org.apache.commons.codec.digest.DigestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import sun.net.www.http.HttpClient;
 
 import javax.servlet.http.HttpSession;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class WxCustomerServiceImpl extends CredentialServiceImpl {
@@ -48,6 +49,8 @@ public class WxCustomerServiceImpl extends CredentialServiceImpl {
 
     @Autowired
     UserInfoServiceImpl userInfoService;
+
+    private static final Logger logger = LoggerFactory.getLogger(WxCustomerServiceImpl.class);
 
     @Override
     public boolean existsed(AuthBo authInfoByLoginRequest) {
@@ -76,28 +79,16 @@ public class WxCustomerServiceImpl extends CredentialServiceImpl {
 
 
         String resultwx = "";
-
         String wxopenid = "";
         try {
-//            resultwx = restTemplate.getForObject(requestURL, String.class);
-//            JSONObject json = JSONObject.parseObject(resultwx);
-//            wxopenid = (String) json.get("openid");
+            resultwx = restTemplate.getForObject(requestURL, String.class);
+            JSONObject json = JSONObject.parseObject(resultwx);
+            wxopenid = (String) json.get("openid");
         }catch(Exception e ){
 
+            logger.error(e.getMessage());
+            throw new InvaildException(ErrEnum.INPUT_PARAM_INVAILD.getErrCode(),ErrEnum.INPUT_PARAM_INVAILD.getErrMsg());
         }
-        int i = new Random().nextInt(1000000000);
-        wxopenid = String.valueOf(i);
-        /*WxAuthRtn authRtn = JSONObject.parseObject(resultwx,WxAuthRtn.class);
-
-        JSONObject json = JSONObject.parseObject(resultwx);
-        String session_key1 = json.get("session_key").toString();
-        //用户的唯一标识（openid）
-        String openid = (String) json.get("openid");
-        //String result = AesUtil.decrypt(encryptedData, session_key, iv, "UTF-8");
-
-        String access_token = authRtn.getAccess_token();
-        String refresh_token = authRtn.getRefresh_token();
-        String wxopenid = authRtn.getOpenid();*/
 
         AuthBo authBo = new AuthBo();
         authBo.setOpenid(wxopenid);
@@ -137,18 +128,6 @@ public class WxCustomerServiceImpl extends CredentialServiceImpl {
 
         httpSession.setAttribute(Contants.USER_AGENT,userAgent);
 
-       /* String code = requestAuth.getCode();
-        String result = requestWxAuthInfoByCode1(code);
-        WxLoginSuccess wxLoginSuccess = JSONObject.parseObject(result, WxLoginSuccess.class);
-        String session_key = wxLoginSuccess.getSession_key();
-        String md5Hex = DigestUtils.md5Hex(session_key);
-        redisTemplate.opsForValue().set(md5Hex, session_key);
-        redisTemplate.expire(md5Hex, KEY_EXPIRE, TimeUnit.SECONDS);
-        AuthBo wxAuthResult = new AuthBo();
-        //wxAuthResult.setOpenid(wxLoginSuccess.getOpenid());
-        wxAuthResult.setOpenid(wxopenid);
-        wxAuthResult.setAuthToken(md5Hex);
-        wxAuthResult.setAuthType(LoginTypeEnum.WECHAT.getLoginTypeCode());*/
         return wxAuthResult;
     }
 
