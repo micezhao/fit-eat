@@ -37,6 +37,8 @@ public class UserAddress {
 	
 	private String addrDetail;
 	
+	private boolean defaultAddr;
+	
 	private String merchantId;
 	
 	private String dr; // 是否禁用

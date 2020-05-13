@@ -1,5 +1,7 @@
 package com.f.a.allan.enums;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * 可用状态的枚举
  * @author micezhao
@@ -34,6 +36,19 @@ public enum DrEnum {
 		this.code = code;
 		this.description = description;
 	}
-
+	
+	
+	public static DrEnum getEnumByCode(String code) {
+		if(StringUtils.isBlank(code)) {
+			return null;
+		}else {
+			for (DrEnum item : DrEnum.values()) {
+				if(StringUtils.equals(item.getCode(), code) ) {
+					return item;
+				}
+			}
+		}
+		return null;
+	}
 	
 }

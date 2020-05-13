@@ -28,4 +28,12 @@ public class UserAddressQueryRequest extends BaseRequest{
 	
 	private String merchantId;
 	
+	private Boolean defaultAddr;
+	
+	private String contactName;
+	
+	private String contactPhone;
+	
+	private String dr;
+	
 }

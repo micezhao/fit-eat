@@ -3,14 +3,15 @@ package com.f.a.allan.biz;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
@@ -21,11 +22,11 @@ import com.f.a.allan.entity.pojo.GoodsItem;
 import com.f.a.allan.entity.pojo.Order;
 import com.f.a.allan.entity.pojo.OrderPackage;
 import com.f.a.allan.entity.request.OrderQueryRequst;
-import com.f.a.allan.entity.response.OrderView;
-import com.f.a.allan.enums.OrderEnum;
+import com.f.a.allan.entity.response.OrderPackageView;
+import com.f.a.allan.entity.response.OrderPackageView.OrderPackageViewBuilder;
 import com.f.a.allan.enums.PackageStatusEnum;
+import com.f.a.allan.service.OrderDetailService;
 import com.f.a.allan.service.impl.OrderServiceImpl;
-import com.f.a.allan.utils.RedisSequenceUtils;
 import com.mongodb.client.result.UpdateResult;
 
 import lombok.AllArgsConstructor;
@@ -43,8 +44,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class OrderBiz {
 
-	@Autowired
-	RedisSequenceUtils redisSequenceUtils;
+	
 
 	@Autowired
 	private MongoTemplate mongoTemplate;
@@ -53,6 +53,14 @@ public class OrderBiz {
 
 	@Autowired
 	private OrderServiceImpl orderServiceImpl;
+	
+	@Autowired
+	private RedisTemplate<String,Object> redisTemplate; 
+	
+	private final static String TEMP_DELIVERY = "temp_delivery";
+	
+	@Autowired
+	private OrderDetailService orderDetailService;
 
 	@Setter
 	@Getter
@@ -70,8 +78,10 @@ public class OrderBiz {
 
 		String packageSettlePrice;
 	}
+	
 
 	public void packItem(String cartId, List<GoodsItem> list, String userAccount, DeliveryInfo delivery) {
+		// TODO 库存扣减的动作放在请求端？还是通过远程调用？
 		log.info("packaging goodsItem...");
 		PackagePriceProccessor cal = priceCalculator(cartId, list);
 		OrderPackage packItem = OrderPackage.builder().userAccount(userAccount)
@@ -80,8 +90,10 @@ public class OrderBiz {
 				.totalAmount(cal.getPackageTotalPrice()).discountPrice(cal.getPackageDiscountPrice())
 				.settlePrice(cal.getPackageSettlePrice()).packageStatus(PackageStatusEnum.CTEATE.getCode())
 				.cdt(LocalDateTime.now()).expireTime(getExpireTime(DELAY_MIN)).build();
-		mongoTemplate.insert(packItem);
-		// TODO 存入延迟队列
+		OrderPackage packInfo = mongoTemplate.insert(packItem);
+		redisTemplate.opsForHash().put(TEMP_DELIVERY, packInfo.getOrderPackageId(), delivery); // 将订单的配送信息先缓存起来
+		
+		// TODO 存入延迟队列，如果过期就执行关闭订单的动作
 
 	}
 
@@ -101,52 +113,55 @@ public class OrderBiz {
 
 		return new PackagePriceProccessor(total.toString(), discountTotal.toString(), settlePrice.toString());
 	}
-
+	
 	private void distributOrder(OrderPackage packageItem) {
-		List<GoodsItem> itemList = packageItem.getItemList();
-		if (itemList.isEmpty()) {
+		List<GoodsItem> goodsItemList = packageItem.getItemList();
+		if (goodsItemList.isEmpty()) {
 			log.debug("orderPackageId:{} has no goodsItem ", packageItem.getOrderPackageId());
+			return ;
 		}
 		String userAccount = packageItem.getUserAccount();
 		LocalDateTime orderTime = packageItem.getPayTime();
-		List<Order> orderItemList = new ArrayList<Order>();
-		for (GoodsItem item : itemList) {
-			String settlePrice = new BigDecimal(item.getPrice()).subtract(new BigDecimal(item.getDiscountPrice()))
-					.multiply(new BigDecimal(item.getNum())).setScale(2, RoundingMode.HALF_UP).toString();
-			Order orderItem = Order.builder().orderId(redisSequenceUtils.orderSequence()).userAccount(userAccount)
-					.goodsId(item.getGoodsId()).merchantId(item.getMerchantId()).category(item.getCategory())
-					.discountPrice(item.getDiscountPrice()).price(item.getPrice()).num(item.getNum())
-					.settlementPrice(settlePrice).orderTime(orderTime).status(OrderEnum.NEED_DELIVERY.getCode())
-					.build();
-			orderItemList.add(orderItem);
-		}
-		// 批量生产订单
-		orderServiceImpl.saveBatch(orderItemList);
+		Object obj = redisTemplate.opsForHash().get(TEMP_DELIVERY, packageItem.getOrderPackageId());
+		String objStr = JSONObject.toJSONString(obj);
+		DeliveryInfo deliveryInfo = JSONObject.parseObject(objStr, DeliveryInfo.class);
+		List<Order> orderItemList = orderServiceImpl.batchDistribute(goodsItemList, userAccount, orderTime);
+		orderDetailService.insertBatch(orderItemList, deliveryInfo);
+		removeTempDelivery(packageItem.getOrderPackageId());
 	}
 
 	// 支付成功后：更新订单包 -> 分配子订单 -> 回传结果，从购物车中清除已购买的商品
 	// TODO 从mongo 到 mysql 的事务一致性问题
+	//	@Transactional  此注解，在 多类型数据源情况下，不生效
 	public OrderPackage paySucccessed(String orderPackageId) {
+		OrderPackage item = mongoTemplate.findOne(Query.query(Criteria.where(OrderPackageMapper.ORDER_PACKAGE_ID).is(orderPackageId))
+								.addCriteria(Criteria.where(OrderPackageMapper.PACKAGE_STATUS).is(PackageStatusEnum.PAID.getCode()))
+								, OrderPackage.class);
+		if(item != null) {
+			log.debug("this orderPackage:{} has been paid ",orderPackageId);
+			return item;
+		}
+		
 		Query query = new Query();
 		query.addCriteria(Criteria.where(OrderPackageMapper.ORDER_PACKAGE_ID).is(orderPackageId))
-				.addCriteria(Criteria.where(OrderPackageMapper.PACKAGE_STATUS).is(PackageStatusEnum.CTEATE));
+				.addCriteria(Criteria.where(OrderPackageMapper.PACKAGE_STATUS).is(PackageStatusEnum.CTEATE.getCode()));
+		
 		Update update = new Update();
 		update.set(OrderPackageMapper.PACKAGE_STATUS, PackageStatusEnum.PAID.getCode());
-		UpdateResult updateResult = mongoTemplate.updateFirst(query, update, OrderPackage.class);
-		// TODO 注意幂等性处理
-		if (updateResult.wasAcknowledged()) {
-			OrderPackage packageItem = mongoTemplate.findOne(query, OrderPackage.class);
-			distributOrder(packageItem); // 分配子订单
-		}
-		String objJsonStr = updateResult.getUpsertedId().asDocument().toJson();
-		return JSONObject.parseObject(objJsonStr, OrderPackage.class);
+		update.set(OrderPackageMapper.MDT, LocalDateTime.now());
+		OrderPackage packageItem  = mongoTemplate.findAndModify(query, update,new FindAndModifyOptions().returnNew(true), OrderPackage.class);
+		distributOrder(packageItem); // 分配子订单
+		
+		return packageItem;
 	}
 
 	// 关闭订单
 	public void closePackage(String orderPackageId) {
 		// 幂等性检查
-		boolean existed = mongoTemplate.exists(new Query().addCriteria(
-				Criteria.where(OrderPackageMapper.ORDER_PACKAGE_ID).is(PackageStatusEnum.CLOSED.getCode())),  OrderPackage.class);
+		boolean existed = mongoTemplate.exists(
+				new Query().addCriteria(Criteria.where(OrderPackageMapper.ORDER_PACKAGE_ID).is(orderPackageId))
+							.addCriteria(Criteria.where(OrderPackageMapper.PACKAGE_STATUS).is(PackageStatusEnum.CLOSED.getCode())),
+							OrderPackage.class);		
 		if(existed) {
 			log.debug("orderPackageId : {} 订单包已关闭",orderPackageId);
 			return; 
@@ -159,12 +174,12 @@ public class OrderBiz {
 		update.set(OrderPackageMapper.PACKAGE_STATUS, PackageStatusEnum.CLOSED.getCode())
 				.set(OrderPackageMapper.MDT, LocalDateTime.now());
 		UpdateResult updateResult = mongoTemplate.updateFirst(query, update, OrderPackage.class);
-		if(!updateResult.wasAcknowledged()) {
-			throw new RuntimeException("订单过期关闭失败");
+		if(updateResult.getModifiedCount() < 1) {
+			throw new RuntimeException("订单关闭失败");
 		}
-		 
+		removeTempDelivery(orderPackageId);
 	}
-
+	
 	private LocalDateTime getExpireTime(Long delay) {
 		return LocalDateTime.now().plusMinutes(delay);
 	}
@@ -191,15 +206,41 @@ public class OrderBiz {
 		return mongoTemplate.find(query, OrderPackage.class);
 	}
 	
+	
 	public OrderPackage findById(OrderQueryRequst request) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where(OrderPackageMapper.ORDER_PACKAGE_ID).is(request.getOrderPackageId()));
 		return mongoTemplate.findOne(query, OrderPackage.class);
 	}
 	
-	public List<OrderView> listOrder(OrderQueryRequst request) {
-		
-		return null;
+	
+	
+	/**
+	 * 从缓存中清除临时的配送信息记录
+	 * @param orderPackageId
+	 */
+	private void removeTempDelivery(String orderPackageId) {
+		redisTemplate.opsForHash().delete(TEMP_DELIVERY, orderPackageId); 
+	}
+	
+	public OrderPackageView rebuildPackageRender(OrderPackage orderPackage) {
+		List<GoodsItem> list= orderPackage.getItemList();
+		if(list.isEmpty()) {
+			log.error("null goodsItem in this orderPackage [orderPackageId:{}]",orderPackage.getOrderPackageId());
+			throw new RuntimeException("订单包中商品内容为空");  
+		}
+		OrderPackageView view =  OrderPackageView.builder()
+									.orderPackageId(orderPackage.getOrderPackageId())
+									.cartId(orderPackage.getCartId())
+									.userAccount(orderPackage.getUserAccount())
+									.delivery(orderPackage.getDelivery())
+									.totalAmount(orderPackage.getTotalAmount())
+									.discountPrice(orderPackage.getDiscountPrice())
+									.settlePrice(orderPackage.getSettlePrice())
+									.expireTime(orderPackage.getExpireTime())
+									.packageStatus(orderPackage.getPackageStatus())
+									.payTime(orderPackage.getPayTime()).goodsItemList(list).cdt(orderPackage.getCdt()).build();
+		return view;
 	}
 
 }

@@ -1,5 +1,8 @@
 package com.f.a.allan.entity.pojo;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,23 +16,28 @@ import lombok.experimental.Accessors;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-/**
- * 用于存储订单配送信息的临时对象
- * @author micezhao
- *
- */
-public class DeliveryInfo {
+@Document("orderDetail")
+public class OrderDetail {
 	
-	// 收货人地址
+	@Id
+	private String id;
+	
+	private String orderId;
+	
 	private String recevierName;
-	// 收货人联系方式
+	
 	private String recevierPhone;
-	// 收货地址
+	
 	private String receiveAddr;
-	// 配送地址
-	private String deliveryTime;
-	// 备注
+	
+	private String goodsName;
+	
+	// 期望送货时间
+	private String expectDeliveryTime;
+	
 	private String memo;
+	
+	private String imgUrl;
 	
 	
 }

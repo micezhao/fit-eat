@@ -54,7 +54,24 @@ public class RedisConfig extends CachingConfigurerSupport {
 	
 	@Value("${redis.lettuce.shutdown-timeout}")
 	private Long shutdown ;
-
+	
+	@Bean(name = "redisTemplate")
+	public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
+		logger.debug("重写redisTemplate的序列化策略");
+		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+		redisTemplate.setConnectionFactory(connectionFactory);
+		redisTemplate.setKeySerializer(new StringRedisSerializer()); //key的序列化策略
+		redisTemplate.setValueSerializer(new FastJsonRedisSerializer<>(Object.class)); //value 的序列化策略
+		
+		// 设置hash key & value的序列化策略
+		redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+		redisTemplate.setHashValueSerializer(new FastJsonRedisSerializer<>(Object.class));
+		
+		//regionRedisTemplate.setDefaultSerializer(new FastJsonRedisSerializer<>(Object.class));
+		redisTemplate.afterPropertiesSet();
+		return redisTemplate;
+	}
+	
 	@Bean(name = "regionRedisTemplate")
 	public RedisTemplate<String, Object> regionRedisTemplate(RedisConnectionFactory connectionFactory) {
 		logger.debug("加载自定义redisTemplate:{}", "regionRedisTemplate");

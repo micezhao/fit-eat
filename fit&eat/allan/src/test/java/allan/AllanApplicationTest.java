@@ -6,6 +6,7 @@ import java.util.List;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
@@ -13,11 +14,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.f.a.allan.AllanApplication;
 import com.f.a.allan.biz.OrderBiz;
 import com.f.a.allan.biz.UserAddressBiz;
+import com.f.a.allan.entity.pojo.DeliveryInfo;
 import com.f.a.allan.entity.pojo.GoodsItem;
 import com.f.a.allan.entity.pojo.OrderPackage;
 import com.f.a.allan.entity.pojo.UserAddress;
 import com.f.a.allan.entity.request.OrderQueryRequst;
-import com.f.a.allan.entity.request.UserAddressQueryRequest;
 import com.f.a.allan.enums.DrEnum;
 
 /**
@@ -28,13 +29,18 @@ import com.f.a.allan.enums.DrEnum;
 @SpringBootTest(classes = AllanApplication.class)
 @WebAppConfiguration
 public class AllanApplicationTest {
+	
 
+	
 	@Autowired
 	OrderBiz orderBiz;
 
 	@Autowired
 	UserAddressBiz userAddressBiz;
-
+	
+	@Autowired
+	private RedisTemplate<String,String> redisTemplate;
+	
 	@org.junit.Test
 	public void test1() {
 		String cart = String.valueOf((int) (Math.random() * 100000));
@@ -49,7 +55,13 @@ public class AllanApplicationTest {
 		list.add(g2);
 		list.add(g3);
 		list.add(g4);
-//		orderBiz.packItem(cart, list, "micezhao");
+		
+		UserAddress userAddress= userAddressBiz.findUserDefaultAddress("dfsdf", "0");
+		DeliveryInfo delivery = DeliveryInfo.builder().deliveryTime("2020-05-18 13:00-14:00").memo("放在家门口")
+										.receiveAddr(userAddress.getAddrDetail()).recevierName(userAddress.getContactName())
+										.recevierPhone(userAddress.getContactPhone()).build();
+		
+		orderBiz.packItem(cart, list, "dfsdf", delivery);
 	}
 
 	@org.junit.Test
@@ -90,5 +102,34 @@ public class AllanApplicationTest {
 		UserAddress u = userAddressBiz.updateById(userAddress);
 		System.out.println("更新后用户的联系方式:"+u.getContactName());
 	}
+	
+	@org.junit.Test
+	public void test7() {
+		UserAddress u = userAddressBiz.setDefault("dfsdf", "5eb904d1aac4727f112df9ab");
+		System.out.println("更新后用户地址详情"+u.toString());
+	}
+	
+	@org.junit.Test
+	public void test8() {
+		UserAddress u = userAddressBiz.switchDr("5eb8f4ccba80746250cdbaf5");
+		System.out.println("更新后用户详情"+u.toString());
+	}
+	
+	@org.junit.Test
+	public void test9() {
+		UserAddress u = userAddressBiz.findUserDefaultAddress("dfsdf","0");
+		System.out.println("用户默认地址详情"+u.toString());
+	}
+	
+	@org.junit.Test
+	public void test10() {
+		orderBiz.paySucccessed("5ebb4b30f47160403030c4d5");
+	}
+	
+	@org.junit.Test
+	public void test11() {
+		orderBiz.closePackage("5ebb4a46f9706c6ab2c1385e");
+	}
+	
 	
 }

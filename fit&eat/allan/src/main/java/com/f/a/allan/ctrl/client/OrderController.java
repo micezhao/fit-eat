@@ -21,6 +21,7 @@ import com.f.a.allan.biz.OrderBiz;
 import com.f.a.allan.dao.mongo.OrderPackageMapper;
 import com.f.a.allan.entity.pojo.OrderPackage;
 import com.f.a.allan.entity.request.OrderQueryRequst;
+import com.f.a.allan.entity.response.OrderPackageView;
 import com.f.a.allan.enums.PackageStatusEnum;
 import com.f.a.kobe.view.UserAgent;
 
@@ -70,9 +71,11 @@ public class OrderController {
 	}
 	
 	@GetMapping("/package/{id}")
-	public List<OrderPackage> listOrderPackage(@PathVariable("id") String orderPackageId ,UserAgent userAgent,OrderQueryRequst orderQueryRequst){
+	public OrderPackageView listOrderPackage(@PathVariable("id") String orderPackageId ,UserAgent userAgent,OrderQueryRequst orderQueryRequst){
 		 orderQueryRequst.setOrderPackageId(orderPackageId);
-		 return  orderBiz.listOrderPackage(orderQueryRequst);
+		 OrderPackage packItem= orderBiz.findById(orderQueryRequst);
+		 return orderBiz.rebuildPackageRender(packItem);
+		   
 	}
 	
 	@GetMapping("/package/pay/{id}")
