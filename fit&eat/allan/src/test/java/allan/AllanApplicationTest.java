@@ -122,7 +122,7 @@ public class AllanApplicationTest {
 	
 	@org.junit.Test
 	public void test10() {
-		orderBiz.paySucccessed("5ebbf8aaf391bf31ec296e0a");
+		orderBiz.paySucccessed("5ebbf8aaf391bf31ec296e0a","fund000202020");
 	}
 	
 	@org.junit.Test
