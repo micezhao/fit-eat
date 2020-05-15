@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.f.a.allan.dao.mongo.OrderPackageMapper;
+import com.f.a.allan.entity.constants.FieldConstants;
 import com.f.a.allan.entity.pojo.DeliveryInfo;
 import com.f.a.allan.entity.pojo.GoodsItem;
 import com.f.a.allan.entity.pojo.Order;
@@ -103,11 +103,14 @@ public class OrderBiz {
 		BigDecimal discountTotal = new BigDecimal(0);
 		for (GoodsItem goodItem : list) {
 			BigDecimal currentItemPrice = new BigDecimal(goodItem.getPrice())
-					.multiply(new BigDecimal(goodItem.getNum())).setScale(2, RoundingMode.HALF_UP);
+					.multiply(new BigDecimal(goodItem.getStock())).setScale(2, RoundingMode.HALF_UP);
 			total = total.add(currentItemPrice);
-			BigDecimal currentItemDiscountPrice = new BigDecimal(goodItem.getDiscountPrice())
-					.multiply(new BigDecimal(goodItem.getNum())).setScale(2, RoundingMode.HALF_UP);
-			discountTotal = discountTotal.add(currentItemDiscountPrice);
+			
+			if(StringUtils.isNotBlank(goodItem.getDiscountPrice())) {
+				BigDecimal currentItemDiscountPrice = new BigDecimal(goodItem.getDiscountPrice())
+						.multiply(new BigDecimal(goodItem.getStock())).setScale(2, RoundingMode.HALF_UP);
+				discountTotal = discountTotal.add(currentItemDiscountPrice);
+			}
 		}
 		BigDecimal settlePrice = total.subtract(discountTotal);
 
@@ -134,8 +137,8 @@ public class OrderBiz {
 	// TODO 从mongo 到 mysql 的事务一致性问题
 	//	@Transactional  此注解，在 多类型数据源情况下，不生效
 	public OrderPackage paySucccessed(String orderPackageId) {
-		OrderPackage item = mongoTemplate.findOne(Query.query(Criteria.where(OrderPackageMapper.ORDER_PACKAGE_ID).is(orderPackageId))
-								.addCriteria(Criteria.where(OrderPackageMapper.PACKAGE_STATUS).is(PackageStatusEnum.PAID.getCode()))
+		OrderPackage item = mongoTemplate.findOne(Query.query(Criteria.where(FieldConstants.ORDER_PACKAGE_ID).is(orderPackageId))
+								.addCriteria(Criteria.where(FieldConstants.PACKAGE_STATUS).is(PackageStatusEnum.PAID.getCode()))
 								, OrderPackage.class);
 		if(item != null) {
 			log.debug("this orderPackage:{} has been paid ",orderPackageId);
@@ -143,12 +146,12 @@ public class OrderBiz {
 		}
 		
 		Query query = new Query();
-		query.addCriteria(Criteria.where(OrderPackageMapper.ORDER_PACKAGE_ID).is(orderPackageId))
-				.addCriteria(Criteria.where(OrderPackageMapper.PACKAGE_STATUS).is(PackageStatusEnum.CTEATE.getCode()));
+		query.addCriteria(Criteria.where(FieldConstants.ORDER_PACKAGE_ID).is(orderPackageId))
+				.addCriteria(Criteria.where(FieldConstants.PACKAGE_STATUS).is(PackageStatusEnum.CTEATE.getCode()));
 		
 		Update update = new Update();
-		update.set(OrderPackageMapper.PACKAGE_STATUS, PackageStatusEnum.PAID.getCode());
-		update.set(OrderPackageMapper.MDT, LocalDateTime.now());
+		update.set(FieldConstants.PACKAGE_STATUS, PackageStatusEnum.PAID.getCode());
+		update.set(FieldConstants.MDT, LocalDateTime.now());
 		OrderPackage packageItem  = mongoTemplate.findAndModify(query, update,new FindAndModifyOptions().returnNew(true), OrderPackage.class);
 		distributOrder(packageItem); // 分配子订单
 		
@@ -159,20 +162,20 @@ public class OrderBiz {
 	public void closePackage(String orderPackageId) {
 		// 幂等性检查
 		boolean existed = mongoTemplate.exists(
-				new Query().addCriteria(Criteria.where(OrderPackageMapper.ORDER_PACKAGE_ID).is(orderPackageId))
-							.addCriteria(Criteria.where(OrderPackageMapper.PACKAGE_STATUS).is(PackageStatusEnum.CLOSED.getCode())),
+				new Query().addCriteria(Criteria.where(FieldConstants.ORDER_PACKAGE_ID).is(orderPackageId))
+							.addCriteria(Criteria.where(FieldConstants.PACKAGE_STATUS).is(PackageStatusEnum.CLOSED.getCode())),
 							OrderPackage.class);		
 		if(existed) {
 			log.debug("orderPackageId : {} 订单包已关闭",orderPackageId);
 			return; 
 		}
 		Query query = new Query();
-		query.addCriteria(Criteria.where(OrderPackageMapper.ORDER_PACKAGE_ID).is(orderPackageId))
-				.addCriteria(Criteria.where(OrderPackageMapper.PACKAGE_STATUS).is(PackageStatusEnum.CTEATE.getCode()));
+		query.addCriteria(Criteria.where(FieldConstants.ORDER_PACKAGE_ID).is(orderPackageId))
+				.addCriteria(Criteria.where(FieldConstants.PACKAGE_STATUS).is(PackageStatusEnum.CTEATE.getCode()));
 		
 		Update update = new Update();
-		update.set(OrderPackageMapper.PACKAGE_STATUS, PackageStatusEnum.CLOSED.getCode())
-				.set(OrderPackageMapper.MDT, LocalDateTime.now());
+		update.set(FieldConstants.PACKAGE_STATUS, PackageStatusEnum.CLOSED.getCode())
+				.set(FieldConstants.MDT, LocalDateTime.now());
 		UpdateResult updateResult = mongoTemplate.updateFirst(query, update, OrderPackage.class);
 		if(updateResult.getModifiedCount() < 1) {
 			throw new RuntimeException("订单关闭失败");
@@ -193,15 +196,15 @@ public class OrderBiz {
 	public List<OrderPackage> listOrderPackage(OrderQueryRequst request) {
 		Query query = new Query();
 		if (StringUtils.isNotBlank(request.getOrderPackageId())) {
-			query.addCriteria(Criteria.where(OrderPackageMapper.ORDER_PACKAGE_ID).is(request.getOrderPackageId()));
+			query.addCriteria(Criteria.where(FieldConstants.ORDER_PACKAGE_ID).is(request.getOrderPackageId()));
 		}
 		if (StringUtils.isNotBlank(request.getPackageStatus())) {
-			query.addCriteria(Criteria.where(OrderPackageMapper.PACKAGE_STATUS).is(request.getPackageStatus()));
+			query.addCriteria(Criteria.where(FieldConstants.PACKAGE_STATUS).is(request.getPackageStatus()));
 		} else {
-			query.addCriteria(Criteria.where(OrderPackageMapper.PACKAGE_STATUS).is(PackageStatusEnum.CTEATE.getCode()));
+			query.addCriteria(Criteria.where(FieldConstants.PACKAGE_STATUS).is(PackageStatusEnum.CTEATE.getCode()));
 		}
 		if(StringUtils.isNotBlank(request.getUserAccount())) {
-			query.addCriteria(Criteria.where(OrderPackageMapper.USER_ACCOUNT).is(request.getUserAccount()));
+			query.addCriteria(Criteria.where(FieldConstants.USER_ACCOUNT).is(request.getUserAccount()));
 		}
 		return mongoTemplate.find(query, OrderPackage.class);
 	}
@@ -209,7 +212,7 @@ public class OrderBiz {
 	
 	public OrderPackage findById(OrderQueryRequst request) {
 		Query query = new Query();
-		query.addCriteria(Criteria.where(OrderPackageMapper.ORDER_PACKAGE_ID).is(request.getOrderPackageId()));
+		query.addCriteria(Criteria.where(FieldConstants.ORDER_PACKAGE_ID).is(request.getOrderPackageId()));
 		return mongoTemplate.findOne(query, OrderPackage.class);
 	}
 	

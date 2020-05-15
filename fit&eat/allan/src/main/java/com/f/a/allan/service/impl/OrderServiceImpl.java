@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -70,11 +71,17 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 		for (Entry<String, List<GoodsItem>> element : map.entrySet()) {
 			String orderId = redisSequenceUtils.orderSequence(); //  同一个商户的商品订单，共享一个订单号
 			for (GoodsItem item : element.getValue()) {
-				String settlePrice = new BigDecimal(item.getPrice()).subtract(new BigDecimal(item.getDiscountPrice()))
-						.multiply(new BigDecimal(item.getNum())).setScale(2, RoundingMode.HALF_UP).toString();
+				String settlePrice = "";
+				if(StringUtils.isNoneBlank(item.getDiscountPrice()) ) {
+					settlePrice = new BigDecimal(item.getPrice()).subtract(new BigDecimal(item.getDiscountPrice()))
+							.multiply(new BigDecimal(item.getStock())).setScale(2, RoundingMode.HALF_UP).toString();
+				}else {
+					settlePrice = item.getPrice();
+				}
+				
 				Order orderItem = Order.builder().orderId(orderId).userAccount(userAccount)
 						.goodsId(item.getGoodsId()).merchantId(item.getMerchantId()).category(item.getCategory())
-						.discountPrice(item.getDiscountPrice()).price(item.getPrice()).num(item.getNum())
+						.discountPrice(item.getDiscountPrice()).price(item.getPrice()).num(item.getStock())
 						.settlementPrice(settlePrice).orderTime(orderTime).status(OrderEnum.NEED_DELIVERY.getCode())
 						.build();
 				orderItemList.add(orderItem);

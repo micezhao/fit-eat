@@ -12,15 +12,15 @@ import com.f.a.allan.exceptions.ErrEnum;
 import com.f.a.allan.exceptions.InvaildException;
 
 public class ObjectUtils {
-		
-	public static <T> String [] getBlankFields(T t) {
-		
+
+	public static <T> String[] getBlankFields(T t) {
+
 		Field[] fields = t.getClass().getDeclaredFields();
-		List<String>  blankFieldList = new ArrayList<String>();
+		List<String> blankFieldList = new ArrayList<String>();
 		for (Field field : fields) {
 			field.setAccessible(true);
 			try {
-				if(field.get(t) == null || "".equals(field.get(t))) {
+				if (field.get(t) == null || "".equals(field.get(t))) {
 					blankFieldList.add(field.getName());
 				}
 			} catch (IllegalArgumentException e) {
@@ -31,22 +31,22 @@ public class ObjectUtils {
 				e.printStackTrace();
 			}
 		}
-		if(!blankFieldList.isEmpty()) {
-			return  blankFieldList.toArray(new String[blankFieldList.size()]);
+		if (!blankFieldList.isEmpty()) {
+			return blankFieldList.toArray(new String[blankFieldList.size()]);
 		}
 		return null;
 	}
-	
-public static <T> Update getUpdateFields(T t) {
-		
+
+	public static <T> Update getUpdateFields(T t) {
+
 		Field[] fields = t.getClass().getDeclaredFields();
 //		List<String>  blankFieldList = new ArrayList<String>();
-		Update update =  new Update();
+		Update update = new Update();
 		for (Field field : fields) {
 			field.setAccessible(true);
 			try {
 				System.out.println(field.get(t));
-				if(field.get(t) != null ) {
+				if (field.get(t) != null) {
 					update.set(field.getName(), field.get(t));
 				}
 			} catch (IllegalArgumentException e) {
@@ -59,8 +59,8 @@ public static <T> Update getUpdateFields(T t) {
 		}
 		return update;
 	}
-	
-	public static void copy(Object dest,Object origin) {
+
+	public static void copy(Object dest, Object origin) {
 		try {
 			BeanUtils.copyProperties(dest, origin);
 		} catch (IllegalAccessException | InvocationTargetException e) {

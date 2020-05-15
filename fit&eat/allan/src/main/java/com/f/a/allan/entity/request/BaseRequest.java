@@ -12,10 +12,13 @@ import lombok.NoArgsConstructor;
  */
 public class BaseRequest {
 	
+	private String id;
+	
 	private int pageSize = 10;
 	
 	private Long pageNum = 1L;
 	
+	private String dr;
 	
 	
 }

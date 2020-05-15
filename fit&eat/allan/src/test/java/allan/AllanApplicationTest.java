@@ -3,6 +3,7 @@ package allan;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.joda.time.LocalDateTime;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,8 +11,10 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.f.a.allan.AllanApplication;
+import com.f.a.allan.biz.GoodsBiz;
 import com.f.a.allan.biz.OrderBiz;
 import com.f.a.allan.biz.UserAddressBiz;
 import com.f.a.allan.entity.pojo.DeliveryInfo;
@@ -20,6 +23,8 @@ import com.f.a.allan.entity.pojo.OrderPackage;
 import com.f.a.allan.entity.pojo.UserAddress;
 import com.f.a.allan.entity.request.OrderQueryRequst;
 import com.f.a.allan.enums.DrEnum;
+import com.f.a.allan.enums.GoodsItemCategoryEnum;
+import com.f.a.allan.enums.GoodsStatusEnum;
 
 /**
  * Unit test for simple App.
@@ -30,7 +35,8 @@ import com.f.a.allan.enums.DrEnum;
 @WebAppConfiguration
 public class AllanApplicationTest {
 	
-
+	@Autowired
+	GoodsBiz goodsBiz;
 	
 	@Autowired
 	OrderBiz orderBiz;
@@ -43,25 +49,18 @@ public class AllanApplicationTest {
 	
 	@org.junit.Test
 	public void test1() {
-		String cart = String.valueOf((int) (Math.random() * 100000));
-		JSONObject json = new JSONObject();
-		json.put("规格", "18cm");
-		List<GoodsItem> list = new ArrayList<GoodsItem>();
-		GoodsItem g1 = new GoodsItem("123", "virtual", json.toJSONString(), 2, "2.3", "18", "7777", "测试商户777");
-		GoodsItem g2 = new GoodsItem("456", "substance", json.toJSONString(), 2, "2.3", "18", "8888", "测试商户8888");
-		GoodsItem g3 = new GoodsItem("789", "virtual", json.toJSONString(), 2, "2.3", "18", "000000", "测试商户");
-		GoodsItem g4 = new GoodsItem("001", "substance", json.toJSONString(), 2, "2.3", "18", "000000", "测试商户");
-		list.add(g1);
-		list.add(g2);
-		list.add(g3);
-		list.add(g4);
-		
-		UserAddress userAddress= userAddressBiz.findUserDefaultAddress("dfsdf", "0");
-		DeliveryInfo delivery = DeliveryInfo.builder().deliveryTime("2020-05-18 13:00-14:00").memo("放在家门口")
-										.receiveAddr(userAddress.getAddrDetail()).recevierName(userAddress.getContactName())
-										.recevierPhone(userAddress.getContactPhone()).build();
-		
-		orderBiz.packItem(cart, list, "dfsdf", delivery);
+		JSONObject itemOutline = new JSONObject();
+		itemOutline.put("规格", "1.8m * 1.2m");
+		itemOutline.put("安装方式", "挂装 或 座装");
+		JSONArray domain = new JSONArray();
+		domain.add("家具");
+		domain.add("生活用品");
+		GoodsItem goodsItem = GoodsItem.builder().category(GoodsItemCategoryEnum.SUBSTAINTIAL.getCode())
+						.goodsName("测试商品1").merchantId("909090")
+						.merchantName("测试商品旗舰店").stock(90).price("68")
+						.discountPrice("11").itemOutline(itemOutline.toJSONString())
+						.domain(domain.toJSONString()).build();
+		goodsBiz.insert(goodsItem);
 	}
 
 	@org.junit.Test

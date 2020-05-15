@@ -1,6 +1,7 @@
 package com.f.a.allan.entity.request;
 
-import com.f.a.allan.entity.request.OrderQueryRequst.OrderQueryRequstBuilder;
+import com.f.a.allan.entity.request.UserAddressQueryRequest.UserAddressQueryRequestBuilder;
+import com.f.a.allan.enums.DrEnum;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,26 +13,28 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 /**
- * 用户地址信息查询对象
+ * 用户地址信息管理对象
  * @author micezhao
  *
  */
-public class UserAddressQueryRequest extends BaseRequest{
-	
-	private String userAccount;
+public class UserAddressRequest {
 	
 	private String userAddressId;
 	
-	private String merchantId;
-	
-	private Boolean defaultAddr;
+	private String userAccount;
 	
 	private String contactName;
 	
 	private String contactPhone;
 	
+	private String addrDetail;
+	
+	private boolean defaultAddr;
+	
+	private String merchantId;
+	
+	private String dr = DrEnum.AVAILABLE.getCode(); // 是否禁用
 }

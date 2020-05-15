@@ -1,5 +1,12 @@
 package com.f.a.allan.entity.pojo;
 
+import java.time.LocalDateTime;
+
+import org.springframework.data.annotation.Id;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +25,10 @@ public class GoodsItem {
 	/**
 	 * 商品编号
 	 */
+	@Id
 	private String goodsId;
+	
+	private String goodsName;
 	
 	/**
 	 * 商品分类
@@ -29,10 +39,17 @@ public class GoodsItem {
 	 * 商品概况 json 格式
 	 */
 	private String itemOutline;
+	
+	/**
+	 * 商品领域 jsonArray 格式
+	 */
+	private String domain;
 	/**
 	 * 商品数量
 	 */
-	private Integer num;
+	private Integer stock;
+	
+	private String goodsStatus;
 	
 	/**
 	 * 优惠金额
@@ -49,8 +66,10 @@ public class GoodsItem {
 	 */
 	private String merchantId;
 	
-	/**
-	 * 名称
-	 */
 	private String merchantName;
+	
+	
+	private LocalDateTime cdt;
+	
+	private LocalDateTime mdt;
 }

@@ -1,4 +1,4 @@
-package com.f.a.allan.ctrl.client;
+package com.f.a.allan.ctrl.client.order;
 
 
 import java.util.List;
@@ -6,8 +6,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -18,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.f.a.allan.biz.OrderBiz;
-import com.f.a.allan.dao.mongo.OrderPackageMapper;
+import com.f.a.allan.entity.constants.FieldConstants;
 import com.f.a.allan.entity.pojo.OrderPackage;
 import com.f.a.allan.entity.request.OrderQueryRequst;
 import com.f.a.allan.entity.response.OrderPackageView;
@@ -81,8 +79,8 @@ public class OrderController {
 	@GetMapping("/package/pay/{id}")
 	public OrderPackage payById(@PathVariable("id") String orderPackageId ,UserAgent userAgent,OrderQueryRequst orderQueryRequst){
 		Query query = new Query();
-		query.addCriteria(Criteria.where(OrderPackageMapper.ORDER_PACKAGE_ID).is(orderPackageId))
-				.addCriteria(Criteria.where(OrderPackageMapper.PACKAGE_STATUS).is(PackageStatusEnum.PAID));
+		query.addCriteria(Criteria.where(FieldConstants.ORDER_PACKAGE_ID).is(orderPackageId))
+				.addCriteria(Criteria.where(FieldConstants.PACKAGE_STATUS).is(PackageStatusEnum.PAID));
 		boolean paid = mongoTemplate.exists(query, OrderPackage.class);
 		// 幂等性检查
 		if(paid) { 
