@@ -141,8 +141,8 @@ public class OrderBiz {
 	// TODO 从 mongo 到 mysql 的事务一致性问题
 	//	@Transactional  此注解，在 多类型数据源情况下，不生效
 	public OrderPackage paySucccessed(String orderPackageId,String fundTransferId) {
-		OrderPackage item = mongoTemplate.findOne(Query.query(Criteria.where(OrderPackageMapper.ORDER_PACKAGE_ID).is(orderPackageId))
-								.addCriteria(Criteria.where(OrderPackageMapper.PACKAGE_STATUS).is(PackageStatusEnum.PAID.getCode()))
+		OrderPackage item = mongoTemplate.findOne(Query.query(Criteria.where(FieldConstants.ORDER_PACKAGE_ID).is(orderPackageId))
+								.addCriteria(Criteria.where(FieldConstants.PACKAGE_STATUS).is(PackageStatusEnum.PAID.getCode()))
 								, OrderPackage.class);
 		if(item != null) {
 			log.debug("this orderPackage:{} has been paid ",orderPackageId);

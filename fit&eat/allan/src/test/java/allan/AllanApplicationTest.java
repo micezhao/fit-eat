@@ -2,12 +2,16 @@ package allan;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import org.joda.time.LocalDateTime;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
@@ -26,6 +30,8 @@ import com.f.a.allan.enums.DrEnum;
 import com.f.a.allan.enums.GoodsItemCategoryEnum;
 import com.f.a.allan.enums.GoodsStatusEnum;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Unit test for simple App.
  */
@@ -33,6 +39,7 @@ import com.f.a.allan.enums.GoodsStatusEnum;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = AllanApplication.class)
 @WebAppConfiguration
+@Slf4j
 public class AllanApplicationTest {
 	
 	@Autowired
@@ -45,10 +52,12 @@ public class AllanApplicationTest {
 	UserAddressBiz userAddressBiz;
 	
 	@Autowired
-	private RedisTemplate<String,String> redisTemplate;
+	private ThreadPoolTaskExecutor taskExecutor;
+	
+	
 	
 	@org.junit.Test
-	public void test1() {
+	public void goodsItem_1() {
 		JSONObject itemOutline = new JSONObject();
 		itemOutline.put("规格", "1.8m * 1.2m");
 		itemOutline.put("安装方式", "挂装 或 座装");
@@ -62,7 +71,105 @@ public class AllanApplicationTest {
 						.domain(domain.toJSONString()).build();
 		goodsBiz.insert(goodsItem);
 	}
+	
 
+	@org.junit.Test
+	public void goodsItem_put_on() {
+		goodsBiz.putGoodsItemOn("5ebf2e7ae6b378647fdc4a47");
+	}
+	
+	@org.junit.Test
+	public void goodsItem_replenish() {
+		goodsBiz.replenish("5ebf2e7ae6b378647fdc4a47", 25);
+	}
+	
+	@org.junit.Test
+	public void goodsItem_pull_out() { // 预期：下架后，redis数据清除，同时，不允许进行补货操作
+		goodsBiz.pullGoodsItemOff("5ebf2e7ae6b378647fdc4a47");
+	}
+	
+	@org.junit.Test
+	public void goodsItem_deduct() { //做边界测试
+		goodsBiz.deduct("5ebf2e7ae6b378647fdc4a47", 100);
+	}
+	
+	@org.junit.Test
+	public void goodsItem_deduct_multi() throws InterruptedException, ExecutionException { //多线程测试
+		
+		List<MulitDeductTask> taskList = new ArrayList<MulitDeductTask>();
+		for (int i = 0; i < 100; i++) {
+			MulitDeductTask task = new MulitDeductTask("5ebf2e7ae6b378647fdc4a47",3,goodsBiz);
+			taskList.add(task);
+		}
+		
+		List<Future<Boolean>> fl = new ArrayList<Future<Boolean>>();
+		for (MulitDeductTask t : taskList) {
+			Future<Boolean> f = taskExecutor.submit(t);
+			fl.add(f);
+		}
+		int i = 0;
+		int s = 0;
+		for (Future<Boolean> future : fl) {
+			if(future.get()) {
+				i++;
+				System.out.println("成功生成订单，订单号：" + i);
+			}else {
+				s ++;
+				System.out.println("扣减失败：" + s);
+			}
+			
+		}
+	}
+	
+	public class MulitDeductTask implements Callable<Boolean> {
+		
+		private String goodsId;
+		
+		private int deduction;
+		
+		private GoodsBiz goodsBiz;
+		
+
+		public String getGoodsId() {
+			return goodsId;
+		}
+
+		public void setGoodsId(String goodsId) {
+			this.goodsId = goodsId;
+		}
+
+		public int getDeduction() {
+			return deduction;
+		}
+
+		public void setDeduction(int deduction) {
+			this.deduction = deduction;
+		}
+
+		public GoodsBiz getGoodsBiz() {
+			return goodsBiz;
+		}
+
+		public void setGoodsBiz(GoodsBiz goodsBiz) {
+			this.goodsBiz = goodsBiz;
+		}
+		
+		public MulitDeductTask(String goodsId, int deduction, GoodsBiz goodsBiz) {
+			super();
+			this.goodsId = goodsId;
+			this.deduction = deduction;
+			this.goodsBiz = goodsBiz;
+		}
+
+		@Override
+		public Boolean call() throws Exception {
+			log.info("执行线程：{}",Thread.currentThread().getName());
+			return goodsBiz.deduct(goodsId, deduction);
+		}
+		
+	}
+	
+	
 	@org.junit.Test
 	public void test2() {
 		OrderQueryRequst r = OrderQueryRequst.builder().orderPackageId("5eb77acae7b12b53a30fee0f").build();

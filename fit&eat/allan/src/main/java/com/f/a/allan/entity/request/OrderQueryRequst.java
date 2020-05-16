@@ -20,6 +20,8 @@ public class OrderQueryRequst extends BaseRequest {
 	
 	private String userAccount;
 	
+	private String fundTransferId;
+	
 	// 订单包状态
 	private String packageStatus;
 	

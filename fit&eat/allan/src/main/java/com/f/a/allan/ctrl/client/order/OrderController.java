@@ -86,7 +86,7 @@ public class OrderController {
 		if(paid) { 
 			return mongoTemplate.findOne(query, OrderPackage.class);
 		} 
-		OrderPackage packItem = orderBiz.paySucccessed(orderPackageId);
+		OrderPackage packItem = orderBiz.paySucccessed(orderPackageId, orderQueryRequst.getFundTransferId());
 		// TODO 清除购物车中的已购买项目
 		 return packItem;
 	}

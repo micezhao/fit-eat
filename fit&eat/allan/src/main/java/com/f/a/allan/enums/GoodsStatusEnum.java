@@ -10,7 +10,7 @@ public enum GoodsStatusEnum {
 	
 	SUSPENSION("suspension","停售"),
 	
-	LACK("lack","缺货");
+	LACK("lack","库存不足");
 	
 	private String code;
 	
