@@ -147,6 +147,9 @@ public class GoodsBiz {
 		// 先更新 mongodb中的库存
 		Update update = new Update();
 		update.set(FieldConstants.STOCK, item.getStock() + replenishment);
+		if(GoodsStatusEnum.getEnumByCode(item.getGoodsStatus()) == GoodsStatusEnum.LACK) {
+			update.set(FieldConstants.GOODS_STATUS, GoodsStatusEnum.ON_SALE.getCode());
+		}
 		update.set(FieldConstants.MDT, LocalDateTime.now());
 		GoodsItem updatedRecord = mongoTemplate.findAndModify(query, update,
 				FindAndModifyOptions.options().returnNew(true), GoodsItem.class);
@@ -182,19 +185,17 @@ public class GoodsBiz {
 			log.error("商品:{}库存不足,库存扣减失败，当前库存{},扣减库存{}", goodsId,remainStock,deduction);
 			return false; // 如果库存小于扣减量，就直接返回扣减失败
 		}
+		redisTemplate.opsForHash().put(FOLDER + item.getMerchantId(), item.getGoodsId(), remainStock);
+		log.debug("[redis] 商品：{} 库存更新成功,当前库存{},准备返回生成订单并异步扣减mongodb中的库存量",item.getGoodsId(), remainStock);
 		// 暂时 通过另起线程 处理这个业务  -> 后期从线程池中获取线程 TODO 比较在不同的请求量级下，对资源开销的情况
-		Callable<Boolean> executeResule = new Callable<Boolean>() {
+		new Callable<Boolean>() {
 			@Override
 			public Boolean call() throws Exception {
 				return deductGoodsStockById(goodsId, remainStock - deduction);
 			}
 		};
-		try {
-			return executeResule.call().booleanValue();
-		} catch (Exception e) {
-			return false;
-		}
 		// taskExecutor.submit(new DeductGoodsStockByAsync(goodsId,remainStock - deduction,mongoTemplate,redisTemplate));
+		return true;
 	}
 
 	private boolean deductGoodsStockById(String goodsId,int remainStock) {
@@ -208,8 +209,6 @@ public class GoodsBiz {
 				setLack(goodsId);
 				return true;
 			}
-			redisTemplate.opsForHash().put(FOLDER + item.getMerchantId(), item.getGoodsId(), remainStock);
-			log.debug("[redis] 商品：{} 库存更新成功,当前库存{}",item.getGoodsId(), remainStock);
 			Update update = new Update();
 			update.set(FieldConstants.STOCK, remainStock);
 			update.set(FieldConstants.MDT, LocalDateTime.now());
