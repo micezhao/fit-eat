@@ -221,6 +221,11 @@ public class GoodsBiz {
 		}
 	}
 	
+	/**
+	 * 扣减商品库存的异步任务
+	 * @author micezhao
+	 *
+	 */
 	public class DeductGoodsStockByAsync implements Callable<Boolean> {
 		
 		private String goodsId;
