@@ -65,7 +65,7 @@ public class AllanApplicationTest {
 		domain.add("家具");
 		domain.add("生活用品");
 		GoodsItem goodsItem = GoodsItem.builder().category(GoodsItemCategoryEnum.SUBSTAINTIAL.getCode())
-				.goodsName("测试商品1").merchantId("909090").merchantName("测试商品旗舰店").stock(90).price("68")
+				.goodsName("micezhao的商品测试商品").merchantId("5ec1fb217c71b741f4a4c7b8").merchantName("micezhao 旗舰店").stock(90).price("68")
 				.discountPrice("11").itemOutline(itemOutline.toJSONString()).domain(domain.toJSONString()).build();
 		goodsBiz.insert(goodsItem);
 	}

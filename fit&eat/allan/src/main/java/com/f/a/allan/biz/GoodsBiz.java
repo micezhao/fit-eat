@@ -1,6 +1,7 @@
 package com.f.a.allan.biz;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -157,7 +158,44 @@ public class GoodsBiz {
 		redisTemplate.opsForHash().increment(FOLDER + item.getMerchantId(), item.getGoodsId(), replenishment);
 		return updatedRecord;
 	}
-
+	
+	/**
+	 * 根据商户号批量更新商品状态
+	 * @param merchantId 商户号
+	 * @param goodsStatus 商品的目标状态
+	 */
+	public void updateGoodsStatusByMerchant(String merchantId,String goodsStatus) {
+		Query query = new Query();
+		query.addCriteria(new Criteria(FieldConstants.MERCHANT_ID).is(merchantId));
+		List<GoodsItem> goodsOfMerchant = mongoTemplate.find(query, GoodsItem.class);
+		if(goodsOfMerchant.isEmpty()) {
+			return ;
+		}
+		log.debug("准备批量更新商户:{}的商品状态",merchantId);
+//		mongoTemplate.findAndModify(query
+//						,new Update().set(FieldConstants.GOODS_STATUS, goodsStatus).set(FieldConstants.MDT, LocalDateTime.now())
+//						, GoodsItem.class);
+		mongoTemplate.updateMulti(
+					query, 
+					new Update()
+						.set(FieldConstants.GOODS_STATUS, goodsStatus)
+						.set(FieldConstants.MDT, LocalDateTime.now()),
+					GoodsItem.class);
+	}
+	
+	/**
+	 * 根据商户编号，删除该商户的全部商品
+	 * @param merchantId
+	 */
+	public void removeGoodsByMerchant(String merchantId) {
+		mongoTemplate.findAllAndRemove(
+				new Query().addCriteria(
+						new Criteria(FieldConstants.MERCHANT_ID).is(merchantId)
+						),
+				GoodsItem.class);
+		
+	}
+	
 	/**
 	 * 商品扣减
 	 * 
@@ -202,7 +240,7 @@ public class GoodsBiz {
 		try {
 			Query query = new Query();
 			query.addCriteria(new Criteria(FieldConstants.GOODS_ID).is(goodsId));
-			GoodsItem item = mongoTemplate.findOne(query, GoodsItem.class);
+//			GoodsItem item = mongoTemplate.findOne(query, GoodsItem.class);
 			// 如果扣减后的剩余量是0 那么就像 当前商品设置为缺货
 			if (remainStock == 0) {
 				log.debug("当前商品:{}库存扣减后为:{},准备进行将当前商品设置为缺货状态的操作",goodsId,remainStock);

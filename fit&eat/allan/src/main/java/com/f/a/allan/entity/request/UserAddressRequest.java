@@ -1,10 +1,8 @@
 package com.f.a.allan.entity.request;
 
-import com.f.a.allan.entity.request.UserAddressQueryRequest.UserAddressQueryRequestBuilder;
 import com.f.a.allan.enums.DrEnum;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

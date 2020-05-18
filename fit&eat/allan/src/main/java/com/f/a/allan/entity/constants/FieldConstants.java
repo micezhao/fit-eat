@@ -41,6 +41,25 @@ public class FieldConstants {
 	
 	public final static String PRICE = "price";
 	
+	/*  merchant  */
+	public final static String REGISTER_DATE = "registerDate";
+	
+	public final static String VERIFY_STATUS = "verifyStatus";
+	
+	public final static String CERT_LIST = "certs";
+	
+	public final static String OPERATION_STATUS = "operationStatus";
+	
+	public final static String HOLDER_NAME = "holderName";
+	
+	public final static String HOLDER_PHONE = "holdPhone";
+	
+	public final static String SCOPE = "scope";
+	
+	public final static String LOGO_URL = "logoUrl";
+	
+	public final static String MER_DESCRIPTION = "description";
+	
 	/*  common  */
 	public static final String USER_ACCOUNT = "userAccount";
 	
