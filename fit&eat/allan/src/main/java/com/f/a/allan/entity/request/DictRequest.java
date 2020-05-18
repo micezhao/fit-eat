@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper =  false)
-public class DictRequest extends BaseRequest {
+public class DictRequest extends BaseQueryRequest {
 	
 	@NotBlank(groups = {DictUpdate.class},message = " id blank is not allowed")
 	private String id;

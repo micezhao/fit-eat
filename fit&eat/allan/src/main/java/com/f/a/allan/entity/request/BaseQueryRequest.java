@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
  * @author micezhao
  *
  */
-public class BaseRequest {
+public class BaseQueryRequest {
 	
 	private String id;
 	

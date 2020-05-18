@@ -29,6 +29,8 @@ public class Merchant {
 	
 	private String merchantName;
 	
+	private String classification;
+	
 	// 商户入驻时间
 	private String registerDate;
 	

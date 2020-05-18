@@ -3,6 +3,7 @@ package com.f.a.allan.biz;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.f.a.allan.entity.constants.FieldConstants;
 import com.f.a.allan.entity.pojo.Merchant;
+import com.f.a.allan.entity.request.MerchantQueryRequest;
 import com.f.a.allan.entity.request.MerchantRequest;
 import com.f.a.allan.enums.GoodsStatusEnum;
 import com.f.a.allan.enums.MerchantStatus;
@@ -180,5 +182,25 @@ public class MerchantBiz {
 		return mongoTemplate.findOne(new Query().addCriteria(new Criteria(FieldConstants.MERCHANT_ID).is(id)),
 				Merchant.class);
 	}
-
+	
+	public List<Merchant> listMerchant(MerchantQueryRequest request){
+		Query query = new Query();
+		Criteria criteria = new Criteria();
+		if(StringUtils.isNotBlank(request.getMerchantId())) {
+			criteria.and(FieldConstants.MERCHANT_ID).is(request.getMerchantId());
+		}
+		if(StringUtils.isNotBlank(request.getMerchantName())) {
+			criteria.and(FieldConstants.MERCHANT_NAME).is(request.getMerchantName());
+		}
+		if(StringUtils.isBlank(request.getClassification())) {
+			criteria.and(FieldConstants.MER_CLASSIFICATION).is(request.getClassification());
+		}
+		if(StringUtils.isNotBlank(request.getHolderName())) {
+			criteria.and(FieldConstants.HOLDER_NAME).is(request.getHolderName());
+		}
+		query.addCriteria(criteria);
+		return mongoTemplate.find(query, Merchant.class);
+		
+	}
+ 
 }

@@ -13,7 +13,7 @@ import lombok.experimental.Accessors;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderQueryRequst extends BaseRequest {
+public class OrderQueryRequst extends BaseQueryRequest {
 	
 	//订单包id
 	private String orderPackageId;

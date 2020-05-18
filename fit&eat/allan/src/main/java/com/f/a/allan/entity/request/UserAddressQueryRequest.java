@@ -20,7 +20,7 @@ import lombok.experimental.Accessors;
  * @author micezhao
  *
  */
-public class UserAddressQueryRequest extends BaseRequest{
+public class UserAddressQueryRequest extends BaseQueryRequest{
 	
 	private String userAccount;
 	

@@ -58,6 +58,8 @@ public class FieldConstants {
 	
 	public final static String LOGO_URL = "logoUrl";
 	
+	public final static String MER_CLASSIFICATION = "classification";
+	
 	public final static String MER_DESCRIPTION = "description";
 	
 	/*  common  */
