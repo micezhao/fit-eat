@@ -24,16 +24,10 @@ public class MerchantQueryRequest extends BaseQueryRequest{
 	private String registerDateStart;
 	
 	private String registerDateEnd;
-
-	private String verifyStatus;
-	
-	private String classification;
 	
 	private List<String> classificationList;
 	
 	private List<String> verifyStatusList;
-	
-	private String operationStatus;
 	
 	private List<String > operationStatusList;
 
