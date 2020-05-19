@@ -56,8 +56,7 @@ public class MerchantBizTest {
 	
 	@org.junit.Test
 	public void reject_verify(){
-		MerchantRequest request= MerchantRequest.builder().merchantId("5ec1fb217c71b741f4a4c7b8").build();
-		merchantBiz.rejectApply(request);
+		merchantBiz.rejectApply("5ec1fb217c71b741f4a4c7b8");
 	}
 	
 	@org.junit.Test

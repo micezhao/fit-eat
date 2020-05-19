@@ -3,8 +3,11 @@ package com.f.a.allan.biz;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -16,8 +19,11 @@ import org.springframework.stereotype.Service;
 
 import com.f.a.allan.entity.constants.FieldConstants;
 import com.f.a.allan.entity.pojo.GoodsItem;
+import com.f.a.allan.entity.request.GoodsItemQueryRequest;
+import com.f.a.allan.entity.request.GoodsItemRequest;
 import com.f.a.allan.enums.GoodsItemCategoryEnum;
 import com.f.a.allan.enums.GoodsStatusEnum;
+import com.f.a.allan.utils.ObjectUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,6 +47,53 @@ public class GoodsBiz {
 
 	@Autowired
 	MongoTemplate mongoTemplate;
+	
+	
+	public List<GoodsItem> listGoodsItem(GoodsItemQueryRequest request ){
+		Query query = new Query();
+		Criteria criteria = new Criteria();
+		if(StringUtils.isNotBlank(request.getGoodsId())) {
+			criteria.and(FieldConstants.GOODS_ID).is(request.getGoodsId());
+		}
+		if(StringUtils.isNotBlank(request.getGoodsName())) {
+			criteria.and(FieldConstants.GOODS_NAME).regex(Pattern.compile("^.*"+request.getGoodsName()+".*$", Pattern.CASE_INSENSITIVE) );
+		}
+		if(StringUtils.isNotBlank(request.getMerchantId())) {
+			criteria.and(FieldConstants.MERCHANT_ID).is(request.getMerchantId());
+		}
+		
+		if(request.getHasDiscount()!=null) {
+			if(request.getHasDiscount().booleanValue()) {
+				criteria.andOperator(Criteria.where(FieldConstants.DISCOUNT_PRICE).exists(true), Criteria.where(FieldConstants.DISCOUNT_PRICE).ne(""));
+			}else {
+				criteria.orOperator(Criteria.where(FieldConstants.DISCOUNT_PRICE).exists(false), Criteria.where(FieldConstants.DISCOUNT_PRICE).is(""));
+			}
+		}
+		
+		if(StringUtils.isNotBlank(request.getCategory())) {
+			criteria.and(FieldConstants.CATEGORY).is(request.getCategory());
+		}
+		if(StringUtils.isNotBlank(request.getGoodsStatus())) {
+			criteria.and(FieldConstants.GOODS_STATUS).is(request.getGoodsStatus());
+		}
+		if(request.getCategoryList() !=null && !request.getCategoryList().isEmpty()) {
+			criteria.and(FieldConstants.CATEGORY).in(request.getCategoryList());
+		}
+		if(request.getGoodsStatusList() !=null && !request.getGoodsStatusList().isEmpty()) {
+			criteria.and(FieldConstants.CATEGORY).in(request.getGoodsStatusList());
+		}
+		if(StringUtils.isNotBlank(request.getPrice())) {
+			criteria.and(FieldConstants.PRICE).is(request.getPrice());
+		}
+		if(StringUtils.isNotBlank(request.getPrice_min())) {
+			criteria.and(FieldConstants.PRICE).gte(request.getPrice_min());
+		}
+		if(StringUtils.isNotBlank(request.getPrice_max())) {
+			criteria.and(FieldConstants.PRICE).lte(request.getPrice_max());
+		}
+		query.addCriteria(criteria);
+		return mongoTemplate.find(query, GoodsItem.class);
+	}
 
 	/**
 	 * 新增商品,此时商品未上架,不能售出
@@ -48,7 +101,9 @@ public class GoodsBiz {
 	 * @param goodsItem
 	 * @return
 	 */
-	public GoodsItem insert(GoodsItem goodsItem) {
+	public GoodsItem insert(GoodsItemRequest request) {
+		GoodsItem goodsItem = new GoodsItem();
+		ObjectUtils.copy(goodsItem, request);
 		if (goodsItem.getStock() == null || goodsItem.getStock() <= 0) {
 			throw new RuntimeException("请设置当前商品的初始库存，初始库存 必须大于0");
 		}

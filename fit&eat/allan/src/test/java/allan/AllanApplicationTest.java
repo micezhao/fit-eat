@@ -67,7 +67,7 @@ public class AllanApplicationTest {
 		GoodsItem goodsItem = GoodsItem.builder().category(GoodsItemCategoryEnum.SUBSTAINTIAL.getCode())
 				.goodsName("micezhao的商品测试商品").merchantId("5ec1fb217c71b741f4a4c7b8").merchantName("micezhao 旗舰店").stock(90).price("68")
 				.discountPrice("11").itemOutline(itemOutline.toJSONString()).domain(domain.toJSONString()).build();
-		goodsBiz.insert(goodsItem);
+//		goodsBiz.insert(goodsItem);
 	}
 
 	@org.junit.Test

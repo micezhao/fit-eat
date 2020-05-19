@@ -62,8 +62,8 @@ public class MerchantBiz {
 		}
 	}
 
-	private Merchant updateMerchantById(final MerchantRequest request) {
-		final Update update = new Update();
+	public Merchant updateMerchantById(final MerchantRequest request) {
+		Update update = new Update();
 		if (StringUtils.isNotBlank(request.getDescription())) {
 			update.set(FieldConstants.MER_DESCRIPTION, request.getDescription());
 		}
@@ -113,9 +113,9 @@ public class MerchantBiz {
 	 * @param request:主要要在 memo 填写打回的原因
 	 * @return
 	 */
-	public Merchant rejectApply(final MerchantRequest request) {
+	public Merchant rejectApply(String id) {
 		final Query query = new Query();
-		query.addCriteria(new Criteria(FieldConstants.MERCHANT_ID).is(request.getMerchantId()));
+		query.addCriteria(new Criteria(FieldConstants.MERCHANT_ID).is(id));
 		final Merchant updatedRecord = mongoTemplate.findAndModify(query,
 				new Update().set(FieldConstants.VERIFY_STATUS, MerchantStatus.UN_VERIFIED.getCode())
 						.set(FieldConstants.MDT, LocalDateTime.now()),
@@ -123,7 +123,7 @@ public class MerchantBiz {
 		return updatedRecord;
 	}
 
-	public Merchant approveApply(final String id) {
+	public Merchant approveApply(String id) {
 		final Query query = new Query();
 		query.addCriteria(new Criteria(FieldConstants.MERCHANT_ID).is(id));
 		final Merchant updatedRecord = mongoTemplate.findAndModify(query,

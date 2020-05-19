@@ -20,13 +20,8 @@ public class MerchantCtrl {
 	@Autowired
 	private MerchantBiz biz;
 	
-	@ApiOperation("商户歇业")
-	@PutMapping("{id}/suspension")
-	@ApiImplicitParam(name = "id", value = "商户id",required = true)
-	public boolean suspense(@PathVariable("id") String id) {
-		biz.operateById(id, "suspension");
-		return true;
-	}
+	
+	
 	
 	
 }

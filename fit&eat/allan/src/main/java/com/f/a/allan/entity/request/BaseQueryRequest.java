@@ -20,5 +20,7 @@ public class BaseQueryRequest {
 	
 	private String dr;
 	
+	private String orderBy ;
+	
 	
 }
