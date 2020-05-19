@@ -52,7 +52,7 @@ public class FieldConstants {
 	
 	public final static String HOLDER_NAME = "holderName";
 	
-	public final static String HOLDER_PHONE = "holdPhone";
+	public final static String HOLDER_PHONE = "holderPhone";
 	
 	public final static String SCOPE = "scope";
 	
