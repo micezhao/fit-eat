@@ -1,4 +1,4 @@
-package com.f.a.allan.ctrl.admin;
+package com.f.a.allan.ctrl.admin.merchant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.f.a.allan.biz.MerchantBiz;
@@ -18,21 +19,20 @@ import com.f.a.allan.entity.request.MerchantQueryRequest;
 import com.f.a.allan.entity.request.MerchantQueryRequest.MerchantQueryRequestBuilder;
 
 @RestController
-@RequestMapping("/admin/merchant")
+@RequestMapping("/admin")
 public class AdminMerchantCtrl {
 
-	private final static String SYMBOL_AND = "&";
+	private final static String SYMBOL_AND = "-";
 
 	@Autowired
 	private MerchantBiz merchantBiz;
 
-	@GetMapping("/name/{name}/verify/{verify}/" + "operation/{operation}/holderName/"
-			+ "{holderName}/holderPhone/{holderPhone}")
-	public ResponseEntity<Object> listMerchant(@PathVariable("name") String merchantName,
-			@PathVariable("verify") String verifyStatus,
-			@PathVariable("operation") String operationStatus,
-			@PathVariable("holderName") String holderName,
-			@PathVariable("holderPhone") String holderPhone) {
+	@GetMapping("/merchants")
+	public ResponseEntity<Object> listMerchant(@RequestParam(name ="name",required = false) String merchantName,
+			@RequestParam(name = "verify",required = false) String verifyStatus,
+			@RequestParam(name ="operation",required = false) String operationStatus,
+			@RequestParam(name ="holderName",required = false) String holderName,
+			@RequestParam(name ="holderPhone",required = false) String holderPhone) {
 		MerchantQueryRequestBuilder requestBuilder = MerchantQueryRequest.builder();
 		List<String> statusList = null;
 		if (StringUtils.isNotBlank(merchantName)) {
