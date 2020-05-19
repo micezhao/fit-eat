@@ -21,6 +21,7 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -47,8 +48,12 @@ public class WebConfig extends WebMvcConfigurationSupport {
 		}
 		return list;
 	}
-
-
+	
+	@Override
+	protected void addResourceHandlers(ResourceHandlerRegistry registry) {
+		registry.addResourceHandler("/swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+	}
 //	@Override
 //	public void addInterceptors(InterceptorRegistry registry) {
 //		registry.addInterceptor(new UserSessionInterceptor()).addPathPatterns("/**").
