@@ -198,6 +198,7 @@ public class MerchantBiz {
 		if(StringUtils.isNotBlank(request.getHolderName())) {
 			criteria.and(FieldConstants.HOLDER_NAME).is(request.getHolderName());
 		}
+		
 		query.addCriteria(criteria);
 		return mongoTemplate.find(query, Merchant.class);
 		
