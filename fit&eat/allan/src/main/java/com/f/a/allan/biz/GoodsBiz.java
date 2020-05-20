@@ -83,14 +83,19 @@ public class GoodsBiz {
 			criteria.and(FieldConstants.CATEGORY).in(request.getGoodsStatusList());
 		}
 		if(StringUtils.isNotBlank(request.getPrice())) {
-			criteria.and(FieldConstants.PRICE).is(request.getPrice());
+			criteria.and(FieldConstants.PRICE).is(Integer.parseInt(request.getPrice()));
 		}
-		if(StringUtils.isNotBlank(request.getPrice_min())) {
-			criteria.and(FieldConstants.PRICE).gte(request.getPrice_min());
+		if(StringUtils.isNotBlank(request.getPrice_min()) && StringUtils.isBlank(request.getPrice_max()) ) {
+			criteria.and(FieldConstants.PRICE).gte(Integer.parseInt(request.getPrice_min()));
 		}
-		if(StringUtils.isNotBlank(request.getPrice_max())) {
-			criteria.and(FieldConstants.PRICE).lte(request.getPrice_max());
+		if(StringUtils.isBlank(request.getPrice_min()) && StringUtils.isNotBlank(request.getPrice_max())) {
+			criteria.and(FieldConstants.PRICE).lte(Integer.parseInt(request.getPrice_max()));
 		}
+		if(StringUtils.isNotBlank(request.getPrice_min()) && StringUtils.isNotBlank(request.getPrice_max())) {
+			criteria.andOperator(Criteria.where(FieldConstants.PRICE).gte(Integer.parseInt(request.getPrice_min())),
+					Criteria.where(FieldConstants.PRICE).lte(Integer.parseInt(request.getPrice_max())));
+		}
+		
 		query.addCriteria(criteria);
 		return mongoTemplate.find(query, GoodsItem.class);
 	}

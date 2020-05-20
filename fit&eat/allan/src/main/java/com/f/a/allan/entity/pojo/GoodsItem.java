@@ -1,5 +1,6 @@
 package com.f.a.allan.entity.pojo;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.Id;
@@ -16,7 +17,6 @@ import lombok.experimental.Accessors;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -52,14 +52,14 @@ public class GoodsItem {
 	private String goodsStatus;
 	
 	/**
-	 * 优惠金额
+	 * 优惠金额 [单位：分]
 	 */
-	private String discountPrice; 
+	private Integer discountPrice; 
 	
 	/**
-	 * 单价
+	 * 单价 [单位：分]
 	 */
-	private String price;
+	private Integer price;
 	
 	/**
 	 * 商户号

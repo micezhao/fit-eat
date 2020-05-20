@@ -106,7 +106,7 @@ public class OrderBiz {
 					.multiply(new BigDecimal(goodItem.getStock())).setScale(2, RoundingMode.HALF_UP);
 			total = total.add(currentItemPrice);
 			
-			if(StringUtils.isNotBlank(goodItem.getDiscountPrice())) {
+			if(goodItem.getDiscountPrice() !=null && goodItem.getDiscountPrice() != 0) {
 				BigDecimal currentItemDiscountPrice = new BigDecimal(goodItem.getDiscountPrice())
 						.multiply(new BigDecimal(goodItem.getStock())).setScale(2, RoundingMode.HALF_UP);
 				discountTotal = discountTotal.add(currentItemDiscountPrice);

@@ -71,10 +71,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 		for (Entry<String, List<GoodsItem>> element : map.entrySet()) {
 			String orderId = redisSequenceUtils.orderSequence(); //  同一个商户的商品订单，共享一个订单号
 			for (GoodsItem item : element.getValue()) {
-				String settlePrice = "";
-				if(StringUtils.isNoneBlank(item.getDiscountPrice()) ) {
+				int settlePrice = 0;
+				if(item.getDiscountPrice() !=null && item.getDiscountPrice() != 0 ) {
 					settlePrice = new BigDecimal(item.getPrice()).subtract(new BigDecimal(item.getDiscountPrice()))
-							.multiply(new BigDecimal(item.getStock())).setScale(2, RoundingMode.HALF_UP).toString();
+							.multiply(new BigDecimal(item.getStock())).setScale(2, RoundingMode.HALF_UP).intValue();
 				}else {
 					settlePrice = item.getPrice();
 				}

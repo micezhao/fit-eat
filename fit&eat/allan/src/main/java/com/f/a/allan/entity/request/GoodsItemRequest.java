@@ -52,13 +52,13 @@ public class GoodsItemRequest {
 	 * 优惠金额
 	 */
 	@ApiModelProperty(value="优惠金额")
-	private String discountPrice;
+	private Integer discountPrice;
 
 	/**
 	 * 单价
 	 */
 	@ApiModelProperty(value="单价")
-	private String price;
+	private Integer price;
 
 	/**
 	 * 商户号

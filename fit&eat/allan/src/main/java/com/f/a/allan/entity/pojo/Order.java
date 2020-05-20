@@ -70,17 +70,17 @@ public class Order extends Model<Order>  {
     /**
      * 应付总价
      */
-    private String price;
+    private Integer price;
 
     /**
      * 优惠价格
      */
-    private String discountPrice;
+    private Integer discountPrice;
 
     /**
      * 结算价格
      */
-    private String settlementPrice;
+    private Integer settlementPrice;
 
     /**
      * 商户号
