@@ -72,11 +72,11 @@ public class OrderBiz {
 	 */
 	private class PackagePriceProccessor {
 
-		String packageTotalPrice;
+		int packageTotalPrice;
 
-		String packageDiscountPrice;
+		int packageDiscountPrice;
 
-		String packageSettlePrice;
+		int packageSettlePrice;
 	}
 	
 
@@ -114,7 +114,7 @@ public class OrderBiz {
 		}
 		BigDecimal settlePrice = total.subtract(discountTotal);
 
-		return new PackagePriceProccessor(total.toString(), discountTotal.toString(), settlePrice.toString());
+		return new PackagePriceProccessor(total.intValue(), discountTotal.intValue(), settlePrice.intValue());
 	}
 	
 	private List<Order>  distributOrder(OrderPackage packageItem) {
@@ -219,7 +219,8 @@ public class OrderBiz {
 	public OrderPackage findById(OrderQueryRequst request) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where(FieldConstants.ORDER_PACKAGE_ID).is(request.getOrderPackageId()));
-		return mongoTemplate.findOne(query, OrderPackage.class);
+		OrderPackage record = mongoTemplate.findOne(query, OrderPackage.class);
+		return record;
 	}
 	
 	

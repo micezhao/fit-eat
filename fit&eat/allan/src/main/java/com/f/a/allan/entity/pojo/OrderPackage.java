@@ -35,11 +35,11 @@ public class OrderPackage {
 	
 	private String userAccount;
 
-	private String totalAmount;
+	private int totalAmount;
 	
-	private String discountPrice;
+	private int discountPrice;
 	
-	private String settlePrice;
+	private int settlePrice;
 	
 	private String packageStatus;
 	

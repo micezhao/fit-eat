@@ -61,7 +61,7 @@ public class OrderController {
 	}
 	
 	
-	@GetMapping("/package/")
+	@GetMapping("/package")
 	public List<OrderPackage> listOrderPackage(UserAgent userAgent,OrderQueryRequst orderQueryRequst){
 		 String userAccount= userAgent.getUserAccount();
 		 orderQueryRequst.setUserAccount(userAccount);

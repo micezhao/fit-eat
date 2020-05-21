@@ -42,15 +42,15 @@ public class OrderPackageView {
 	
 	@Setter
 	@Getter
-	private String totalAmount;
+	private int totalAmount;
 	
 	@Setter
 	@Getter
-	private String discountPrice;
+	private int discountPrice;
 	
 	@Setter
 	@Getter
-	private String settlePrice;
+	private int settlePrice;
 	
 	@Setter
 	@Getter
@@ -70,8 +70,8 @@ public class OrderPackageView {
 	
 	
 	public OrderPackageView(String orderPackageId, String cartId, DeliveryInfo delivery, List<GoodsItem> goodsItemList,
-			Map<String, List<GoodsItem>> merchantVsOrder, String userAccount, String totalAmount, String discountPrice,
-			String settlePrice, String packageStatus, LocalDateTime expireTime, LocalDateTime payTime,
+			Map<String, List<GoodsItem>> merchantVsOrder, String userAccount, int totalAmount, int discountPrice,
+			int settlePrice, String packageStatus, LocalDateTime expireTime, LocalDateTime payTime,
 			LocalDateTime cdt) {
 		super();
 		this.orderPackageId = orderPackageId;
