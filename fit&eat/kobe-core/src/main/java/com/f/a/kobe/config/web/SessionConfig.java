@@ -10,7 +10,7 @@ import org.springframework.session.web.http.HttpSessionIdResolver;
 
 import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
 
-//@Configuration
+@Configuration
 public class SessionConfig {
 
     private static final Logger log = LoggerFactory.getLogger(SessionConfig.class);

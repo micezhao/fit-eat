@@ -10,7 +10,7 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableEurekaClient
 @SpringBootApplication
 @EnableFeignClients
-@ComponentScan("com.f.a.allan")
+@ComponentScan("com.f.a")
 @MapperScan("com.f.a.allan.dao")
 public class AllanApplication {
 

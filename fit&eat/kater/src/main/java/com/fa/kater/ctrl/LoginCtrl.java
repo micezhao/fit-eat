@@ -1,31 +1,33 @@
 package com.fa.kater.ctrl;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.f.a.kobe.contants.Contants;
 import com.f.a.kobe.view.UserAgent;
 import com.fa.kater.biz.LoginBiz;
 import com.fa.kater.customer.pojo.Credential;
 import com.fa.kater.customer.pojo.bo.AuthBo;
 import com.fa.kater.customer.pojo.bo.ParamRequest;
-import com.fa.kater.customer.pojo.bo.WxAuthRtn;
-import com.fa.kater.customer.pojo.bo.WxRequest;
 import com.fa.kater.customer.pojo.enums.LoginTypeEnum;
 import com.fa.kater.exceptions.ErrEnum;
 import com.fa.kater.exceptions.ErrRtn;
 import com.fa.kater.exceptions.InvaildException;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpSession;
-import java.util.Arrays;
 
 @RestController
 @RequestMapping("login")
@@ -73,23 +75,29 @@ public class LoginCtrl {
 
 
     //登录
-    @PostMapping("thirdPart/{loginType}/{thirdAuthId}")
+    @GetMapping("thirdPart/{loginType}/{thirdAuthId}")
     public ResponseEntity<Object> login(@PathVariable(value="loginType") String loginType,
                                         @PathVariable(value="thirdAuthId") String thirdAuthId,
                                         HttpSession session){
-        try {
+    	  UserAgent userAgent = null;
+    	  Map<String,Object> resultMap = new HashMap<String,Object>();
+    	try {
             //生成UserAgent
-            UserAgent userAgent = loginBiz.generateUserAgent(loginType, thirdAuthId);
+             userAgent = loginBiz.generateUserAgent(loginType, thirdAuthId);
             //需要对登录信息表进行操作
             loginBiz.recordLoginInfo(userAgent,Contants.LOGIN_TYPE_LOGIN);
             //存入redis
             session.setAttribute(Contants.USER_AGENT, userAgent);
+            logger.debug("当前sessionId:{}",session.getId()); 
+            resultMap.put("X-AUTH-TOKEN", session.getId());
+            // TODO 是否绑定了手机号 的实现逻辑
+            resultMap.put("hasBinded", true);
         }catch (InvaildException ex) {
             return new ResponseEntity<Object>(
                     new ErrRtn(ex.getErrCode(), ex.getErrMsg()),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<Object>(HttpStatus.OK);
+        return new ResponseEntity<Object>(resultMap,HttpStatus.OK);
     }
 
 
@@ -146,6 +154,14 @@ public class LoginCtrl {
         logouted = true;
         logger.info("用户id：[{}]执行登出操作，已清空会话", userAgent.getUserAccount());
         return new ResponseEntity<Boolean>(logouted, HttpStatus.OK);
+    }
+    
+    @GetMapping("/test")
+    public String test(UserAgent userAgent ) {
+        if (userAgent == null) {
+            throw new InvaildException(ErrEnum.UNLOGIN_ERROR.getErrCode(), ErrEnum.UNLOGIN_ERROR.getErrMsg());
+        }
+        return userAgent.getUserAccount();
     }
 
 }

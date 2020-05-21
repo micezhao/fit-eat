@@ -1,7 +1,6 @@
 package com.fa.kater.config;
 
 
-import com.fa.kater.customer.pojo.bo.WxRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
@@ -9,10 +8,10 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class ParamConfig {
 
-    @Bean
-    public WxRequest wxRequest(){
-        return new WxRequest();
-    }
+//    @Bean
+//    public WxRequest wxRequest(){
+//        return new WxRequest();
+//    }
 
 
     @Bean

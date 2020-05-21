@@ -15,7 +15,6 @@ public class UserAgent implements Serializable {
 	private static final long serialVersionUID = 3035675799721442471L;
 	
 	private String loginType;
-
 	/**
 	 * 用户账号
 	 */
