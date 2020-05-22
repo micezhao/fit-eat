@@ -30,11 +30,11 @@ public class OrderPackageView {
 	private DeliveryInfo delivery;
 	
 	@Setter
-	private List<GoodsItem> goodsItemList;
+	private List<OrderGoodsItemView> goodsItemList;
 	
 	@Getter
 	@Setter
-	private Map<String,List<GoodsItem>>  merchantVsOrder;
+	private Map<String,List<OrderGoodsItemView>>  merchantVsOrder;
 	
 	@Setter
 	@Getter
@@ -69,8 +69,8 @@ public class OrderPackageView {
 	private LocalDateTime cdt;
 	
 	
-	public OrderPackageView(String orderPackageId, String cartId, DeliveryInfo delivery, List<GoodsItem> goodsItemList,
-			Map<String, List<GoodsItem>> merchantVsOrder, String userAccount, int totalAmount, int discountPrice,
+	public OrderPackageView(String orderPackageId, String cartId, DeliveryInfo delivery, List<OrderGoodsItemView> goodsItemList,
+			Map<String, List<OrderGoodsItemView>> merchantVsOrder, String userAccount, int totalAmount, int discountPrice,
 			int settlePrice, String packageStatus, LocalDateTime expireTime, LocalDateTime payTime,
 			LocalDateTime cdt) {
 		super();
@@ -89,15 +89,15 @@ public class OrderPackageView {
 		this.cdt = cdt;
 	}
 	
-	private  Map<String,List<GoodsItem>> renderProcess(List<GoodsItem> goodsItemList){
-		Map<String,List<GoodsItem>> map = new HashMap<String,List<GoodsItem>>();
-		for (GoodsItem curGoodsItem : goodsItemList) {
+	private  Map<String,List<OrderGoodsItemView>> renderProcess(List<OrderGoodsItemView> goodsItemList){
+		Map<String,List<OrderGoodsItemView>> map = new HashMap<String,List<OrderGoodsItemView>>();
+		for (OrderGoodsItemView curGoodsItem : goodsItemList) {
 			String curKey = curGoodsItem.getMerchantId()+"|"+curGoodsItem.getMerchantName();
 			if(map.containsKey(curKey)) { 
-				List<GoodsItem> ls= map.get(curKey);
+				List<OrderGoodsItemView> ls= map.get(curKey);
 				ls.add(curGoodsItem);
 			}else {
-				 List<GoodsItem> temp= new ArrayList<GoodsItem>();
+				 List<OrderGoodsItemView> temp= new ArrayList<OrderGoodsItemView>();
 				 temp.add(curGoodsItem);
 				map.put(curKey, temp);
 			}

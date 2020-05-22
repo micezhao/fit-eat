@@ -39,8 +39,9 @@ public class GoodsItemRequest {
 	 */
 	@ApiModelProperty(value="所属领域")
 	private String domain;
+	
 	/**
-	 * 商品数量
+	 * 商品库存
 	 */
 	@ApiModelProperty(value="当前库存")
 	private Integer stock;

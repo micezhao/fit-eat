@@ -3,7 +3,9 @@ package com.f.a.allan.biz;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
@@ -19,14 +21,18 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.f.a.allan.entity.constants.FieldConstants;
 import com.f.a.allan.entity.pojo.DeliveryInfo;
 import com.f.a.allan.entity.pojo.GoodsItem;
+import com.f.a.allan.entity.pojo.Merchant;
 import com.f.a.allan.entity.pojo.Order;
 import com.f.a.allan.entity.pojo.OrderPackage;
 import com.f.a.allan.entity.request.OrderQueryRequst;
+import com.f.a.allan.entity.response.OrderGoodsItemView;
 import com.f.a.allan.entity.response.OrderPackageView;
-import com.f.a.allan.entity.response.OrderPackageView.OrderPackageViewBuilder;
 import com.f.a.allan.enums.PackageStatusEnum;
+import com.f.a.allan.service.CalculatorService;
+import com.f.a.allan.service.CalculatorService.PriceProccessor;
 import com.f.a.allan.service.OrderDetailService;
 import com.f.a.allan.service.impl.OrderServiceImpl;
+import com.f.a.allan.utils.ObjectUtils;
 import com.mongodb.client.result.UpdateResult;
 
 import lombok.AllArgsConstructor;
@@ -44,10 +50,11 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class OrderBiz {
 
-	
-
 	@Autowired
 	private MongoTemplate mongoTemplate;
+	
+	@Autowired
+	private CalculatorService calculatorService;
 
 	private static final Long DELAY_MIN = 15L;
 
@@ -62,33 +69,34 @@ public class OrderBiz {
 	@Autowired
 	private OrderDetailService orderDetailService;
 
-	@Setter
-	@Getter
-	@AllArgsConstructor 
-	/**
-	 * 订单包价格计算处理器
-	 * @author micezhao
-	 *
-	 */
-	private class PackagePriceProccessor {
-
-		int packageTotalPrice;
-
-		int packageDiscountPrice;
-
-		int packageSettlePrice;
+	
+	public OrderGoodsItemView r2Dto(String goodsId,int num) {
+		OrderGoodsItemView view = new OrderGoodsItemView();
+		if(StringUtils.isNotBlank(goodsId) ) {
+			GoodsItem g =mongoTemplate.findOne(new Query().addCriteria(new Criteria(FieldConstants.GOODS_ID).is(goodsId)), GoodsItem.class);
+			ObjectUtils.copy(view, g);
+			Merchant m =mongoTemplate.findOne(new Query().addCriteria(new Criteria(FieldConstants.MERCHANT_ID).is(view.getMerchantId())), Merchant.class);
+			view.setMerchantName(m.getMerchantName());
+			view.setNum(num);
+		}
+		return view;
 	}
 	
-
-	public void packItem(String cartId, List<GoodsItem> list, String userAccount, DeliveryInfo delivery) {
+	// 通过购物车生成订单包 此时商品的结算价格不再变化
+	public void packItem(String cartId, List<Map<String,Object>> list, String userAccount, DeliveryInfo delivery) {
 		// TODO 库存扣减的动作放在请求端？还是通过远程调用？
 		log.info("packaging goodsItem...");
-		PackagePriceProccessor cal = priceCalculator(cartId, list);
+		List<OrderGoodsItemView> goodsViewList = new ArrayList<OrderGoodsItemView>();
+		for (Map<String,Object> map : list) {
+			goodsViewList.add(r2Dto((String)map.get(FieldConstants.GOODS_ID),(int)map.get(FieldConstants.NUM)));
+		}
+		// 开始计算价格
+		PriceProccessor cal = calculatorService.priceCalculator(cartId, goodsViewList);
 		OrderPackage packItem = OrderPackage.builder().userAccount(userAccount)
-				.cartId(cartId).itemList(list)
+				.cartId(cartId).itemList(goodsViewList)
 				.delivery(delivery)
-				.totalAmount(cal.getPackageTotalPrice()).discountPrice(cal.getPackageDiscountPrice())
-				.settlePrice(cal.getPackageSettlePrice()).packageStatus(PackageStatusEnum.CTEATE.getCode())
+				.totalAmount(cal.getTotalPrice()).discountPrice(cal.getDiscountPrice())
+				.settlePrice(cal.getSettlePrice()).packageStatus(PackageStatusEnum.CTEATE.getCode())
 				.cdt(LocalDateTime.now()).expireTime(getExpireTime(DELAY_MIN)).build();
 		OrderPackage packInfo = mongoTemplate.insert(packItem);
 		redisTemplate.opsForHash().put(TEMP_DELIVERY, packInfo.getOrderPackageId(), delivery); // 将订单的配送信息先缓存起来
@@ -97,28 +105,8 @@ public class OrderBiz {
 
 	}
 
-	private PackagePriceProccessor priceCalculator(String cartId, List<GoodsItem> list) {
-		log.info("price of shopcart: {}  is calculating ... ", cartId);
-		BigDecimal total = new BigDecimal(0);
-		BigDecimal discountTotal = new BigDecimal(0);
-		for (GoodsItem goodItem : list) {
-			BigDecimal currentItemPrice = new BigDecimal(goodItem.getPrice())
-					.multiply(new BigDecimal(goodItem.getStock())).setScale(2, RoundingMode.HALF_UP);
-			total = total.add(currentItemPrice);
-			
-			if(goodItem.getDiscountPrice() !=null && goodItem.getDiscountPrice() != 0) {
-				BigDecimal currentItemDiscountPrice = new BigDecimal(goodItem.getDiscountPrice())
-						.multiply(new BigDecimal(goodItem.getStock())).setScale(2, RoundingMode.HALF_UP);
-				discountTotal = discountTotal.add(currentItemDiscountPrice);
-			}
-		}
-		BigDecimal settlePrice = total.subtract(discountTotal);
-
-		return new PackagePriceProccessor(total.intValue(), discountTotal.intValue(), settlePrice.intValue());
-	}
-	
 	private List<Order>  distributOrder(OrderPackage packageItem) {
-		List<GoodsItem> goodsItemList = packageItem.getItemList();
+		List<OrderGoodsItemView> goodsItemList = packageItem.getItemList();
 		if (goodsItemList.isEmpty()) {
 			log.debug("orderPackageId:{} has no goodsItem ", packageItem.getOrderPackageId());
 			throw new RuntimeException("订单商品列表为空");
@@ -223,6 +211,13 @@ public class OrderBiz {
 		return record;
 	}
 	
+	// TODO 此方案可解决内嵌的对象id无法映射的问题
+	public JSONObject findById2(OrderQueryRequst request) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where(FieldConstants.ORDER_PACKAGE_ID).is(request.getOrderPackageId()));
+		JSONObject record = mongoTemplate.findOne(query, JSONObject.class,"orderPackage");
+		return record;
+	}
 	
 	
 	/**
@@ -234,7 +229,7 @@ public class OrderBiz {
 	}
 	
 	public OrderPackageView rebuildPackageRender(OrderPackage orderPackage) {
-		List<GoodsItem> list= orderPackage.getItemList();
+		List<OrderGoodsItemView> list= orderPackage.getItemList();
 		if(list.isEmpty()) {
 			log.error("null goodsItem in this orderPackage [orderPackageId:{}]",orderPackage.getOrderPackageId());
 			throw new RuntimeException("订单包中商品内容为空");  

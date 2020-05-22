@@ -37,6 +37,7 @@ public class FieldConstants {
 	
 	public final static String STOCK = "stock";
 	
+	
 	public final static String DISCOUNT_PRICE = "discountPrice";
 	
 	public final static String PRICE = "price";
@@ -62,7 +63,12 @@ public class FieldConstants {
 	
 	public final static String MER_DESCRIPTION = "description";
 	
+	public final static String CHAT_ID = "_id";
+	
 	/*  common  */
+	
+	public final static String NUM = "num";
+	
 	public static final String USER_ACCOUNT = "userAccount";
 	
 	public final static String MERCHANT_ID = "merchantId";

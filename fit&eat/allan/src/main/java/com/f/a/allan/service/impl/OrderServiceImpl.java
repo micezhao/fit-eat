@@ -17,6 +17,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.f.a.allan.dao.OrderMapper;
 import com.f.a.allan.entity.pojo.GoodsItem;
 import com.f.a.allan.entity.pojo.Order;
+import com.f.a.allan.entity.response.OrderGoodsItemView;
 import com.f.a.allan.enums.OrderEnum;
 import com.f.a.allan.service.OrderService;
 import com.f.a.allan.utils.RedisSequenceUtils;
@@ -43,13 +44,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 	 * @param orderTime
 	 */
 
-	public List<Order> batchDistribute(List<GoodsItem> itemList, String userAccount, LocalDateTime orderTime) {
-		Map<String, List<GoodsItem>> map = new HashMap<String, List<GoodsItem>>();
-		for (GoodsItem item : itemList) {
+	public List<Order> batchDistribute(List<OrderGoodsItemView> itemList, String userAccount, LocalDateTime orderTime) {
+		Map<String, List<OrderGoodsItemView>> map = new HashMap<String, List<OrderGoodsItemView>>();
+		for (OrderGoodsItemView item : itemList) {
 			if(map.containsKey(item.getMerchantId())){
 				map.get(item.getMerchantId()).add(item);
 			}else {
-				List<GoodsItem> list = new ArrayList<GoodsItem>();
+				List<OrderGoodsItemView> list = new ArrayList<OrderGoodsItemView>();
 				list.add(item);
 				map.put(item.getMerchantId(),list);
 			}
@@ -66,22 +67,22 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 	 * @param orderTime
 	 * @return
 	 */
-	public List<Order> generateOrder(Map<String, List<GoodsItem>> map, String userAccount, LocalDateTime orderTime) {
+	public List<Order> generateOrder(Map<String, List<OrderGoodsItemView>> map, String userAccount, LocalDateTime orderTime) {
 		List<Order> orderItemList = new ArrayList<Order>();
-		for (Entry<String, List<GoodsItem>> element : map.entrySet()) {
+		for (Entry<String, List<OrderGoodsItemView>> element : map.entrySet()) {
 			String orderId = redisSequenceUtils.orderSequence(); //  同一个商户的商品订单，共享一个订单号
-			for (GoodsItem item : element.getValue()) {
+			for (OrderGoodsItemView item : element.getValue()) {
 				int settlePrice = 0;
 				if(item.getDiscountPrice() !=null && item.getDiscountPrice() != 0 ) {
 					settlePrice = new BigDecimal(item.getPrice()).subtract(new BigDecimal(item.getDiscountPrice()))
-							.multiply(new BigDecimal(item.getStock())).setScale(2, RoundingMode.HALF_UP).intValue();
+							.multiply(new BigDecimal(item.getNum())).setScale(2, RoundingMode.HALF_UP).intValue();
 				}else {
 					settlePrice = item.getPrice();
 				}
 				
 				Order orderItem = Order.builder().orderId(orderId).userAccount(userAccount)
 						.goodsId(item.getGoodsId()).merchantId(item.getMerchantId()).category(item.getCategory())
-						.discountPrice(item.getDiscountPrice()).price(item.getPrice()).num(item.getStock())
+						.discountPrice(item.getDiscountPrice()).price(item.getPrice()).num(item.getNum())
 						.settlementPrice(settlePrice).orderTime(orderTime).status(OrderEnum.NEED_DELIVERY.getCode())
 						.build();
 				orderItemList.add(orderItem);

@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.f.a.allan.entity.response.OrderGoodsItemView;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,7 +33,7 @@ public class OrderPackage {
 	
 	private DeliveryInfo delivery;
 		
-	private List<GoodsItem> itemList;
+	private List<OrderGoodsItemView> itemList;
 	
 	private String userAccount;
 

@@ -1,36 +1,25 @@
 package allan;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.stream.IntStream;
 
-import org.joda.time.LocalDateTime;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.f.a.allan.AllanApplication;
 import com.f.a.allan.biz.GoodsBiz;
 import com.f.a.allan.biz.OrderBiz;
 import com.f.a.allan.biz.UserAddressBiz;
-import com.f.a.allan.entity.pojo.DeliveryInfo;
-import com.f.a.allan.entity.pojo.GoodsItem;
 import com.f.a.allan.entity.pojo.OrderPackage;
 import com.f.a.allan.entity.pojo.UserAddress;
 import com.f.a.allan.entity.request.OrderQueryRequst;
 import com.f.a.allan.enums.DrEnum;
-import com.f.a.allan.enums.GoodsItemCategoryEnum;
-import com.f.a.allan.enums.GoodsStatusEnum;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -58,16 +47,7 @@ public class AllanApplicationTest {
 
 	@org.junit.Test
 	public void goodsItem_1() {
-		JSONObject itemOutline = new JSONObject();
-		itemOutline.put("规格", "1.8m * 1.2m");
-		itemOutline.put("安装方式", "挂装 或 座装");
-		JSONArray domain = new JSONArray();
-		domain.add("家具");
-		domain.add("生活用品");
-		GoodsItem goodsItem = GoodsItem.builder().category(GoodsItemCategoryEnum.SUBSTAINTIAL.getCode())
-				.goodsName("micezhao的商品测试商品").merchantId("5ec1fb217c71b741f4a4c7b8").merchantName("micezhao 旗舰店").stock(90).price(80)
-				.discountPrice(65).itemOutline(itemOutline.toJSONString()).domain(domain.toJSONString()).build();
-//		goodsBiz.insert(goodsItem);
+		
 	}
 
 	@org.junit.Test
@@ -103,9 +83,11 @@ public class AllanApplicationTest {
 
 	@org.junit.Test
 	public void test2() {
-		OrderQueryRequst r = OrderQueryRequst.builder().orderPackageId("5eb77acae7b12b53a30fee0f").build();
-		OrderPackage p = orderBiz.findById(r);
-		System.out.println(p.getOrderPackageId());
+		OrderQueryRequst r = OrderQueryRequst.builder().orderPackageId("5ebbf8aaf391bf31ec296e0a").build();
+//		OrderPackage p = orderBiz.findById(r);
+//		System.out.println("当前订单："+p);
+		JSONObject o= orderBiz.findById2(r);
+		System.out.println("当前订单："+o);
 //		orderBiz.closePackage("5eb77d169ad6660f58cb744d");
 	}
 
