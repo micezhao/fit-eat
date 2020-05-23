@@ -2,7 +2,7 @@ package com.f.a.allan.entity.request;
 
 import java.util.List;
 
-import com.f.a.allan.entity.pojo.Certificate;
+import com.f.a.allan.entity.bo.Certificate;
 import com.f.a.allan.enums.DrEnum;
 import com.f.a.allan.enums.MerchantStatus;
 

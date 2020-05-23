@@ -12,8 +12,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.f.a.allan.entity.bo.DeliveryInfo;
 import com.f.a.allan.entity.constants.FieldConstants;
-import com.f.a.allan.entity.pojo.DeliveryInfo;
 import com.f.a.allan.entity.pojo.Order;
 import com.f.a.allan.entity.pojo.OrderDetail;
 import com.f.a.allan.entity.pojo.OrderDetail.OrderDetailBuilder;

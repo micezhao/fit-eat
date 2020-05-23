@@ -63,7 +63,11 @@ public class FieldConstants {
 	
 	public final static String MER_DESCRIPTION = "description";
 	
+	
+	/* chat */
 	public final static String CHAT_ID = "_id";
+	
+	public final static String CHAT_ITEM_LIST = "itemList";
 	
 	/*  common  */
 	

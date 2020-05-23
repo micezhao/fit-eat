@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.f.a.allan.entity.pojo.DeliveryInfo;
+import com.f.a.allan.entity.bo.DeliveryInfo;
 import com.f.a.allan.entity.pojo.GoodsItem;
 
 import lombok.Builder;

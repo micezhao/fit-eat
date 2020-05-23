@@ -1,6 +1,6 @@
-package com.f.a.allan.entity.pojo;
+package com.f.a.allan.entity.bo;
 
-import com.f.a.allan.entity.pojo.DeliveryInfo.DeliveryInfoBuilder;
+import com.f.a.allan.entity.bo.DeliveryInfo.DeliveryInfoBuilder;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

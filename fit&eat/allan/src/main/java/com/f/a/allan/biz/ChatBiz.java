@@ -4,20 +4,17 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
-import org.apache.commons.codec.binary.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import com.f.a.allan.entity.bo.ChatItem;
 import com.f.a.allan.entity.constants.FieldConstants;
 import com.f.a.allan.entity.pojo.Chat;
-import com.f.a.allan.entity.pojo.ChatItem;
-import com.f.a.allan.service.CalculatorService;
-import com.f.a.allan.service.CalculatorService.PriceProccessor;
 
 @Service
 public class ChatBiz {
@@ -25,22 +22,18 @@ public class ChatBiz {
 	@Autowired
 	private MongoTemplate mongoTemplate;
 	
-	@Autowired
-	private CalculatorService calculatorService;
 	
 	/**
 	 * 将商品加入购物车
 	 * @param userAccount
-	 * @param chatItem
+	 * @param chatItem [goodsId:商品id，num：当前商品的数量]
 	 */
 	public void addItemToChat(String userAccount,ChatItem chatItem) {
 		Chat chat = getChatByuserAccount(userAccount); // 先查询当前用户是否存在购物车
 		List<ChatItem> chatItemList = null;
 		if(chat == null) {
-			// TODO 新增购物车，并将当前商品放入购物车中
 			chatItemList = new ArrayList<ChatItem>();
 			chatItemList.add(chatItem);
-//			PriceProccessor priceProccessor= calculatorService.priceCalculator(chatItemList);
 			chat = Chat.builder()
 						.userAccount(userAccount)
 						.itemList(chatItemList)
@@ -52,7 +45,7 @@ public class ChatBiz {
 			boolean repeat = false;
 			for (ChatItem element : chatItemList) {
 				if(StringUtils.equals(chatItem.getGoodsId(),element.getGoodsId() )) {
-					element.setNum(element.getNum() + chatItem.getNum());
+					element.setNum(chatItem.getNum());
 					repeat = true;
 					break;
 				}
@@ -66,6 +59,34 @@ public class ChatBiz {
 			// 执行购物车更新
 			mongoTemplate.findAndReplace(new Query().addCriteria(new Criteria(FieldConstants.CHAT_ID).is(chat.getChatId())), chat);
 		}
+	}
+	
+	/**
+	 * 从购物车中减去 某个商品
+	 * @param chatId
+	 * @param chatItem [goodsId:商品id，num：当前商品的数量]
+	 */
+	public void subItemFromChat(String chatId,ChatItem chatItem) {
+		Chat chat = getChatById(chatId);
+		Iterator<ChatItem> iterator= chat.getItemList().iterator();
+		while (iterator.hasNext()) {
+			ChatItem element = iterator.next();
+			if(StringUtils.equals(chatItem.getGoodsId(),element.getGoodsId())) { 
+				if(chatItem.getNum() == 0) {
+					iterator.remove(); // 如果当前商品数量为0，那么就从购物车中删除这个商品
+				}else {
+					element.setNum(chatItem.getNum());
+				}
+			}
+		}
+		if(chat.getItemList().isEmpty()) { // 如果购物车中的所有的商品数量被减0，就删除购物车
+			deleteChatById(chatId);
+			return;
+		}
+		chat.setItemList(chat.getItemList());
+		chat.setMdt(LocalDateTime.now());
+		// 执行购物车更新
+		mongoTemplate.findAndReplace(new Query().addCriteria(new Criteria(FieldConstants.CHAT_ID).is(chatId)), chat);
 		
 	}
 	
@@ -75,13 +96,19 @@ public class ChatBiz {
 		return mongoTemplate.findOne(query, Chat.class);
 	}
 	
+	public Chat getChatById(String chatId) {
+		Query query = new Query();
+		query.addCriteria(new Criteria(FieldConstants.CHAT_ID).is(chatId));
+		return mongoTemplate.findOne(query, Chat.class);
+	}
+	
 	/**
 	 * 从购物车中移除指定产品
 	 * @param userAccount
 	 * @param goodsId
 	 */
-	public void removeChatItem(String userAccount,String goodsId) {
-		Chat chat = getChatByuserAccount(userAccount);
+	public void removeChatItem(String chatId,String goodsId) {
+		Chat chat = getChatById(chatId);
 		if(chat.getItemList().size() == 1) { // 如果当前购物车就一个商品，那么就直接删除当前商品
 			mongoTemplate.remove(new Query().addCriteria(new Criteria(FieldConstants.CHAT_ID).is(chat.getChatId())), Chat.class);
 			return ;
@@ -94,13 +121,55 @@ public class ChatBiz {
 				break;
 			}
 		}
+		if(chat.getItemList().isEmpty()) { // 如果购物车中的所有的商品数量被减0，就删除购物车
+			deleteChatById(chatId);
+			return;
+		}
 		chat.setItemList(chat.getItemList());
 		chat.setMdt(LocalDateTime.now());
 		// 执行购物车更新
 		mongoTemplate.findAndReplace(new Query().addCriteria(new Criteria(FieldConstants.CHAT_ID).is(chat.getChatId())), chat);
 	}
 	
-
+	/**
+	 * 根据userAccount 查询购物车信息
+	 * @return
+	 */
+//	public ChatView getChatByUserAccount(String userAccount) {
+//		
+//	}
+	
+	/**
+	 * 当商品购买成功后，清空购物车的服务
+	 * @param chatId 购物车编号
+	 * @param goodsIdList 需要被清除的商品列表
+	 */
+	public void clearChatByGoodsIdList(String chatId,List<String> goodsIdList) {
+		Chat chat = getChatById(chatId);
+		Query query = new Query().addCriteria(new Criteria(FieldConstants.CHAT_ID).is(chat.getChatId()));
+		
+		for (String goodsId : goodsIdList) {
+			Iterator<ChatItem>  Iterator = chat.getItemList().iterator();
+			while(Iterator.hasNext()) {
+				String curId = Iterator.next().getGoodsId();
+				if(StringUtils.equals(curId, goodsId)) {
+					Iterator.remove();
+					break;
+				}
+			}
+		}
+		if(chat.getItemList().isEmpty()) { // 如果此时购物车为空了，那么就删除掉整个购物车
+			deleteChatById(chatId);
+		}else {	// 执行购物车更新
+			chat.setItemList(chat.getItemList());
+			chat.setMdt(LocalDateTime.now());
+			mongoTemplate.findAndReplace(query, chat);
+		}
+	}
+	
+	public void deleteChatById(String chatId) {
+		mongoTemplate.findAllAndRemove(new Query().addCriteria(new Criteria(FieldConstants.CHAT_ID).is(chatId)), Chat.class);
+	}
 	
 	
 	

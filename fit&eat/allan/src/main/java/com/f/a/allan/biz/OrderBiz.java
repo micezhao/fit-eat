@@ -18,8 +18,8 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.f.a.allan.entity.bo.DeliveryInfo;
 import com.f.a.allan.entity.constants.FieldConstants;
-import com.f.a.allan.entity.pojo.DeliveryInfo;
 import com.f.a.allan.entity.pojo.GoodsItem;
 import com.f.a.allan.entity.pojo.Merchant;
 import com.f.a.allan.entity.pojo.Order;

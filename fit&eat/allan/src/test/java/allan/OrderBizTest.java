@@ -16,10 +16,9 @@ import com.f.a.allan.biz.ChatBiz;
 import com.f.a.allan.biz.MerchantBiz;
 import com.f.a.allan.biz.OrderBiz;
 import com.f.a.allan.biz.UserAddressBiz;
+import com.f.a.allan.entity.bo.ChatItem;
+import com.f.a.allan.entity.bo.DeliveryInfo;
 import com.f.a.allan.entity.constants.FieldConstants;
-import com.f.a.allan.entity.pojo.ChatItem;
-import com.f.a.allan.entity.pojo.DeliveryInfo;
-import com.f.a.allan.entity.request.GoodsItemRequest;
 
 /**
  * Unit test for simple App.
@@ -56,7 +55,7 @@ public class OrderBizTest {
 	
 	@org.junit.Test
 	public void chat_1() {
-		ChatItem chatItem  = ChatItem.builder().goodsId("5ec201476135d4020e727da6").num(3).build();
+		ChatItem chatItem  = ChatItem.builder().goodsId("5ebf2e7ae6b378647fdc4a47").num(3).build();
 		chatBiz.addItemToChat("93012130-96df-4025-9350-e503282c5dda", chatItem);
 	}
 	
@@ -65,6 +64,21 @@ public class OrderBizTest {
 	public void chat_2() {
 		chatBiz.removeChatItem("93012130-96df-4025-9350-e503282c5dda", "5ec201476135d4020e727da6");
 	}
+	
+	@org.junit.Test
+	public void chat_3() {
+		List<String> goodsIdList = new ArrayList<String>();
+		goodsIdList.add("5ec201476135d4020e727da6");
+		goodsIdList.add("5ebf2e7ae6b378647fdc4a47");
+		chatBiz.clearChatByGoodsIdList("93012130-96df-4025-9350-e503282c5dda", goodsIdList);
+	}
+	
+	@org.junit.Test
+	public void chat_4() {
+		ChatItem item = ChatItem.builder().goodsId("5ebf2e7ae6b378647fdc4a47").num(0).build(); 
+		chatBiz.subItemFromChat("5ec8a031bf1ef62fe4397404", item);
+	}
+	
 	
 	
 }

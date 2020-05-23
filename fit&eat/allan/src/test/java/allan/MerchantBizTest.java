@@ -13,7 +13,7 @@ import com.f.a.allan.AllanApplication;
 import com.f.a.allan.biz.MerchantBiz;
 import com.f.a.allan.biz.OrderBiz;
 import com.f.a.allan.biz.UserAddressBiz;
-import com.f.a.allan.entity.pojo.Certificate;
+import com.f.a.allan.entity.bo.Certificate;
 import com.f.a.allan.entity.pojo.Merchant;
 import com.f.a.allan.entity.request.MerchantQueryRequest;
 import com.f.a.allan.entity.request.MerchantRequest;

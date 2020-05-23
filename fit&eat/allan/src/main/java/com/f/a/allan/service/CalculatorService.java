@@ -10,8 +10,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
+import com.f.a.allan.entity.bo.ChatItem;
 import com.f.a.allan.entity.constants.FieldConstants;
-import com.f.a.allan.entity.pojo.ChatItem;
 import com.f.a.allan.entity.pojo.GoodsItem;
 import com.f.a.allan.entity.response.OrderGoodsItemView;
 

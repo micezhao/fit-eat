@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.f.a.allan.entity.bo.ChatItem;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

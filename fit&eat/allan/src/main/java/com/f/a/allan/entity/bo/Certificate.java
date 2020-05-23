@@ -1,4 +1,4 @@
-package com.f.a.allan.entity.pojo;
+package com.f.a.allan.entity.bo;
 
 import lombok.Builder;
 import lombok.Data;
