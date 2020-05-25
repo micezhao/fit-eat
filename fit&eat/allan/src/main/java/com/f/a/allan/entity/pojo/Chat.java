@@ -23,6 +23,8 @@ public class Chat {
 	@Id
 	private String chatId;
 	
+	private String chatMerchant;
+	
 	private String userAccount;
 	
 	private List<ChatItem> itemList;

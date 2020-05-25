@@ -16,6 +16,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.f.a.allan.entity.bo.DeliveryInfo;
@@ -90,6 +91,32 @@ public class OrderBiz {
 		for (Map<String,Object> map : list) {
 			goodsViewList.add(r2Dto((String)map.get(FieldConstants.GOODS_ID),(int)map.get(FieldConstants.NUM)));
 		}
+		// 开始计算价格
+		PriceProccessor cal = calculatorService.priceCalculator(cartId, goodsViewList);
+		OrderPackage packItem = OrderPackage.builder().userAccount(userAccount)
+				.cartId(cartId).itemList(goodsViewList)
+				.delivery(delivery)
+				.totalAmount(cal.getTotalPrice()).discountPrice(cal.getDiscountPrice())
+				.settlePrice(cal.getSettlePrice()).packageStatus(PackageStatusEnum.CTEATE.getCode())
+				.cdt(LocalDateTime.now()).expireTime(getExpireTime(DELAY_MIN)).build();
+		OrderPackage packInfo = mongoTemplate.insert(packItem);
+		redisTemplate.opsForHash().put(TEMP_DELIVERY, packInfo.getOrderPackageId(), delivery); // 将订单的配送信息先缓存起来
+		
+		// TODO 存入延迟队列，如果过期就执行关闭订单的动作
+
+	}
+	
+	// 通过购物车生成订单包 此时商品的结算价格不再变化
+	public void packItem2(String cartId, JSONArray arr, String userAccount, DeliveryInfo delivery) {
+		// TODO 库存扣减的动作放在请求端？还是通过远程调用？
+		log.info("packaging goodsItem...");
+		List<OrderGoodsItemView> goodsViewList = new ArrayList<OrderGoodsItemView>();
+		for (int i = 0; i < arr.size(); i++) {
+			goodsViewList.add(r2Dto(arr.getJSONObject(i).getString(FieldConstants.GOODS_ID),arr.getJSONObject(i).getIntValue(FieldConstants.NUM)));
+		}
+//		for (JSONObject json : arr) {
+//			goodsViewList.add(r2Dto((String)map.get(FieldConstants.GOODS_ID),(int)map.get(FieldConstants.NUM)));
+//		}
 		// 开始计算价格
 		PriceProccessor cal = calculatorService.priceCalculator(cartId, goodsViewList);
 		OrderPackage packItem = OrderPackage.builder().userAccount(userAccount)

@@ -28,14 +28,15 @@ public class ChatBiz {
 	 * @param userAccount
 	 * @param chatItem [goodsId:商品id，num：当前商品的数量]
 	 */
-	public void addItemToChat(String userAccount,ChatItem chatItem) {
-		Chat chat = getChatByuserAccount(userAccount); // 先查询当前用户是否存在购物车
+	public void addItemToChat(String userAccount,String chatMerchant,ChatItem chatItem) {
+		Chat chat = getChatByuserAccount(userAccount,chatMerchant); // 先查询当前用户是否存在购物车
 		List<ChatItem> chatItemList = null;
 		if(chat == null) {
 			chatItemList = new ArrayList<ChatItem>();
 			chatItemList.add(chatItem);
 			chat = Chat.builder()
 						.userAccount(userAccount)
+						.chatMerchant(chatMerchant)
 						.itemList(chatItemList)
 						.cdt(LocalDateTime.now()).build();
 			mongoTemplate.insert(chat);
@@ -90,9 +91,10 @@ public class ChatBiz {
 		
 	}
 	
-	public Chat getChatByuserAccount(String userAccount) {
+	public Chat getChatByuserAccount(String userAccount,String chatMerchant) {
 		Query query = new Query();
 		query.addCriteria(new Criteria(FieldConstants.USER_ACCOUNT).is(userAccount));
+		query.addCriteria(new Criteria(FieldConstants.CHAT_MERCHANT).is(chatMerchant));
 		return mongoTemplate.findOne(query, Chat.class);
 	}
 	
@@ -131,13 +133,6 @@ public class ChatBiz {
 		mongoTemplate.findAndReplace(new Query().addCriteria(new Criteria(FieldConstants.CHAT_ID).is(chat.getChatId())), chat);
 	}
 	
-	/**
-	 * 根据userAccount 查询购物车信息
-	 * @return
-	 */
-//	public ChatView getChatByUserAccount(String userAccount) {
-//		
-//	}
 	
 	/**
 	 * 当商品购买成功后，清空购物车的服务

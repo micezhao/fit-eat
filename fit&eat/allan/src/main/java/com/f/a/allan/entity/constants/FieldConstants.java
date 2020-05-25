@@ -69,6 +69,8 @@ public class FieldConstants {
 	
 	public final static String CHAT_ITEM_LIST = "itemList";
 	
+	public final static String CHAT_MERCHANT = "chatMerchant";
+	
 	/*  common  */
 	
 	public final static String NUM = "num";
