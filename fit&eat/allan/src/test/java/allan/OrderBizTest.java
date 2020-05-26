@@ -61,14 +61,14 @@ public class OrderBizTest {
 
 	@org.junit.Test
 	public void new_order_package() {
-		DeliveryInfo delivery = DeliveryInfo.builder().
-			receiveAddr("江岸区").deliveryTime("9:00").recevierName("zhuzhusong").recevierPhone("123").build();
-		List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
-		Map<String,Object> map = new HashMap<String, Object>();
-		map.put(FieldConstants.GOODS_ID, "5ec201476135d4020e727da6");
-		map.put(FieldConstants.NUM, 3);
-		list.add(map);
-		orderBiz.packItem("78644", list, "93012130-96df-4025-9350-e503282c5dda", delivery);
+//		DeliveryInfo delivery = DeliveryInfo.builder().
+//			receiveAddr("江岸区").deliveryTime("9:00").recevierName("zhuzhusong").recevierPhone("123").build();
+//		List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
+//		Map<String,Object> map = new HashMap<String, Object>();
+//		map.put(FieldConstants.GOODS_ID, "5ec201476135d4020e727da6");
+//		map.put(FieldConstants.NUM, 3);
+//		list.add(map);
+//		orderBiz.packItem("78644", list, "93012130-96df-4025-9350-e503282c5dda", delivery);
 	}
 	
 	@org.junit.Test

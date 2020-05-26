@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,6 +41,10 @@ import com.f.a.allan.entity.response.OrderPackageView;
 import com.f.a.allan.enums.PackageStatusEnum;
 import com.f.a.kobe.view.UserAgent;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
+
 /**
  * <p>
  *  前端控制器
@@ -47,6 +53,7 @@ import com.f.a.kobe.view.UserAgent;
  * @author micezhao
  * @since 2020-05-06
  */
+@Api("client-订单功能接口")
 @RestController
 @RequestMapping("/order")
 public class OrderController {
@@ -68,15 +75,10 @@ public class OrderController {
 	 * @param goodItemList
 	 * @param userAgent
 	 * @return
-	 * userAddressId : 5ebb4a46f9706c6ab2c1385f
 	 */
 	@PostMapping("package")
-	public OrderPackage packGoodItem(@RequestBody OrderRequset request,UserAgent userAgent) {
-		// 生成订单接口
-//		String userAddressId = (String)request.getAttribute("userAddressId");
-//		String deliveryTime = "2020-05-09 10:00-11:00";
-//		String mome ="请勿放到快递柜";
-		
+	@ApiOperation("生成支付包")
+	public ResponseEntity<Object> packGoodItem(@RequestBody OrderRequset request,UserAgent userAgent) {		
 		String userAccount= userAgent.getUserAccount();
 		
 		UserAddress userAddress = userAddressBiz.findById(request.getUserAddressId());
@@ -88,44 +90,49 @@ public class OrderController {
 		json.put(FieldConstants.GOODS_ID, "5ebf2e7ae6b378647fdc4a47");
 		json.put(FieldConstants.NUM, 3);
 		arr.add(json);
-		orderBiz.packItem2(request.getChatId(),arr,userAccount,info);
+		orderBiz.packItem(request.getChatId(),arr,userAccount,info);
 		
-		return null;
+		return new ResponseEntity<Object>(HttpStatus.OK);
 	}
 	
-	
+	@ApiOperation("查询用户的订单包列表")
 	@GetMapping("/package")
-	public List<OrderPackage> listOrderPackage(UserAgent userAgent,OrderQueryRequst orderQueryRequst){
+	public ResponseEntity<Object> listOrderPackage(UserAgent userAgent,@RequestBody OrderQueryRequst orderQueryRequst){
 		 String userAccount= userAgent.getUserAccount();
 		 orderQueryRequst.setUserAccount(userAccount);
-		 return  orderBiz.listOrderPackage(orderQueryRequst);
+		 List<OrderPackage> list=  orderBiz.listOrderPackage(orderQueryRequst);
+		 return new ResponseEntity<Object>(list,HttpStatus.OK);
 	}
 	
+	@ApiOperation("查询指定订单包")
+	@ApiImplicitParam(name = "订单包编号",value = "id")
 	@GetMapping("/package/{id}")
-	public OrderPackageView listOrderPackage(@PathVariable("id") String orderPackageId ,UserAgent userAgent,OrderQueryRequst orderQueryRequst){
-		 orderQueryRequst.setOrderPackageId(orderPackageId);
-		 OrderPackage packItem= orderBiz.findById(orderQueryRequst);
-		 return orderBiz.rebuildPackageRender(packItem);
+	public ResponseEntity<Object> listOrderPackage(@PathVariable("id") String orderPackageId ,UserAgent userAgent){
+		 OrderPackage packItem= orderBiz.findById(orderPackageId);
+		 return new ResponseEntity<Object>( orderBiz.rebuildPackageRender(packItem),HttpStatus.OK);
 		   
 	}
 	
+	@ApiOperation("订单包支付成功后分发订单，后端调用的远程接口")
 	@PutMapping("/package/pay")
-	public OrderPackage payById(UserAgent userAgent,@RequestBody OrderQueryRequst orderQueryRequst){
+	public ResponseEntity<Object> payById(UserAgent userAgent,@RequestBody OrderQueryRequst orderQueryRequst){
 		Query query = new Query();
 		query.addCriteria(Criteria.where(FieldConstants.ORDER_PACKAGE_ID).is(orderQueryRequst.getOrderPackageId()))
 				.addCriteria(Criteria.where(FieldConstants.PACKAGE_STATUS).is(PackageStatusEnum.PAID));
 		boolean paid = mongoTemplate.exists(query, OrderPackage.class);
+		OrderPackage opk = new OrderPackage();
 		// 幂等性检查
 		if(paid) { 
-			return mongoTemplate.findOne(query, OrderPackage.class);
+			opk = mongoTemplate.findOne(query, OrderPackage.class);
+			return new ResponseEntity<Object>( opk,HttpStatus.OK);
 		} 
-		OrderPackage packItem = orderBiz.paySucccessed(orderQueryRequst.getOrderPackageId(), orderQueryRequst.getFundTransferId());
+		opk = orderBiz.paySucccessed(orderQueryRequst.getOrderPackageId(), orderQueryRequst.getFundTransferId());
 		List<String> goodsIdList = new ArrayList<String>();
-		for (OrderGoodsItemView  item: packItem.getItemList()) {
+		for (OrderGoodsItemView  item: opk.getItemList()) {
 			goodsIdList.add(item.getGoodsId());
 		}
-		chatBiz.clearChatByGoodsIdList(packItem.getCartId(),goodsIdList);
-		 return packItem;
+		chatBiz.clearChatByGoodsIdList(opk.getCartId(),goodsIdList);
+		return new ResponseEntity<Object>( opk,HttpStatus.OK);
 	}
 }	
 
