@@ -81,11 +81,6 @@ public class ChatCtrl {
 		return new ResponseEntity<Object>(true, HttpStatus.OK);
 	}
 	
-//	@DeleteMapping("/{chatId}")
-//	public ResponseEntity<Object> removeChatItem(@PathVariable("chatId") String chatId){
-//		chatBiz.deleteChatById(chatId);
-//		return new ResponseEntity<Object>(true, HttpStatus.OK);
-//	}
 	
 	@ApiOperation("减少指定商品的数量")
 	@ApiImplicitParams({

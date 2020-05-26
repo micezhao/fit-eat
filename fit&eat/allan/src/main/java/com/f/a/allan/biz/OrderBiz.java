@@ -1,11 +1,8 @@
 package com.f.a.allan.biz;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
@@ -36,9 +33,6 @@ import com.f.a.allan.service.impl.OrderServiceImpl;
 import com.f.a.allan.utils.ObjectUtils;
 import com.mongodb.client.result.UpdateResult;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -91,9 +85,6 @@ public class OrderBiz {
 		for (int i = 0; i < arr.size(); i++) {
 			goodsViewList.add(r2Dto(arr.getJSONObject(i).getString(FieldConstants.GOODS_ID),arr.getJSONObject(i).getIntValue(FieldConstants.NUM)));
 		}
-//		for (JSONObject json : arr) {
-//			goodsViewList.add(r2Dto((String)map.get(FieldConstants.GOODS_ID),(int)map.get(FieldConstants.NUM)));
-//		}
 		// 开始计算价格
 		PriceProccessor cal = calculatorService.priceCalculator(cartId, goodsViewList);
 		OrderPackage packItem = OrderPackage.builder().userAccount(userAccount)
@@ -215,12 +206,12 @@ public class OrderBiz {
 		return record;
 	}
 	
-	// TODO 此方案可解决内嵌的对象id无法映射的问题
-	public JSONObject findById2(OrderQueryRequst request) {
+	//  通过JSONObject 做桥梁的方案可解决内嵌的对象id无法映射的问题
+	public OrderPackage findById2(String orderPackageId) {
 		Query query = new Query();
-		query.addCriteria(Criteria.where(FieldConstants.ORDER_PACKAGE_ID).is(request.getOrderPackageId()));
+		query.addCriteria(Criteria.where(FieldConstants.ORDER_PACKAGE_ID).is(orderPackageId));
 		JSONObject record = mongoTemplate.findOne(query, JSONObject.class,"orderPackage");
-		return record;
+		return JSONObject.toJavaObject(record, OrderPackage.class);
 	}
 	
 	

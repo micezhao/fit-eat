@@ -22,7 +22,8 @@ public class ChatService {
 	
 	public List<ChatView> getChatViewByUser(String userAccount,String chatMerchant) {
 		Aggregation aggregation = Aggregation.newAggregation(
-				Aggregation.match(new Criteria(FieldConstants.USER_ACCOUNT).is(userAccount).and(FieldConstants.CHAT_MERCHANT).is(chatMerchant)),
+				Aggregation.match(new Criteria(FieldConstants.USER_ACCOUNT).is(userAccount)
+						.and(FieldConstants.CHAT_MERCHANT).is(chatMerchant)),
 				Aggregation.unwind("itemList", "index", true),
 				MongoAggrerationUtils.aggregateAddFields("goodsItemId", "$toObjectId", "$itemList.goodsId"),
 				MongoAggrerationUtils.aggregateAddFields("chatId", "$toString", "$_id"),

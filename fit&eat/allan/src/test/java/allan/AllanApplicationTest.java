@@ -83,12 +83,7 @@ public class AllanApplicationTest {
 
 	@org.junit.Test
 	public void test2() {
-		OrderQueryRequst r = OrderQueryRequst.builder().orderPackageId("5ebbf8aaf391bf31ec296e0a").build();
-//		OrderPackage p = orderBiz.findById(r);
-//		System.out.println("当前订单："+p);
-		JSONObject o= orderBiz.findById2(r);
-		System.out.println("当前订单："+o);
-//		orderBiz.closePackage("5eb77d169ad6660f58cb744d");
+		
 	}
 
 	@org.junit.Test

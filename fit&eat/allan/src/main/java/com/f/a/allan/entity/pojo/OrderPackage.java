@@ -32,6 +32,8 @@ public class OrderPackage {
 	
 	private String cartId;
 	
+	private String merchantId;
+	
 	private DeliveryInfo delivery;
 		
 	private List<OrderGoodsItemView> itemList;
@@ -53,5 +55,6 @@ public class OrderPackage {
 	private LocalDateTime cdt;
 	
 	private LocalDateTime mdt;
+	
 
 }

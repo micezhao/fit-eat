@@ -2,13 +2,7 @@ package com.f.a.allan.ctrl.client.order;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -24,9 +18,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.f.a.allan.biz.ChatBiz;
 import com.f.a.allan.biz.OrderBiz;
 import com.f.a.allan.biz.UserAddressBiz;
@@ -37,7 +31,6 @@ import com.f.a.allan.entity.pojo.UserAddress;
 import com.f.a.allan.entity.request.OrderQueryRequst;
 import com.f.a.allan.entity.request.OrderRequset;
 import com.f.a.allan.entity.response.OrderGoodsItemView;
-import com.f.a.allan.entity.response.OrderPackageView;
 import com.f.a.allan.enums.PackageStatusEnum;
 import com.f.a.kobe.view.UserAgent;
 
@@ -53,7 +46,7 @@ import io.swagger.annotations.ApiOperation;
  * @author micezhao
  * @since 2020-05-06
  */
-@Api("client-订单功能接口")
+@Api(tags = "client-订单功能接口")
 @RestController
 @RequestMapping("/order")
 public class OrderController {
@@ -108,7 +101,7 @@ public class OrderController {
 	@ApiImplicitParam(name = "订单包编号",value = "id")
 	@GetMapping("/package/{id}")
 	public ResponseEntity<Object> listOrderPackage(@PathVariable("id") String orderPackageId ,UserAgent userAgent){
-		 OrderPackage packItem= orderBiz.findById(orderPackageId);
+		 OrderPackage packItem= orderBiz.findById2(orderPackageId);
 		 return new ResponseEntity<Object>( orderBiz.rebuildPackageRender(packItem),HttpStatus.OK);
 		   
 	}
@@ -131,7 +124,9 @@ public class OrderController {
 		for (OrderGoodsItemView  item: opk.getItemList()) {
 			goodsIdList.add(item.getGoodsId());
 		}
-		chatBiz.clearChatByGoodsIdList(opk.getCartId(),goodsIdList);
+		if(StringUtils.isNotBlank(opk.getCartId()) ) { // 如果订单包中的购物车编号不为空，就去清除购物车中的指定内容
+			chatBiz.clearChatByGoodsIdList(opk.getCartId(),goodsIdList);
+		}
 		return new ResponseEntity<Object>( opk,HttpStatus.OK);
 	}
 }	

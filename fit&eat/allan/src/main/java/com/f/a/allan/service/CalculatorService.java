@@ -45,7 +45,6 @@ public class CalculatorService {
 	}
 	
 	public  PriceProccessor priceCalculator(String cartId, List<OrderGoodsItemView> list) {
-		log.info("price of shopcart: {}  is calculating ... ", cartId);
 		BigDecimal total = new BigDecimal(0);
 		BigDecimal discountTotal = new BigDecimal(0);
 		for (OrderGoodsItemView goodItem : list) {

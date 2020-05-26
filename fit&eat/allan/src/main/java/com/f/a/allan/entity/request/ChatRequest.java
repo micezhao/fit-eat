@@ -10,6 +10,7 @@ public class ChatRequest {
 	
 	@ApiModelProperty("购物车编号")
 	private String chatId;
+	
 	@ApiModelProperty("购物车所属的商户编号")
 	private String chatMerchantId;
 	
