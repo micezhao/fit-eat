@@ -1,6 +1,7 @@
 package com.f.a.allan.ctrl.admin.goods;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,7 @@ import io.swagger.annotations.ApiOperation;
 
 @Api(tags = "admin-商品管理")
 @RestController
-@RequestMapping("/admin/goods")
+@RequestMapping("/admin/commodity")
 public class AdminGoodsCtrl extends BaseAdminCtrl {
 
 	@Autowired
@@ -53,50 +54,36 @@ public class AdminGoodsCtrl extends BaseAdminCtrl {
 	@ApiOperation("商品查询")
 	@ApiImplicitParams({
 		@ApiImplicitParam(name="merchantId",value = "商户id",required = false),
-		@ApiImplicitParam(name="goodsId",value = "商品id",required = false),
-		@ApiImplicitParam(name="goodsName",value = "商品名称",required = false),
-		@ApiImplicitParam(name="categories",value = "商品分类列表",required = false,allowableValues = "substantial,virtual"),
-		@ApiImplicitParam(name="goodsStatuses",value = "商品状态列表",required = false),
-		@ApiImplicitParam(name="price_min",value = "商品价格最低值",required = false),
-		@ApiImplicitParam(name="price_max",value = "商品价格最高值",required = false),
-		@ApiImplicitParam(name="hasDiscount",value = "是否有优惠",required = false,dataType = "boolean" )
+		@ApiImplicitParam(name="spuId",value = "商品id",required = false),
+		@ApiImplicitParam(name="name",value = "商品名称",required = false),
+		@ApiImplicitParam(name="categories",value = "商品分类列表",required = false,allowableValues = "substantial,virtual",dataTypeClass = String[].class),
+		@ApiImplicitParam(name="statuses",value = "商品状态列表",required = false,dataTypeClass = String[].class)
 	})
 	public ResponseEntity<Object> listGoodsItem(
 			@RequestParam(name = "merchantId",required = false)String merchantId,
-			@RequestParam(name = "goodsId",required = false)String goodsId,
-			@RequestParam(name = "goodsName",required = false)String goodsName,
-			@RequestParam(name = "categories",required = false)String categories,
-			@RequestParam(name = "goodsStatuses",required = false)String goodsStatuses,
-			@RequestParam(name = "price_min",required = false)String price_min,
-			@RequestParam(name = "price_max",required = false)String price_max,
-			@RequestParam(name = "hasDiscount",required = false)Boolean hasDiscount
+			@RequestParam(name = "spuId",required = false)String spuId,
+			@RequestParam(name = "name",required = false)String name,
+			@RequestParam(name = "categories",required = false)String[] categories,
+			@RequestParam(name = "statuses",required = false)String[] statuses
 			,UserAgent userAgent) {
 		GoodsItemQueryRequestBuilder builder = GoodsItemQueryRequest.builder();
 		if(StringUtils.isNotBlank(merchantId)) {
 			builder.merchantId(merchantId);
 		}
-		if(StringUtils.isNotBlank(goodsId)) {
-			builder.goodsId(goodsId);
+		if(StringUtils.isNotBlank(spuId)) {
+			builder.id(spuId);
 		}
-		if(StringUtils.isNotBlank(goodsName)) {
-			builder.goodsName(goodsName);
+		if(StringUtils.isNotBlank(name)) {
+			builder.name(name);
 		}
-		if(StringUtils.isNotBlank(price_max)) {
-			builder.price_max(price_max);
+
+		if(categories != null && categories.length > 0) {
+			builder.categoryList(Arrays.asList(categories));
 		}
-		if(StringUtils.isNotBlank(price_min)) {
-			builder.price_min(price_min);
+		if(statuses != null && statuses.length > 0) {
+			builder.statusList(Arrays.asList(statuses));
 		}
-		if(hasDiscount != null) {
-			builder.hasDiscount(hasDiscount.booleanValue());
-		}
-		if(StringUtils.isNotBlank(categories)) {
-			builder.categoryList(parse2List(categories));
-		}
-		if(StringUtils.isNotBlank(goodsStatuses)) {
-			builder.categoryList(parse2List(goodsStatuses));
-		}
-		List<GoodsItem> list = goodBiz.listGoodsItem(builder.build());
+		List<Commodity> list = commodityBiz.listCommodity(builder.build());
 		return new ResponseEntity<Object>(list, HttpStatus.OK);
 	}
 	
@@ -180,28 +167,28 @@ public class AdminGoodsCtrl extends BaseAdminCtrl {
 		return new ResponseEntity<Object>(item, HttpStatus.OK);
 	}
 
-	@PutMapping("{id}/puton")
-	@ApiOperation("商品上架")
-	@ApiImplicitParam(name = "id", value = "商品id", required = true)
+	@PutMapping("/sku/{id}/puton")
+	@ApiOperation("sku上架")
+	@ApiImplicitParam(name = "id", value = "skuId", required = true)
 	public ResponseEntity<Object> puton(@PathVariable("id") String goodsId,UserAgent userAgent) {
 		GoodsItem item = goodBiz.putGoodsItemOn(goodsId);
 		return new ResponseEntity<Object>(item, HttpStatus.OK);
 	}
 
-	@PutMapping("{id}/pulloff")
-	@ApiImplicitParam(name = "id", value = "商品id", required = true)
-	@ApiOperation("商品下架")
+	@PutMapping("/sku/{id}/pulloff")
+	@ApiImplicitParam(name = "id", value = "skuId", required = true)
+	@ApiOperation("sku下架")
 	public ResponseEntity<Object> pulloff(@PathVariable("id") String goodsId,UserAgent userAgent) {
 		GoodsItem item = goodBiz.pullGoodsItemOff(goodsId);
 		return new ResponseEntity<Object>(item, HttpStatus.OK);
 	}
 
-	@PutMapping("{id}/{replenishment}/replenish")
+	@PutMapping("/sku/{id}/{replenishment}/replenish")
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "id", value = "商品id", required = true),
 		@ApiImplicitParam(name = "replenishment", value = "增补量", required = true)
 	})
-	@ApiOperation("商品补货")
+	@ApiOperation("sku补货")
 	public ResponseEntity<Object> replenish(@PathVariable("id") String goodsId,@PathVariable("replenishment") int replenishment,UserAgent userAgent) {
 		GoodsItem item = goodBiz.replenish(goodsId, replenishment);
 		return new ResponseEntity<Object>(item, HttpStatus.OK);

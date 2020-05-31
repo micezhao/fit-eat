@@ -52,11 +52,11 @@ public class GoodsBiz {
 	public List<GoodsItem> listGoodsItem(GoodsItemQueryRequest request ){
 		Query query = new Query();
 		Criteria criteria = new Criteria();
-		if(StringUtils.isNotBlank(request.getGoodsId())) {
-			criteria.and(FieldConstants.GOODS_ID).is(request.getGoodsId());
+		if(StringUtils.isNotBlank(request.getId())) {
+			criteria.and(FieldConstants.GOODS_ID).is(request.getId());
 		}
-		if(StringUtils.isNotBlank(request.getGoodsName())) {
-			criteria.and(FieldConstants.GOODS_NAME).regex(Pattern.compile("^.*"+request.getGoodsName()+".*$", Pattern.CASE_INSENSITIVE) );
+		if(StringUtils.isNotBlank(request.getName())) {
+			criteria.and(FieldConstants.GOODS_NAME).regex(Pattern.compile("^.*"+request.getName()+".*$", Pattern.CASE_INSENSITIVE) );
 		}
 		if(StringUtils.isNotBlank(request.getMerchantId())) {
 			criteria.and(FieldConstants.MERCHANT_ID).is(request.getMerchantId());
@@ -73,14 +73,14 @@ public class GoodsBiz {
 		if(StringUtils.isNotBlank(request.getCategory())) {
 			criteria.and(FieldConstants.CATEGORY).is(request.getCategory());
 		}
-		if(StringUtils.isNotBlank(request.getGoodsStatus())) {
-			criteria.and(FieldConstants.GOODS_STATUS).is(request.getGoodsStatus());
+		if(StringUtils.isNotBlank(request.getStatus())) {
+			criteria.and(FieldConstants.GOODS_STATUS).is(request.getStatus());
 		}
 		if(request.getCategoryList() !=null && !request.getCategoryList().isEmpty()) {
 			criteria.and(FieldConstants.CATEGORY).in(request.getCategoryList());
 		}
-		if(request.getGoodsStatusList() !=null && !request.getGoodsStatusList().isEmpty()) {
-			criteria.and(FieldConstants.CATEGORY).in(request.getGoodsStatusList());
+		if(request.getStatusList() !=null && !request.getStatusList().isEmpty()) {
+			criteria.and(FieldConstants.CATEGORY).in(request.getStatusList());
 		}
 		if(StringUtils.isNotBlank(request.getPrice())) {
 			criteria.and(FieldConstants.PRICE).is(Integer.parseInt(request.getPrice()));

@@ -3,6 +3,7 @@ package com.f.a.allan.biz;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +16,11 @@ import org.springframework.stereotype.Service;
 
 import com.f.a.allan.entity.constants.FieldConstants;
 import com.f.a.allan.entity.pojo.Commodity;
+import com.f.a.allan.entity.pojo.GoodsItem;
 import com.f.a.allan.entity.pojo.SkuConfig;
 import com.f.a.allan.entity.pojo.SkuConfigItem;
 import com.f.a.allan.entity.request.CommodityRequest;
+import com.f.a.allan.entity.request.GoodsItemQueryRequest;
 import com.f.a.allan.enums.GoodsStatusEnum;
 import com.f.a.allan.utils.ObjectUtils;
 
@@ -27,6 +30,12 @@ public class CommodityBiz {
 	@Autowired
 	private MongoTemplate mongoTemplate;
 	
+	
+	/**
+	 * 新增一个商品记录
+	 * @param request
+	 * @return
+	 */
 	public Commodity insertOne(CommodityRequest request) {
 		Commodity record = new Commodity();
 		ObjectUtils.copy(record, request);
@@ -35,11 +44,48 @@ public class CommodityBiz {
 		return mongoTemplate.insert(record);
 	}
 	
+	/**
+	 * 根据spu查询商品
+	 * @param spuId
+	 * @return
+	 */
 	public Commodity findById(String spuId) {
 		return mongoTemplate.findOne(new Query().addCriteria(new Criteria(FieldConstants.SPU_ID).is(spuId))
 				, Commodity.class);
 	}
 	
+	public List<Commodity> listCommodity(GoodsItemQueryRequest request){
+		Query query = new Query();
+		Criteria criteria = new Criteria();
+		if(StringUtils.isNotBlank(request.getName())) {
+			criteria.and(FieldConstants.SPU_NAME).regex(Pattern.compile("^.*"+request.getName()+".*$", Pattern.CASE_INSENSITIVE) );
+		}
+		if(StringUtils.isNotBlank(request.getMerchantId())) {
+			criteria.and(FieldConstants.MERCHANT_ID).is(request.getMerchantId());
+		}
+		
+		if(StringUtils.isNotBlank(request.getCategory())) {
+			criteria.and(FieldConstants.CATEGORY).is(request.getCategory());
+		}
+		if(StringUtils.isNotBlank(request.getStatus())) {
+			criteria.and(FieldConstants.SPU_STATUS).is(request.getStatus());
+		}
+		if(request.getCategoryList() !=null && !request.getCategoryList().isEmpty()) {
+			criteria.and(FieldConstants.CATEGORY).in(request.getCategoryList());
+		}
+		if(request.getStatusList() !=null && !request.getStatusList().isEmpty()) {
+			criteria.and(FieldConstants.SPU_STATUS).in(request.getStatusList());
+		}
+		query.addCriteria(criteria);
+		return mongoTemplate.find(query, Commodity.class);
+	}
+	
+	/**
+	 * 对spu添加配置项
+	 * @param spuId
+	 * @param configs
+	 * @return
+	 */
 	public Commodity addSkuConfig(String spuId, List<SkuConfig> configs) {
 		Update update = new Update() ;
 		update.set(FieldConstants.SKU_CONFIG, configs);	
@@ -75,6 +121,13 @@ public class CommodityBiz {
 //		return record;
 //	}
 	
+	/**
+	 * 更新指定配置项
+	 * @param spuId
+	 * @param index
+	 * @param configValue
+	 * @return
+	 */
 	public Commodity updateSkuConfigByIndex(String spuId,String index,String configValue) {
 		List<SkuConfig> list= findById(spuId).getSkus();
 		for (SkuConfig skuConfig : list) {
@@ -97,6 +150,12 @@ public class CommodityBiz {
 		return record;
 	}
 	
+	/**
+	 * 删除指定配置项
+	 * @param spuId
+	 * @param index
+	 * @return
+	 */
 	public Commodity deleteSkuConfigByIndex(String spuId,String index) {
 		List<SkuConfig> list= findById(spuId).getSkus();
 		for (SkuConfig skuConfig : list) {

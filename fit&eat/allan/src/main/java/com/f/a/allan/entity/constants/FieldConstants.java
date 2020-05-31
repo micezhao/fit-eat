@@ -27,11 +27,8 @@ public class FieldConstants {
 	
 	public final static String GOODS_NAME = "goodsName";
 	
-	public final static String CATEGORY = "category";
-	
 	public final static String GOODS_ITEM_OUTLINE = "itemOutline";
 	
-	public final static String GOODS_DOMAIN=  "domain";
 	
 	public final static String GOODS_STATUS=  "goodsStatus";
 	
@@ -75,7 +72,12 @@ public class FieldConstants {
 	
 	public final static String SPU_ID = "_id";
 	
+	public final static String SPU_NAME = "name";
+	
+	public final static String SPU_STATUS = "status";
+
 	public final static String SKU_CONFIG = "skus";
+	
 		
 	public final static String SKU_CONFIG_VALUE = "skus.value";
 	
@@ -91,6 +93,10 @@ public class FieldConstants {
 	public final static String MERCHANT_NAME = "merchantName";
 	
 	public final static String ORDER_ID= "orderId";
+	
+	public final static String CATEGORY = "category";
+	
+	public final static String DOMAIN=  "domain";
 	
 	public final static String DR = "dr";
 	

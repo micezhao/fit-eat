@@ -19,10 +19,10 @@ import lombok.NoArgsConstructor;
 public class GoodsItemQueryRequest extends BaseQueryRequest {
 	
 //	@ApiModelProperty(value = "商品id",allowEmptyValue = true)
-	private String goodsId;
+	private String id;
 
 //	@ApiModelProperty(value = "商品名称",allowEmptyValue = true)
-	private String goodsName;
+	private String name;
 
 //	@ApiModelProperty(value = "商品分类",allowEmptyValue = true )
 	private String category;
@@ -31,10 +31,10 @@ public class GoodsItemQueryRequest extends BaseQueryRequest {
 	private List<String> categoryList;
 	
 //	@ApiModelProperty(value = "商品状态",allowEmptyValue = true )
-	private String goodsStatus;
+	private String status;
 	
 //	@ApiModelProperty(value = "商品状态列表",allowEmptyValue = true)
-	private List<String> goodsStatusList;
+	private List<String> statusList;
 
 //	@ApiModelProperty(value = "单价最大值",allowEmptyValue = true)
 	private String price_max;

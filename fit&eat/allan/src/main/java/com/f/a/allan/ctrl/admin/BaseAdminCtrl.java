@@ -18,36 +18,10 @@ import com.f.a.allan.enums.MediaTypeEnum;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-@Api(tags = "admin-通用功能")
-@RestController
-@RequestMapping("admin")
+
 public class BaseAdminCtrl {
 	
 	protected final static String SYMBOL_AND = "-";
-	
-	@ApiOperation("获取多媒体类型选项列表")
-	@GetMapping("/mediaType")
-	public ResponseEntity<Object> getMediaTypes(){
-		JSONArray arr = new JSONArray();
-		for (MediaTypeEnum element : MediaTypeEnum.values()) {
-			JSONObject json = new JSONObject();
-			json.put(element.getCode(), element.getDescription());
-			arr.add(json);
-		}
-		return new ResponseEntity<Object>(arr, HttpStatus.OK);
-	}
-	@ApiOperation("获取多媒体展示范围选项列表")
-	@GetMapping("/mediaScope")
-	public ResponseEntity<Object> getMediaScope(){
-		JSONArray arr = new JSONArray();
-		for (MediaScopeEnum element : MediaScopeEnum.values()) {
-			JSONObject json = new JSONObject();
-			json.put(element.getCode(), element.getDescription());
-			arr.add(json);
-		}
-		return new ResponseEntity<Object>(arr, HttpStatus.OK);
-	}
-	
 	
 	/**
 	 * adminCtrl 通用方法，将请求条件转成参数集合
