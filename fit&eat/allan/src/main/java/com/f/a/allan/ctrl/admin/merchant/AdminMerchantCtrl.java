@@ -31,7 +31,7 @@ import io.swagger.annotations.ApiOperation;
 
 @Api(tags = "admin-商户管理功能")
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/admin/merchant")
 public class AdminMerchantCtrl extends BaseAdminCtrl{
 
 	@Autowired
@@ -43,7 +43,7 @@ public class AdminMerchantCtrl extends BaseAdminCtrl{
 			@ApiImplicitParam(name = "operation", value = "商户的运行状态", required = false),
 			@ApiImplicitParam(name = "holderName", value = "商户负责人姓名", required = false),
 			@ApiImplicitParam(name = "holderPhone", value = "商户负责人联系电话", required = false)})
-	@GetMapping("/merchants")
+	@GetMapping
 	public ResponseEntity<Object> listMerchant(@RequestParam(name = "name", required = false) String merchantName,
 			@RequestParam(name = "verify", required = false) String verifyStatus,
 			@RequestParam(name = "operation", required = false) String operationStatus,

@@ -71,6 +71,15 @@ public class FieldConstants {
 	
 	public final static String CHAT_MERCHANT = "chatMerchant";
 	
+	/* commodity */
+	
+	public final static String SPU_ID = "_id";
+	
+	public final static String SKU_CONFIG = "skus";
+		
+	public final static String SKU_CONFIG_VALUE = "skus.value";
+	
+	
 	/*  common  */
 	
 	public final static String NUM = "num";

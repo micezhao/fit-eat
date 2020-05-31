@@ -1,8 +1,10 @@
 package com.f.a.allan.entity.pojo;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,60 +17,50 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Document("commodity")
 /**
- * 货品SPU
+ * 商品 SPU
+ * 
  * @author micezhao
  *
  */
-public class GoodsItem {
-	
-	/**
-	 * 货品编号SKU
-	 */
+public class Commodity {
+
 	@Id
-	private String goodsId;
+	private String spuId;
+
+	private String merchantId;
+
+	private String name;
+
+	private String introduce;
+
+	private List<Media> medias;
 	
-	private String goodsName;
 	
 	/**
 	 * 商品分类
 	 */
 	private String category;
-
-	/**
-	 * 商品概况 json 格式
-	 */
-	private String itemOutline;
 	
 	/**
-	 * 商品领域 jsonArray 格式
+	 * 商品应用领域 
 	 */
 	private String domain;
-	/**
-	 * 商品数量
-	 */
-	private Integer stock;
-	
-	private String goodsStatus;
 	
 	/**
-	 * 优惠金额 [单位：分]
+	 * 存储富文本编辑中的内容
 	 */
-	private Integer discountPrice; 
+	private String detail;
 	
-	/**
-	 * 单价 [单位：分]
-	 */
-	private Integer price;
+	private String status;
 	
-	/**
-	 * 商户号
-	 */
-	private String merchantId;
-	
-	private String merchantName;
-	
+	private List<SkuConfig> skus;
+
+	private String goodsItemLink;
+
 	private LocalDateTime cdt;
-	
+
 	private LocalDateTime mdt;
+
 }

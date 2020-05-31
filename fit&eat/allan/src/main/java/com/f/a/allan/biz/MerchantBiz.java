@@ -21,7 +21,7 @@ import com.f.a.allan.entity.request.MerchantRequest;
 import com.f.a.allan.enums.GoodsStatusEnum;
 import com.f.a.allan.enums.MerchantStatus;
 import com.f.a.allan.utils.ObjectUtils;
-
+import com.mongodb.MongoClient;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -45,6 +45,7 @@ public class MerchantBiz {
 
 	@Autowired
 	private GoodsBiz goodsBiz;
+	
 
 	/**
 	 * 申请成为商户
@@ -208,6 +209,7 @@ public class MerchantBiz {
 			criteria.and(FieldConstants.VERIFY_STATUS).in(request.getVerifyStatusList());
 		}
 		query.addCriteria(criteria);
+
 		return mongoTemplate.find(query, Merchant.class);
 
 	}
