@@ -177,4 +177,11 @@ public class CommodityBiz {
 				Commodity.class);
 		return record;
 	}
+	
+	public void updateGoodsLink(String spuId,String skuId) {
+		mongoTemplate.findAndModify(
+				new Query().addCriteria(new Criteria(FieldConstants.SPU_ID).is(spuId)), 
+				new Update().push(FieldConstants.SPU_LINK_SKU, skuId),
+				Commodity.class);
+	}
 }

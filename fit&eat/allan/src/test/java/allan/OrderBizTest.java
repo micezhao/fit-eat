@@ -1,9 +1,7 @@
 package allan;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.bson.Document;
 import org.junit.runner.RunWith;
@@ -11,28 +9,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationExpression;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperationContext;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
-import org.springframework.data.mongodb.core.aggregation.ConvertOperators.ToObjectId;
-import org.springframework.data.mongodb.core.aggregation.Fields;
-import org.springframework.data.mongodb.core.aggregation.LookupOperation;
-import org.springframework.data.mongodb.core.aggregation.MatchOperation;
-import org.springframework.data.mongodb.core.aggregation.ProjectionOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.f.a.allan.AllanApplication;
-import com.f.a.allan.biz.ChatBiz;
+import com.f.a.allan.biz.CartBiz;
 import com.f.a.allan.biz.MerchantBiz;
 import com.f.a.allan.biz.OrderBiz;
 import com.f.a.allan.biz.UserAddressBiz;
 import com.f.a.allan.entity.bo.ChatItem;
-import com.f.a.allan.entity.bo.DeliveryInfo;
 import com.f.a.allan.entity.constants.FieldConstants;
 
 /**
@@ -51,7 +41,7 @@ public class OrderBizTest {
 	OrderBiz orderBiz;
 	
 	@Autowired
-	ChatBiz chatBiz;
+	CartBiz chatBiz;
 
 	@Autowired
 	UserAddressBiz userAddressBiz;

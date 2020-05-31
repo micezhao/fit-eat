@@ -16,7 +16,10 @@ import lombok.NoArgsConstructor;
 @ApiModel("商品请求对象")
 public class GoodsItemRequest {
 	
-	@ApiModelProperty(value="商品id")
+	@ApiModelProperty(value="商品SpuId")
+	private String spuId;
+	
+	@ApiModelProperty(value="货品SkuId")
 	private String goodsId;
 	
 	@ApiModelProperty(value="商品名称")
@@ -31,7 +34,7 @@ public class GoodsItemRequest {
 	/**
 	 * 商品概况 json 格式
 	 */
-	@ApiModelProperty(value="商品概况")
+	@ApiModelProperty(value="商品规格")
 	private String itemOutline;
 
 	/**

@@ -15,7 +15,7 @@ import com.f.a.allan.entity.response.ChatView;
 import com.f.a.allan.utils.MongoAggrerationUtils;
 
 @Service
-public class ChatService {
+public class CartService {
 	
 	@Autowired
 	MongoTemplate mongoTemplate;

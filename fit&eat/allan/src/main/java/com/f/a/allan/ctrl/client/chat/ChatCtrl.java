@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +17,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.f.a.allan.biz.ChatBiz;
+import com.f.a.allan.biz.CartBiz;
 import com.f.a.allan.entity.bo.ChatItem;
 import com.f.a.allan.entity.request.ChatRequest;
 import com.f.a.allan.entity.response.ChatView;
-import com.f.a.allan.service.ChatService;
+import com.f.a.allan.service.CartService;
 import com.f.a.kobe.view.UserAgent;
 
 import io.swagger.annotations.Api;
@@ -31,21 +30,21 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
-@RequestMapping("/chat")
+@RequestMapping("/cart")
 @Api(tags = "client-客户端购物车")
 public class ChatCtrl {
 	
 	@Autowired
-	private ChatService chatService;
+	private CartService cartService;
 	
 	@Autowired
-	private ChatBiz chatBiz;
+	private CartBiz cartBiz;
 	
 	@ApiOperation("加入购物车")
 	@PostMapping("/add")
 	public ResponseEntity<Object> joinChat(UserAgent userAgent,@RequestBody ChatRequest request) {
 		ChatItem chatItem = ChatItem.builder().goodsId(request.getGoodsId()).num(request.getNum()).build();
-		chatBiz.addItemToChat(userAgent.getUserAccount(), request.getChatMerchantId(),chatItem);
+		cartBiz.addItemToChat(userAgent.getUserAccount(), request.getChatMerchantId(),chatItem);
 		return new ResponseEntity<Object>(true, HttpStatus.OK);
 	}
 	
@@ -54,7 +53,7 @@ public class ChatCtrl {
 	@ApiImplicitParam(name="购物车所在的商户编号",value="chatMerchantId")
 	@GetMapping("/{chatMerchantId}")
 	public ResponseEntity<Object> getChatByUserAccount(@PathVariable("chatMerchantId") String chatMerchantId,UserAgent userAgent) {
-		List<ChatView> list=chatService.getChatViewByUser(userAgent.getUserAccount(),chatMerchantId);
+		List<ChatView> list=cartService.getChatViewByUser(userAgent.getUserAccount(),chatMerchantId);
 		if(list.isEmpty()) {
 			return new ResponseEntity<Object>(null, HttpStatus.OK);
 		}
@@ -69,7 +68,7 @@ public class ChatCtrl {
 	})
 	@DeleteMapping("/{chatId}/{goodsId}")
 	public ResponseEntity<Object> removeChatItem(@PathVariable("chatId") String chatId,@PathVariable("goodsId") String goodsId){
-		chatBiz.removeChatItem(chatId, goodsId);
+		cartBiz.removeChatItem(chatId, goodsId);
 		return new ResponseEntity<Object>(true, HttpStatus.OK);
 	}
 	
@@ -77,7 +76,7 @@ public class ChatCtrl {
 	@ApiImplicitParam(name="购物车编号",value="chatId")
 	@DeleteMapping("/{chatId}")
 	public ResponseEntity<Object> removeChat(@PathVariable("chatId") String chatId){
-		chatBiz.deleteChatById(chatId);
+		cartBiz.deleteChatById(chatId);
 		return new ResponseEntity<Object>(true, HttpStatus.OK);
 	}
 	
@@ -91,7 +90,7 @@ public class ChatCtrl {
 	@PutMapping("/{chatId}/{goodsId}/{num}")
 	public ResponseEntity<Object> subItem(@PathVariable("chatId") String chatId,@PathVariable("goodsId") String goodsId){
 		ChatItem chatItem = ChatItem.builder().goodsId(goodsId).build();
-		chatBiz.subItemFromChat(chatId, chatItem);
+		cartBiz.subItemFromChat(chatId, chatItem);
 		return new ResponseEntity<Object>(true, HttpStatus.OK);
 	}
 	

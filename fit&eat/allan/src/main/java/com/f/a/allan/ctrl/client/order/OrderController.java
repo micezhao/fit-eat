@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.f.a.allan.biz.ChatBiz;
+import com.f.a.allan.biz.CartBiz;
 import com.f.a.allan.biz.OrderBiz;
 import com.f.a.allan.biz.UserAddressBiz;
 import com.f.a.allan.entity.bo.DeliveryInfo;
@@ -61,7 +61,7 @@ public class OrderController {
 	UserAddressBiz userAddressBiz;
 	
 	@Autowired
-	ChatBiz chatBiz;
+	CartBiz cartBiz;
 	
 	/**
 	 * 接受提交的商品列表，并将其组装成订单包
@@ -125,7 +125,7 @@ public class OrderController {
 			goodsIdList.add(item.getGoodsId());
 		}
 		if(StringUtils.isNotBlank(opk.getCartId()) ) { // 如果订单包中的购物车编号不为空，就去清除购物车中的指定内容
-			chatBiz.clearChatByGoodsIdList(opk.getCartId(),goodsIdList);
+			cartBiz.clearChatByGoodsIdList(opk.getCartId(),goodsIdList);
 		}
 		return new ResponseEntity<Object>( opk,HttpStatus.OK);
 	}

@@ -18,7 +18,14 @@ public static AggregationOperation aggregateAddFields(final String field, final 
 		};
 		return ao;
 	}
-	
+
+/**
+ * 增加字段
+ * @param field 新增的字段名
+ * @param ops 操作命令
+ * @param fieldExpresion 当前字段表达式
+ * @return
+ */
 public static AggregationOperation aggregateAddFields(final String field, String ops,String fieldExpresion) {
 		
 		AggregationOperation ao = new AggregationOperation() {

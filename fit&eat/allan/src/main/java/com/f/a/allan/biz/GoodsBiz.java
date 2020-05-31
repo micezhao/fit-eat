@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -17,12 +19,16 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.f.a.allan.entity.constants.FieldConstants;
+import com.f.a.allan.entity.pojo.Commodity;
+import com.f.a.allan.entity.pojo.Goods;
 import com.f.a.allan.entity.pojo.GoodsItem;
 import com.f.a.allan.entity.request.GoodsItemQueryRequest;
 import com.f.a.allan.entity.request.GoodsItemRequest;
 import com.f.a.allan.enums.GoodsItemCategoryEnum;
 import com.f.a.allan.enums.GoodsStatusEnum;
+import com.f.a.allan.utils.MongoAggrerationUtils;
 import com.f.a.allan.utils.ObjectUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +42,10 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class GoodsBiz {
-
+	
+	@Autowired
+	private CommodityBiz commodityBiz;
+	
 	private static final String FOLDER = "stock:";
 
 	@Autowired
@@ -116,10 +125,66 @@ public class GoodsBiz {
 		goodsItem.setCdt(LocalDateTime.now());
 		return mongoTemplate.insert(goodsItem);
 	}
-
+	
+	/**
+	 * 新增商品,此时商品未上架,不能售出
+	 * 
+	 * @param goodsItem
+	 * @return
+	 */
+	public Goods insertSku(GoodsItemRequest request) {
+		Goods temp = new Goods();
+		ObjectUtils.copy(temp, request);
+		Commodity spu = commodityBiz.findById(temp.getSpuId());
+		if(StringUtils.isEmpty(temp.getGoodsName()) ) {
+			temp.setGoodsName(spu.getName());
+		}
+		if (temp.getStock() == null || temp.getStock() <= 0) {
+			throw new RuntimeException("请设置当前商品的初始库存，初始库存 必须大于0");
+		}
+		temp.setGoodsStatus(GoodsStatusEnum.UN_SOLD.getCode());
+		temp.setCdt(LocalDateTime.now());
+		Goods sku = mongoTemplate.insert(temp);
+		String skuId = sku.getGoodsId();
+		commodityBiz.updateGoodsLink(spu.getSpuId(), skuId);
+		return sku;
+	}
+	
 	/**
 	 * 上架商品，将库存同步到redis中，商品状态变为可售
-	 * 
+	 * @param goodsItem
+	 * @return
+	 */
+	public Goods putGoodsOn(String goodsId) {
+		Query query = new Query();
+		query.addCriteria(new Criteria(FieldConstants.GOODS_ID).is(goodsId));
+		Goods item = mongoTemplate.findOne(query, Goods.class);
+		Aggregation aggregation = Aggregation.newAggregation(
+				Aggregation.match(new Criteria(FieldConstants.GOODS_ID).is(goodsId)),
+				MongoAggrerationUtils.aggregateAddFields("spu_oid", "$toObjectId", "$spuId"),
+				Aggregation.lookup("commodity", "spu_oid", "_id", "spu"),
+				Aggregation.unwind("$spu"),
+				Aggregation.project().andInclude("$spu.merchantId").andExclude("_id"));
+		AggregationResults<JSONObject> result =mongoTemplate.aggregate(aggregation,"goods" , JSONObject.class);
+		String  merchantId= result.getUniqueMappedResult().getString("merchantId");
+//		String merchantId = item.getMerchantId();
+		String skuId = item.getGoodsId();
+		int currentStock = item.getStock();
+		// 同步库存
+		redisTemplate.opsForHash().put(FOLDER + merchantId, skuId, currentStock);
+		log.debug(">>>>向redis中同步库存,货品编号:{},当前库存:{}", skuId, currentStock);
+		// 更新商品状态
+		Update update = new Update();
+		update.set(FieldConstants.GOODS_STATUS, GoodsStatusEnum.ON_SALE.getCode());
+		update.set(FieldConstants.MDT, LocalDateTime.now());
+		Goods updatedRecord = mongoTemplate.findAndModify(query, update,
+				FindAndModifyOptions.options().returnNew(true), Goods.class);
+		return updatedRecord;
+	}
+	
+	/**
+	 * 上架商品，将库存同步到redis中，商品状态变为可售
+	 * @deprecated
 	 * @param goodsItem
 	 * @return
 	 */
