@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
-import com.f.a.allan.entity.bo.ChatItem;
+import com.f.a.allan.entity.bo.CartItem;
 import com.f.a.allan.entity.constants.FieldConstants;
 import com.f.a.allan.entity.pojo.GoodsItem;
 import com.f.a.allan.entity.response.OrderGoodsItemView;
@@ -63,10 +63,10 @@ public class CalculatorService {
 		return new PriceProccessor(total.intValue(), discountTotal.intValue(), settlePrice.intValue());
 	}
 	
-	public PriceProccessor priceCalculator(List<ChatItem> list) {
+	public PriceProccessor priceCalculator(List<CartItem> list) {
 		BigDecimal total = new BigDecimal(0);
 		BigDecimal discountTotal = new BigDecimal(0);
-		for (ChatItem item : list) {
+		for (CartItem item : list) {
 			GoodsItem goodItem = mongoTemplate.findOne(
 					new Query().addCriteria(new Criteria(FieldConstants.GOODS_ID).is(item.getGoodsId())), 
 					GoodsItem.class);

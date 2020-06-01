@@ -19,7 +19,6 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.f.a.allan.entity.bo.DeliveryInfo;
 import com.f.a.allan.entity.constants.FieldConstants;
 import com.f.a.allan.entity.pojo.GoodsItem;
-import com.f.a.allan.entity.pojo.Merchant;
 import com.f.a.allan.entity.pojo.Order;
 import com.f.a.allan.entity.pojo.OrderPackage;
 import com.f.a.allan.entity.request.OrderQueryRequst;
@@ -28,6 +27,7 @@ import com.f.a.allan.entity.response.OrderPackageView;
 import com.f.a.allan.enums.PackageStatusEnum;
 import com.f.a.allan.service.CalculatorService;
 import com.f.a.allan.service.CalculatorService.PriceProccessor;
+import com.f.a.allan.service.GoodsItemService;
 import com.f.a.allan.service.OrderDetailService;
 import com.f.a.allan.service.impl.OrderServiceImpl;
 import com.f.a.allan.utils.ObjectUtils;
@@ -59,6 +59,9 @@ public class OrderBiz {
 	@Autowired
 	private RedisTemplate<String,Object> redisTemplate; 
 	
+	@Autowired
+	private GoodsItemService goodsItemService;
+	
 	private final static String TEMP_DELIVERY = "temp_delivery";
 	
 	@Autowired
@@ -68,10 +71,8 @@ public class OrderBiz {
 	public OrderGoodsItemView r2Dto(String goodsId,int num) {
 		OrderGoodsItemView view = new OrderGoodsItemView();
 		if(StringUtils.isNotBlank(goodsId) ) {
-			GoodsItem g =mongoTemplate.findOne(new Query().addCriteria(new Criteria(FieldConstants.GOODS_ID).is(goodsId)), GoodsItem.class);
+			GoodsItem g =goodsItemService.findBySkuId(goodsId);
 			ObjectUtils.copy(view, g);
-			Merchant m =mongoTemplate.findOne(new Query().addCriteria(new Criteria(FieldConstants.MERCHANT_ID).is(view.getMerchantId())), Merchant.class);
-			view.setMerchantName(m.getMerchantName());
 			view.setNum(num);
 		}
 		return view;

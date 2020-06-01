@@ -57,8 +57,8 @@ public class CommodityBiz {
 	public List<Commodity> listCommodity(GoodsItemQueryRequest request){
 		Query query = new Query();
 		Criteria criteria = new Criteria();
-		if(StringUtils.isNotBlank(request.getName())) {
-			criteria.and(FieldConstants.SPU_NAME).regex(Pattern.compile("^.*"+request.getName()+".*$", Pattern.CASE_INSENSITIVE) );
+		if(StringUtils.isNotBlank(request.getSpuName())) {
+			criteria.and(FieldConstants.SPU_NAME).regex(Pattern.compile("^.*"+request.getSpuName()+".*$", Pattern.CASE_INSENSITIVE) );
 		}
 		if(StringUtils.isNotBlank(request.getMerchantId())) {
 			criteria.and(FieldConstants.MERCHANT_ID).is(request.getMerchantId());
@@ -129,7 +129,7 @@ public class CommodityBiz {
 	 * @return
 	 */
 	public Commodity updateSkuConfigByIndex(String spuId,String index,String configValue) {
-		List<SkuConfig> list= findById(spuId).getSkus();
+		List<SkuConfig> list= findById(spuId).getConfigs();
 		for (SkuConfig skuConfig : list) {
 			List<Map<String,String>> mapList =skuConfig.getValue();
 			for (Map<String,String> itemMap : mapList) {
@@ -157,7 +157,7 @@ public class CommodityBiz {
 	 * @return
 	 */
 	public Commodity deleteSkuConfigByIndex(String spuId,String index) {
-		List<SkuConfig> list= findById(spuId).getSkus();
+		List<SkuConfig> list= findById(spuId).getConfigs();
 		for (SkuConfig skuConfig : list) {
 			List<Map<String,String>> mapList =skuConfig.getValue();
 			for (Map<String,String> itemMap : mapList) {

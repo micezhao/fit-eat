@@ -1,41 +1,60 @@
 package com.f.a.allan.utils;
 
 import org.bson.Document;
+import org.springframework.data.mongodb.core.aggregation.AggregationExpression;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperationContext;
 
 import com.alibaba.fastjson.JSONObject;
 
 public class MongoAggrerationUtils {
-	
-public static AggregationOperation aggregateAddFields(final String field, final String valueExpresion) {
-		
+
+	public static AggregationOperation aggregateAddFields(final String field, final String valueExpresion) {
+
 		AggregationOperation ao = new AggregationOperation() {
 			@Override
 			public Document toDocument(AggregationOperationContext context) {
-				return new Document("$addFields", new Document(field,valueExpresion));
+				return new Document("$addFields", new Document(field, valueExpresion));
 			}
 		};
 		return ao;
 	}
 
-/**
- * 增加字段
- * @param field 新增的字段名
- * @param ops 操作命令
- * @param fieldExpresion 当前字段表达式
- * @return
- */
-public static AggregationOperation aggregateAddFields(final String field, String ops,String fieldExpresion) {
-		
+	/**
+	 * 增加字段
+	 * 
+	 * @param field          新增的字段名
+	 * @param ops            操作命令
+	 * @param fieldExpresion 当前字段表达式
+	 * @return
+	 */
+	public static AggregationOperation aggregateAddFields(final String field, String ops, String fieldExpresion) {
+
 		AggregationOperation ao = new AggregationOperation() {
 			@Override
 			public Document toDocument(AggregationOperationContext context) {
 				JSONObject json = new JSONObject();
 				json.put(ops, fieldExpresion);
-				return new Document("$addFields", new Document(field,json));
+				return new Document("$addFields", new Document(field, json));
 			}
 		};
 		return ao;
+	}
+	
+	/**
+	 * 聚合表达式
+	 * @param ops 操作指令
+	 * @param field 文档字段
+	 * @return
+	 */
+	public static AggregationExpression aggregationExpression(String ops, String field) {
+
+		AggregationExpression expression = new AggregationExpression() {
+			@Override
+			public Document toDocument(AggregationOperationContext context) {
+				return new Document(ops,field);
+			}
+		};
+		return expression;
 	}
 }

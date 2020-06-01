@@ -55,7 +55,7 @@ public class Commodity {
 	
 	private String status;
 	
-	private List<SkuConfig> skus;
+	private List<SkuConfig> configs;
 
 	private String[] goodsItemLink;
 

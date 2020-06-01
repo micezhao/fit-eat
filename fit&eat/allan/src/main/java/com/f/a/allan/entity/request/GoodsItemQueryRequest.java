@@ -19,10 +19,14 @@ import lombok.NoArgsConstructor;
 public class GoodsItemQueryRequest extends BaseQueryRequest {
 	
 //	@ApiModelProperty(value = "商品id",allowEmptyValue = true)
-	private String id;
+	private String spuId;
+	
+	private String skuId;
 
 //	@ApiModelProperty(value = "商品名称",allowEmptyValue = true)
-	private String name;
+	private String spuName;
+	
+	private String skuName;
 
 //	@ApiModelProperty(value = "商品分类",allowEmptyValue = true )
 	private String category;

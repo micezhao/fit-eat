@@ -9,9 +9,8 @@ import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSONObject;
 import com.f.a.allan.entity.constants.FieldConstants;
-import com.f.a.allan.entity.response.ChatView;
+import com.f.a.allan.entity.response.CartView;
 import com.f.a.allan.utils.MongoAggrerationUtils;
 
 @Service
@@ -20,10 +19,10 @@ public class CartService {
 	@Autowired
 	MongoTemplate mongoTemplate;
 	
-	public List<ChatView> getChatViewByUser(String userAccount,String chatMerchant) {
+	public List<CartView> getCartViewByUser(String userAccount,String chatMerchant) {
 		Aggregation aggregation = Aggregation.newAggregation(
 				Aggregation.match(new Criteria(FieldConstants.USER_ACCOUNT).is(userAccount)
-						.and(FieldConstants.CHAT_MERCHANT).is(chatMerchant)),
+						.and(FieldConstants.CART_MERCHANT).is(chatMerchant)),
 				Aggregation.unwind("itemList", "index", true),
 				MongoAggrerationUtils.aggregateAddFields("goodsItemId", "$toObjectId", "$itemList.goodsId"),
 				MongoAggrerationUtils.aggregateAddFields("chatId", "$toString", "$_id"),
@@ -39,7 +38,7 @@ public class CartService {
 							"$merchant.merchantName"),
 				Aggregation.project().andExclude("cdt","mdt","moid","goodsItemId")
 				);
-		 AggregationResults<ChatView> result = mongoTemplate.aggregate(aggregation, "chat", ChatView.class);
+		 AggregationResults<CartView> result = mongoTemplate.aggregate(aggregation, "chat", CartView.class);
 		return result.getMappedResults();
 	}
 	

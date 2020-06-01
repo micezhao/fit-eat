@@ -163,12 +163,13 @@ public class MerchantBiz {
 					goodsTargetStatus = GoodsStatusEnum.UN_SOLD;
 				} else if (targetStatus == MerchantStatus.OFF) {
 					goodsTargetStatus = GoodsStatusEnum.UN_SOLD;
-					goodsBiz.removeGoodsByMerchant(id);
+					goodsBiz.removeSpuSkuByMerchant(id);
 					return;
 				} else {
 					return;
 				}
-				goodsBiz.updateGoodsStatusByMerchant(id, goodsTargetStatus.getCode());
+//				goodsBiz.updateGoodsStatusByMerchant(id, goodsTargetStatus.getCode());
+				goodsBiz.updateSpuStatusByMerchant(id, goodsTargetStatus.getCode());
 			}
 		}.run();
 	}

@@ -16,10 +16,14 @@ import com.f.a.allan.AllanApplication;
 import com.f.a.allan.biz.GoodsBiz;
 import com.f.a.allan.biz.OrderBiz;
 import com.f.a.allan.biz.UserAddressBiz;
+import com.f.a.allan.entity.pojo.Goods;
+import com.f.a.allan.entity.pojo.GoodsItem;
 import com.f.a.allan.entity.pojo.OrderPackage;
 import com.f.a.allan.entity.pojo.UserAddress;
+import com.f.a.allan.entity.request.GoodsItemQueryRequest;
 import com.f.a.allan.entity.request.OrderQueryRequst;
 import com.f.a.allan.enums.DrEnum;
+import com.f.a.allan.service.GoodsItemService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,27 +48,14 @@ public class AllanApplicationTest {
 
 	@Autowired
 	private ThreadPoolTaskExecutor taskExecutor;
+	
+	@Autowired
+	private GoodsItemService goodsItemService;
 
 	@org.junit.Test
 	public void goodsItem_1() {
 		
 	}
-
-	@org.junit.Test
-	public void goodsItem_put_on() {
-		goodsBiz.putGoodsItemOn("5ebf2e7ae6b378647fdc4a47");
-	}
-
-	@org.junit.Test
-	public void goodsItem_replenish() {
-		goodsBiz.replenish("5ebf2e7ae6b378647fdc4a47", 25);
-	}
-
-	@org.junit.Test
-	public void goodsItem_pull_out() { // 预期：下架后，redis数据清除，同时，不允许进行补货操作
-		goodsBiz.pullGoodsItemOff("5ebf2e7ae6b378647fdc4a47");
-	}
-
 	@org.junit.Test
 	public void goodsItem_deduct() { // 做边界测试
 		goodsBiz.deduct("5ebf2e7ae6b378647fdc4a47", 100);
@@ -83,7 +74,10 @@ public class AllanApplicationTest {
 
 	@org.junit.Test
 	public void test2() {
-		
+		 List<GoodsItem> s= goodsItemService.findByReqeust(new GoodsItemQueryRequest());
+		for (GoodsItem g : s) {
+			System.out.println("当前查询的结果："+ g);
+		}
 	}
 
 	@org.junit.Test

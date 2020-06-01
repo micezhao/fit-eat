@@ -6,7 +6,8 @@ import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.f.a.allan.entity.bo.ChatItem;
+import com.f.a.allan.entity.bo.CartItem;
+import com.f.a.allan.entity.response.CartView;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,8 +18,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Document("chat")
-public class Chat {
+@Document("cart")
+public class Cart {
 	
 	@Id
 	private String chatId;
@@ -27,7 +28,7 @@ public class Chat {
 	
 	private String userAccount;
 	
-	private List<ChatItem> itemList;
+	private List<CartItem> itemList;
 	
 	private LocalDateTime cdt;
 	

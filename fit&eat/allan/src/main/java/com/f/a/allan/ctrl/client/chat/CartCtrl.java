@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.f.a.allan.biz.CartBiz;
-import com.f.a.allan.entity.bo.ChatItem;
+import com.f.a.allan.entity.bo.CartItem;
 import com.f.a.allan.entity.request.ChatRequest;
-import com.f.a.allan.entity.response.ChatView;
+import com.f.a.allan.entity.response.CartView;
 import com.f.a.allan.service.CartService;
 import com.f.a.kobe.view.UserAgent;
 
@@ -32,7 +32,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/cart")
 @Api(tags = "client-客户端购物车")
-public class ChatCtrl {
+public class CartCtrl {
 	
 	@Autowired
 	private CartService cartService;
@@ -43,8 +43,8 @@ public class ChatCtrl {
 	@ApiOperation("加入购物车")
 	@PostMapping("/add")
 	public ResponseEntity<Object> joinChat(UserAgent userAgent,@RequestBody ChatRequest request) {
-		ChatItem chatItem = ChatItem.builder().goodsId(request.getGoodsId()).num(request.getNum()).build();
-		cartBiz.addItemToChat(userAgent.getUserAccount(), request.getChatMerchantId(),chatItem);
+		CartItem chatItem = CartItem.builder().goodsId(request.getGoodsId()).num(request.getNum()).build();
+		cartBiz.addItemToCart(userAgent.getUserAccount(), request.getChatMerchantId(),chatItem);
 		return new ResponseEntity<Object>(true, HttpStatus.OK);
 	}
 	
@@ -53,11 +53,11 @@ public class ChatCtrl {
 	@ApiImplicitParam(name="购物车所在的商户编号",value="chatMerchantId")
 	@GetMapping("/{chatMerchantId}")
 	public ResponseEntity<Object> getChatByUserAccount(@PathVariable("chatMerchantId") String chatMerchantId,UserAgent userAgent) {
-		List<ChatView> list=cartService.getChatViewByUser(userAgent.getUserAccount(),chatMerchantId);
+		List<CartView> list=cartService.getCartViewByUser(userAgent.getUserAccount(),chatMerchantId);
 		if(list.isEmpty()) {
 			return new ResponseEntity<Object>(null, HttpStatus.OK);
 		}
-		Map<String,List<ChatView>>  map = renderProcess(list);
+		Map<String,List<CartView>>  map = renderProcess(list);
 		return new ResponseEntity<Object>(map, HttpStatus.OK);
 	}
 	
@@ -89,20 +89,20 @@ public class ChatCtrl {
 	})
 	@PutMapping("/{chatId}/{goodsId}/{num}")
 	public ResponseEntity<Object> subItem(@PathVariable("chatId") String chatId,@PathVariable("goodsId") String goodsId){
-		ChatItem chatItem = ChatItem.builder().goodsId(goodsId).build();
+		CartItem chatItem = CartItem.builder().goodsId(goodsId).build();
 		cartBiz.subItemFromChat(chatId, chatItem);
 		return new ResponseEntity<Object>(true, HttpStatus.OK);
 	}
 	
-	private  Map<String,List<ChatView>> renderProcess(List<ChatView> chatViemList){
-		Map<String,List<ChatView>> map = new HashMap<String,List<ChatView>>();
-		for (ChatView curGoodsItem : chatViemList) {
+	private  Map<String,List<CartView>> renderProcess(List<CartView> chatViemList){
+		Map<String,List<CartView>> map = new HashMap<String,List<CartView>>();
+		for (CartView curGoodsItem : chatViemList) {
 			String curKey = curGoodsItem.getMerchantId()+"|"+curGoodsItem.getMerchantName();
 			if(map.containsKey(curKey)) { 
-				List<ChatView> ls= map.get(curKey);
+				List<CartView> ls= map.get(curKey);
 				ls.add(curGoodsItem);
 			}else {
-				 List<ChatView> temp= new ArrayList<ChatView>();
+				 List<CartView> temp= new ArrayList<CartView>();
 				 temp.add(curGoodsItem);
 				map.put(curKey, temp);
 			}

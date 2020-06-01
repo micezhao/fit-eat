@@ -22,7 +22,7 @@ import com.f.a.allan.biz.CartBiz;
 import com.f.a.allan.biz.MerchantBiz;
 import com.f.a.allan.biz.OrderBiz;
 import com.f.a.allan.biz.UserAddressBiz;
-import com.f.a.allan.entity.bo.ChatItem;
+import com.f.a.allan.entity.bo.CartItem;
 import com.f.a.allan.entity.constants.FieldConstants;
 
 /**
@@ -62,9 +62,15 @@ public class OrderBizTest {
 	}
 	
 	@org.junit.Test
+	public void cart_1() {
+		chatBiz.getCartById("5ed50a64d7d18764d486b547");
+	}
+	
+	
+	@org.junit.Test
 	public void chat_1() {
-		ChatItem chatItem  = ChatItem.builder().goodsId("5ec201476135d4020e727da6").num(3).build();
-		chatBiz.addItemToChat("93012130-96df-4025-9350-e503282c5dda", "test",chatItem);
+		CartItem chatItem  = CartItem.builder().goodsId("5ed3bf8cdcb4134f1fbff2a0").num(3).build();
+		chatBiz.addItemToCart("93012130-96df-4025-9350-e503282c5dda", "5ec1fb217c71b741f4a4c7b8",chatItem);
 	}
 	
 	
@@ -83,7 +89,7 @@ public class OrderBizTest {
 	
 	@org.junit.Test
 	public void chat_4() {
-		ChatItem item = ChatItem.builder().goodsId("5ebf2e7ae6b378647fdc4a47").num(0).build(); 
+		CartItem item = CartItem.builder().goodsId("5ebf2e7ae6b378647fdc4a47").num(0).build(); 
 		chatBiz.subItemFromChat("5ec8a031bf1ef62fe4397404", item);
 	}
 	

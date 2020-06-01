@@ -25,6 +25,7 @@ import com.f.a.allan.biz.CommodityBiz;
 import com.f.a.allan.biz.GoodsBiz;
 import com.f.a.allan.ctrl.admin.BaseAdminCtrl;
 import com.f.a.allan.entity.pojo.Commodity;
+import com.f.a.allan.entity.pojo.Goods;
 import com.f.a.allan.entity.pojo.GoodsItem;
 import com.f.a.allan.entity.pojo.SkuConfig;
 import com.f.a.allan.entity.pojo.SkuConfigItem;
@@ -71,10 +72,10 @@ public class AdminGoodsCtrl extends BaseAdminCtrl {
 			builder.merchantId(merchantId);
 		}
 		if(StringUtils.isNotBlank(spuId)) {
-			builder.id(spuId);
+			builder.spuId(spuId);
 		}
 		if(StringUtils.isNotBlank(name)) {
-			builder.name(name);
+			builder.spuName(name);
 		}
 
 		if(categories != null && categories.length > 0) {
@@ -160,10 +161,10 @@ public class AdminGoodsCtrl extends BaseAdminCtrl {
 	}
 	
 	
-	@PostMapping("/goodsItem")
+	@PostMapping("/sku")
 	@ApiOperation("新增货品")
 	public ResponseEntity<Object> addGoodsItem(@RequestBody GoodsItemRequest request,UserAgent userAgent) {
-		GoodsItem item = goodBiz.insert(request);
+		Goods item = goodBiz.insertSku(request);
 		return new ResponseEntity<Object>(item, HttpStatus.OK);
 	}
 
@@ -171,7 +172,7 @@ public class AdminGoodsCtrl extends BaseAdminCtrl {
 	@ApiOperation("sku上架")
 	@ApiImplicitParam(name = "id", value = "skuId", required = true)
 	public ResponseEntity<Object> puton(@PathVariable("id") String goodsId,UserAgent userAgent) {
-		GoodsItem item = goodBiz.putGoodsItemOn(goodsId);
+		Goods item = goodBiz.putGoodsOn(goodsId);
 		return new ResponseEntity<Object>(item, HttpStatus.OK);
 	}
 
@@ -179,7 +180,7 @@ public class AdminGoodsCtrl extends BaseAdminCtrl {
 	@ApiImplicitParam(name = "id", value = "skuId", required = true)
 	@ApiOperation("sku下架")
 	public ResponseEntity<Object> pulloff(@PathVariable("id") String goodsId,UserAgent userAgent) {
-		GoodsItem item = goodBiz.pullGoodsItemOff(goodsId);
+		Goods item = goodBiz.pullGoodsOff(goodsId);
 		return new ResponseEntity<Object>(item, HttpStatus.OK);
 	}
 
@@ -190,7 +191,7 @@ public class AdminGoodsCtrl extends BaseAdminCtrl {
 	})
 	@ApiOperation("sku补货")
 	public ResponseEntity<Object> replenish(@PathVariable("id") String goodsId,@PathVariable("replenishment") int replenishment,UserAgent userAgent) {
-		GoodsItem item = goodBiz.replenish(goodsId, replenishment);
+		Goods item = goodBiz.replenish(goodsId, replenishment);
 		return new ResponseEntity<Object>(item, HttpStatus.OK);
 	}
 

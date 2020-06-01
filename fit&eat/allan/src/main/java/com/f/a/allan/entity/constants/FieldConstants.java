@@ -62,11 +62,11 @@ public class FieldConstants {
 	
 	
 	/* chat */
-	public final static String CHAT_ID = "_id";
+	public final static String CART_ID = "_id";
 	
-	public final static String CHAT_ITEM_LIST = "itemList";
+	public final static String CART_ITEM_LIST = "itemList";
 	
-	public final static String CHAT_MERCHANT = "chatMerchant";
+	public final static String CART_MERCHANT = "chatMerchant";
 	
 	/* commodity */
 	
@@ -76,7 +76,7 @@ public class FieldConstants {
 	
 	public final static String SPU_STATUS = "status";
 
-	public final static String SKU_CONFIG = "skus";
+	public final static String SKU_CONFIG = "configs";
 	
 		
 	public final static String SKU_CONFIG_VALUE = "skus.value";
