@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.f.a.allan.biz.CartBiz;
 import com.f.a.allan.entity.bo.CartItem;
-import com.f.a.allan.entity.request.ChatRequest;
+import com.f.a.allan.entity.request.CartRequest;
 import com.f.a.allan.entity.response.CartView;
 import com.f.a.allan.service.CartService;
 import com.f.a.kobe.view.UserAgent;
@@ -42,18 +42,18 @@ public class CartCtrl {
 	
 	@ApiOperation("加入购物车")
 	@PostMapping("/add")
-	public ResponseEntity<Object> joinChat(UserAgent userAgent,@RequestBody ChatRequest request) {
-		CartItem chatItem = CartItem.builder().goodsId(request.getGoodsId()).num(request.getNum()).build();
-		cartBiz.addItemToCart(userAgent.getUserAccount(), request.getChatMerchantId(),chatItem);
+	public ResponseEntity<Object> joinChat(UserAgent userAgent,@RequestBody CartRequest request) {
+		CartItem cartItem = CartItem.builder().goodsId(request.getGoodsId()).num(request.getNum()).build();
+		cartBiz.addItemToCart(userAgent.getUserAccount(), request.getCartMerchantId(),cartItem);
 		return new ResponseEntity<Object>(true, HttpStatus.OK);
 	}
 	
 	
 	@ApiOperation("查询用户的购物车")
-	@ApiImplicitParam(name="购物车所在的商户编号",value="chatMerchantId")
-	@GetMapping("/{chatMerchantId}")
-	public ResponseEntity<Object> getChatByUserAccount(@PathVariable("chatMerchantId") String chatMerchantId,UserAgent userAgent) {
-		List<CartView> list=cartService.getCartViewByUser(userAgent.getUserAccount(),chatMerchantId);
+	@ApiImplicitParam(name="购物车所在的商户编号",value="merchantId")
+	@GetMapping("/cartMerchantId/{merchantId}")
+	public ResponseEntity<Object> getChatByUserAccount(@PathVariable("merchantId") String cartMerchantId,UserAgent userAgent) {
+		List<CartView> list=cartService.getCartViewByUser(userAgent.getUserAccount(),cartMerchantId);
 		if(list.isEmpty()) {
 			return new ResponseEntity<Object>(null, HttpStatus.OK);
 		}
@@ -63,40 +63,40 @@ public class CartCtrl {
 	
 	@ApiOperation("从购物车中清除指定商品")
 	@ApiImplicitParams({
-		@ApiImplicitParam(name="购物车编号",value="chatId"),
+		@ApiImplicitParam(name="购物车编号",value="cartId"),
 		@ApiImplicitParam(name="商品编号",value="goodsId")
 	})
-	@DeleteMapping("/{chatId}/{goodsId}")
-	public ResponseEntity<Object> removeChatItem(@PathVariable("chatId") String chatId,@PathVariable("goodsId") String goodsId){
-		cartBiz.removeChatItem(chatId, goodsId);
+	@DeleteMapping("/{cartId}/{goodsId}")
+	public ResponseEntity<Object> removeChatItem(@PathVariable("cartId") String cartId,@PathVariable("goodsId") String goodsId){
+		cartBiz.removeChatItem(cartId, goodsId);
 		return new ResponseEntity<Object>(true, HttpStatus.OK);
 	}
 	
 	@ApiOperation("删除购物车")
-	@ApiImplicitParam(name="购物车编号",value="chatId")
-	@DeleteMapping("/{chatId}")
-	public ResponseEntity<Object> removeChat(@PathVariable("chatId") String chatId){
-		cartBiz.deleteChatById(chatId);
+	@ApiImplicitParam(name="购物车编号",value="cartId")
+	@DeleteMapping("/{cartId}")
+	public ResponseEntity<Object> removeChat(@PathVariable("cartId") String cartId){
+		cartBiz.deleteChatById(cartId);
 		return new ResponseEntity<Object>(true, HttpStatus.OK);
 	}
 	
 	
 	@ApiOperation("减少指定商品的数量")
 	@ApiImplicitParams({
-		@ApiImplicitParam(name="购物车编号",value="chatId"),
+		@ApiImplicitParam(name="购物车编号",value="cartId"),
 		@ApiImplicitParam(name="商品编号",value="goodsId"),	
 		@ApiImplicitParam(name="当前数量",value="num")
 	})
-	@PutMapping("/{chatId}/{goodsId}/{num}")
-	public ResponseEntity<Object> subItem(@PathVariable("chatId") String chatId,@PathVariable("goodsId") String goodsId){
+	@PutMapping("/{cartId}/{goodsId}/{num}")
+	public ResponseEntity<Object> subItem(@PathVariable("cartId") String cartId,@PathVariable("goodsId") String goodsId){
 		CartItem chatItem = CartItem.builder().goodsId(goodsId).build();
-		cartBiz.subItemFromChat(chatId, chatItem);
+		cartBiz.subItemFromChat(cartId, chatItem);
 		return new ResponseEntity<Object>(true, HttpStatus.OK);
 	}
 	
-	private  Map<String,List<CartView>> renderProcess(List<CartView> chatViemList){
+	private  Map<String,List<CartView>> renderProcess(List<CartView> cartViemList){
 		Map<String,List<CartView>> map = new HashMap<String,List<CartView>>();
-		for (CartView curGoodsItem : chatViemList) {
+		for (CartView curGoodsItem : cartViemList) {
 			String curKey = curGoodsItem.getMerchantId()+"|"+curGoodsItem.getMerchantName();
 			if(map.containsKey(curKey)) { 
 				List<CartView> ls= map.get(curKey);

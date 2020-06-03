@@ -28,6 +28,8 @@ public class Goods {
 	private String goodsName;
 
 	private String spuId;
+	
+	private String merchantId;
 
 	/**
 	 * 商品规格 json 格式

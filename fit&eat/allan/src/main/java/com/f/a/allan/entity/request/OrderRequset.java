@@ -11,7 +11,7 @@ import lombok.Data;
 public class OrderRequset {
 	
 	@ApiModelProperty(value="购物车编号")
-	private String chatId;
+	private String cartId;
 	@ApiModelProperty(value="期望的配送时间")
 	private String deliveryTime;
 	@ApiModelProperty(value="用户地址编号")

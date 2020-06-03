@@ -56,21 +56,7 @@ public class AllanApplicationTest {
 	public void goodsItem_1() {
 		
 	}
-	@org.junit.Test
-	public void goodsItem_deduct() { // 做边界测试
-		goodsBiz.deduct("5ebf2e7ae6b378647fdc4a47", 100);
-	}
 	
-	@org.junit.Test
-	public void mulit() throws InterruptedException {
-		final CountDownLatch latch = new CountDownLatch(10);
-		IntStream.rangeClosed(1, 10).forEach(i -> new Thread(() -> {
-			System.out.println(Thread.currentThread().getName() + " is working.");
-			goodsBiz.deduct("5ebf2e7ae6b378647fdc4a47", 7);
-			latch.countDown();
-		}, String.valueOf(i)).start());
-		latch.await();
-	}
 
 	@org.junit.Test
 	public void test2() {

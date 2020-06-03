@@ -9,13 +9,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CartView {
 	
-	private String chatId;
+	private String cartId;
 	
 	private String userAccount;
 	
-	private String chatMerchant;
+	private String cartMerchant;
 	
 	private String goodsId;
+	
+	private String spuId;
 	
 	private String goodsStatus;	
 	

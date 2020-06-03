@@ -65,8 +65,7 @@ public class GoodsItemService {
 					.and(MongoAggrerationUtils.aggregationExpression("$toString", "$merchantId")).as("merchantId")
 					.and("$merchant.merchantName").as("merchantName")
 					.and("$spu.category").as("category")
-					.andInclude("goodsName","spuId","itemOutline","stock","goodsStatus","discountPrice","price")
-					.andExclude("_id"),
+					.andInclude("goodsName","spuId","itemOutline","stock","goodsStatus","discountPrice","price"),
 				Aggregation.match(criteria));
 	}
 }

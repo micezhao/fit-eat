@@ -1,5 +1,10 @@
 package com.f.a.allan.entity.request;
 
+import java.util.List;
+
+import com.f.a.allan.entity.request.GoodsItemQueryRequest.GoodsItemQueryRequestBuilder;
+
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -16,11 +21,13 @@ public class BaseQueryRequest {
 	
 	private int pageSize = 10;
 	
-	private Long pageNum = 1L;
+	private int pageNum = 1;
 	
 	private String dr;
 	
 	private String orderBy ;
+	
+	private String sort;
 	
 	
 }

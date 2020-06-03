@@ -27,7 +27,6 @@ public class CartBiz {
 	/**
 	 * 将商品加入购物车
 	 * @param userAccount
-	 * @param chatItem [goodsId:商品id，num：当前商品的数量]
 	 */
 	public void addItemToCart(String userAccount,String chatMerchant,CartItem cartItem) {
 		Cart chat = getChatByuserAccount(userAccount,chatMerchant); // 先查询当前用户是否存在购物车
@@ -37,13 +36,16 @@ public class CartBiz {
 			chatItemList.add(cartItem);
 			chat = Cart.builder()
 						.userAccount(userAccount)
-						.chatMerchant(chatMerchant)
+						.cartMerchant(chatMerchant)
 						.itemList(chatItemList)
 						.cdt(LocalDateTime.now()).build();
 			mongoTemplate.insert(chat);
 		}else {
 			// 先获取到 用户已经存在的购物车内容，然后比对 新传入的商品 和 购物车中已经有的 是否有重复，如果有重复的内容就要合并
 			chatItemList = chat.getItemList();
+			if(chatItemList.size() >= 99) {
+				throw new RuntimeException("购物车中的项目不能超过99个");
+			}
 			boolean repeat = false;
 			for (CartItem element : chatItemList) {
 				if(StringUtils.equals(cartItem.getGoodsId(),element.getGoodsId() )) {
@@ -59,7 +61,7 @@ public class CartBiz {
 //			PriceProccessor priceProccessor= calculatorService.priceCalculator(chatItemList);
 			chat.setMdt(LocalDateTime.now());
 			// 执行购物车更新
-			mongoTemplate.findAndReplace(new Query().addCriteria(new Criteria(FieldConstants.CART_ID).is(chat.getChatId())), chat);
+			mongoTemplate.findAndReplace(new Query().addCriteria(new Criteria(FieldConstants.CART_ID).is(chat.getCartId())), chat);
 		}
 	}
 	
@@ -105,6 +107,7 @@ public class CartBiz {
 		return mongoTemplate.findOne(query, Cart.class);
 	}
 	
+	
 	/**
 	 * 从购物车中移除指定产品
 	 * @param userAccount
@@ -113,7 +116,7 @@ public class CartBiz {
 	public void removeChatItem(String cartId,String goodsId) {
 		Cart chat = getCartById(cartId);
 		if(chat.getItemList().size() == 1) { // 如果当前购物车就一个商品，那么就直接删除当前商品
-			mongoTemplate.remove(new Query().addCriteria(new Criteria(FieldConstants.CART_ID).is(chat.getChatId())), Cart.class);
+			mongoTemplate.remove(new Query().addCriteria(new Criteria(FieldConstants.CART_ID).is(chat.getCartId())), Cart.class);
 			return ;
 		}
 		Iterator<CartItem>  Iterator = chat.getItemList().iterator();
@@ -131,7 +134,7 @@ public class CartBiz {
 		chat.setItemList(chat.getItemList());
 		chat.setMdt(LocalDateTime.now());
 		// 执行购物车更新
-		mongoTemplate.findAndReplace(new Query().addCriteria(new Criteria(FieldConstants.CART_ID).is(chat.getChatId())), chat);
+		mongoTemplate.findAndReplace(new Query().addCriteria(new Criteria(FieldConstants.CART_ID).is(chat.getCartId())), chat);
 	}
 	
 	
@@ -142,7 +145,7 @@ public class CartBiz {
 	 */
 	public void clearChatByGoodsIdList(String cartId,List<String> goodsIdList) {
 		Cart chat = getCartById(cartId);
-		Query query = new Query().addCriteria(new Criteria(FieldConstants.CART_ID).is(chat.getChatId()));
+		Query query = new Query().addCriteria(new Criteria(FieldConstants.CART_ID).is(chat.getCartId()));
 		
 		for (String goodsId : goodsIdList) {
 			Iterator<CartItem>  Iterator = chat.getItemList().iterator();

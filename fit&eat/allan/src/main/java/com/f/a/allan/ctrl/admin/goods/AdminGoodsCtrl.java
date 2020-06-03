@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -58,14 +59,18 @@ public class AdminGoodsCtrl extends BaseAdminCtrl {
 		@ApiImplicitParam(name="spuId",value = "商品id",required = false),
 		@ApiImplicitParam(name="name",value = "商品名称",required = false),
 		@ApiImplicitParam(name="categories",value = "商品分类列表",required = false,allowableValues = "substantial,virtual",dataTypeClass = String[].class),
-		@ApiImplicitParam(name="statuses",value = "商品状态列表",required = false,dataTypeClass = String[].class)
+		@ApiImplicitParam(name="statuses",value = "商品状态列表",required = false,dataTypeClass = String[].class),
+		@ApiImplicitParam(name="pageNum",value = "当前页",required = false),
+		@ApiImplicitParam(name="pageSize",value = "显示条数",required = false),
 	})
 	public ResponseEntity<Object> listGoodsItem(
 			@RequestParam(name = "merchantId",required = false)String merchantId,
 			@RequestParam(name = "spuId",required = false)String spuId,
 			@RequestParam(name = "name",required = false)String name,
 			@RequestParam(name = "categories",required = false)String[] categories,
-			@RequestParam(name = "statuses",required = false)String[] statuses
+			@RequestParam(name = "statuses",required = false)String[] statuses,
+			@RequestParam(name = "pageNum",required = false) int pageNum,
+			@RequestParam(name = "pageSize",required = false) int pageSize
 			,UserAgent userAgent) {
 		GoodsItemQueryRequestBuilder builder = GoodsItemQueryRequest.builder();
 		if(StringUtils.isNotBlank(merchantId)) {
@@ -84,8 +89,15 @@ public class AdminGoodsCtrl extends BaseAdminCtrl {
 		if(statuses != null && statuses.length > 0) {
 			builder.statusList(Arrays.asList(statuses));
 		}
-		List<Commodity> list = commodityBiz.listCommodity(builder.build());
-		return new ResponseEntity<Object>(list, HttpStatus.OK);
+		GoodsItemQueryRequest request=builder.build();
+		if(pageNum > 0) {
+			request.setPageNum(pageNum);
+		}
+		if(pageSize > 0) {
+			request.setPageSize(pageSize);
+		}
+		Page<Commodity> page = commodityBiz.pageListCommodity(builder.build());
+		return new ResponseEntity<Object>(page, HttpStatus.OK);
 	}
 	
 	@PostMapping("/commodity")

@@ -22,9 +22,9 @@ import lombok.NoArgsConstructor;
 public class Cart {
 	
 	@Id
-	private String chatId;
+	private String cartId;
 	
-	private String chatMerchant;
+	private String cartMerchant;
 	
 	private String userAccount;
 	

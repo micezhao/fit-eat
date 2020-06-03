@@ -25,20 +25,32 @@ public class CartService {
 						.and(FieldConstants.CART_MERCHANT).is(chatMerchant)),
 				Aggregation.unwind("itemList", "index", true),
 				MongoAggrerationUtils.aggregateAddFields("goodsItemId", "$toObjectId", "$itemList.goodsId"),
-				MongoAggrerationUtils.aggregateAddFields("chatId", "$toString", "$_id"),
-				Aggregation.lookup("goodsItem", "goodsItemId", "_id", "chat_doc"),
-				Aggregation.unwind("$chat_doc"),
-				MongoAggrerationUtils.aggregateAddFields("moid", "$toObjectId", "$chat_doc.merchantId"),
+				MongoAggrerationUtils.aggregateAddFields("cartId", "$toString", "$_id"),
+				Aggregation.lookup("goods", "goodsItemId", "_id", "cart_doc"),
+				Aggregation.unwind("$cart_doc"),
+				MongoAggrerationUtils.aggregateAddFields("moid", "$toObjectId", "$cart_doc.merchantId"),
 				Aggregation.lookup("merchant", "moid", "_id", "merchant"),
+				MongoAggrerationUtils.aggregateAddFields("spu_oid", "$toObjectId", "$cart_doc.spuId"),
+				Aggregation.lookup("commodity", "spu_oid", "_id", "spu_doc"),
 				Aggregation.unwind("$merchant"),
-				Aggregation.project().andInclude("_id","userAccount","chatMerchant","chatId",
-							"$itemList.num","$itemList.goodsId",
-							"$chat_doc.goodsName","$chat_doc.category","$chat_doc.domain","$chat_doc.itemOutline",
-							"$chat_doc.goodsStatus","$chat_doc.discountPrice","$chat_doc.price","$chat_doc.merchantId",
-							"$merchant.merchantName"),
-				Aggregation.project().andExclude("cdt","mdt","moid","goodsItemId")
+				Aggregation.unwind("$spu_doc"),
+				Aggregation.project()
+					.and(MongoAggrerationUtils.aggregationExpression("$toString", "$cart_doc._id")).as("goodsId")
+					.and("$cart_doc.goodsName").as("goodsName")
+					.and("$itemList.num").as("num")
+					.and("$cart_doc.spuId").as("spuId")
+					.and("$spu_doc.category").as("category")
+					.and(MongoAggrerationUtils.aggregationExpression("$toString", "$merchant._id")).as("merchantId")
+					.and(MongoAggrerationUtils.aggregationExpression("$toString", "$merchant.merchantName")).as("merchantName")
+					.and("$cart_doc.goodsStatus").as("goodsStatus")
+					.and("$cart_doc.itemOutline").as("itemOutline")
+					.and("$cart_doc.discountPrice").as("discountPrice")
+					.and("$cart_doc.price").as("price")
+					.and("$spu_doc.domain").as("domain")
+					.andInclude("cartId","cartMerchant","userAccount")
+					.andExclude("_id")
 				);
-		 AggregationResults<CartView> result = mongoTemplate.aggregate(aggregation, "chat", CartView.class);
+		 AggregationResults<CartView> result = mongoTemplate.aggregate(aggregation, "cart", CartView.class);
 		return result.getMappedResults();
 	}
 	

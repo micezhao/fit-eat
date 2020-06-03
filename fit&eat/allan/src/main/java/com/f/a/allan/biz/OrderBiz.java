@@ -32,6 +32,7 @@ import com.f.a.allan.service.OrderDetailService;
 import com.f.a.allan.service.impl.OrderServiceImpl;
 import com.f.a.allan.utils.ObjectUtils;
 import com.mongodb.client.result.UpdateResult;
+import com.netflix.discovery.converters.Auto;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -50,6 +51,9 @@ public class OrderBiz {
 	
 	@Autowired
 	private CalculatorService calculatorService;
+	
+	@Autowired
+	private GoodsBiz goodsBiz;
 
 	private static final Long DELAY_MIN = 15L;
 
@@ -79,25 +83,45 @@ public class OrderBiz {
 	}
 	
 	// 通过购物车生成订单包 此时商品的结算价格不再变化
-	public void packItem(String cartId, JSONArray arr, String userAccount, DeliveryInfo delivery) {
-		// TODO 库存扣减的动作放在请求端？还是通过远程调用？
+	public boolean packItem(String cartId, JSONArray arr, String userAccount, DeliveryInfo delivery) {
 		log.info("packaging goodsItem...");
+		boolean result = true;
 		List<OrderGoodsItemView> goodsViewList = new ArrayList<OrderGoodsItemView>();
-		for (int i = 0; i < arr.size(); i++) {
-			goodsViewList.add(r2Dto(arr.getJSONObject(i).getString(FieldConstants.GOODS_ID),arr.getJSONObject(i).getIntValue(FieldConstants.NUM)));
+		int executed_index = 0;
+		try {
+			for (int i = 0; i < arr.size(); i++) {
+				String goodsId = arr.getJSONObject(i).getString("goodsId");
+				int num = arr.getJSONObject(i).getIntValue("num"); 
+				//  占用库存，不直接扣减库存
+				goodsBiz.occupyByGoodsId(goodsId, num);
+				executed_index ++;
+				goodsViewList.add(r2Dto(goodsId,num));
+			}
+			// 开始计算价格
+			PriceProccessor cal = calculatorService.priceCalculator(cartId, goodsViewList);
+			OrderPackage packItem = OrderPackage.builder().userAccount(userAccount)
+					.cartId(cartId).itemList(goodsViewList)
+					.delivery(delivery)
+					.totalAmount(cal.getTotalPrice()).discountPrice(cal.getDiscountPrice())
+					.settlePrice(cal.getSettlePrice()).packageStatus(PackageStatusEnum.CTEATE.getCode())
+					.cdt(LocalDateTime.now()).expireTime(getExpireTime(DELAY_MIN)).build();
+			OrderPackage packInfo = mongoTemplate.insert(packItem);
+			redisTemplate.opsForHash().put(TEMP_DELIVERY, packInfo.getOrderPackageId(), delivery); // 将订单的配送信息先缓存起来
+			
+			// TODO 存入延迟队列，如果过期就执行关闭订单的动作
+			
+		}catch (Exception e) {
+			// 对已经执行了进扣减
+			for (int i = 0; i < arr.subList(0, executed_index).size(); i++) {
+				String goodsId = arr.getJSONObject(i).getString("goodsId");
+				GoodsItem g =goodsItemService.findBySkuId(goodsId);
+				int returnAmount = arr.getJSONObject(i).getIntValue("num"); 
+				goodsBiz.returnBack(g.getMerchantId(), goodsId, returnAmount);
+			}
+			result = false;
 		}
-		// 开始计算价格
-		PriceProccessor cal = calculatorService.priceCalculator(cartId, goodsViewList);
-		OrderPackage packItem = OrderPackage.builder().userAccount(userAccount)
-				.cartId(cartId).itemList(goodsViewList)
-				.delivery(delivery)
-				.totalAmount(cal.getTotalPrice()).discountPrice(cal.getDiscountPrice())
-				.settlePrice(cal.getSettlePrice()).packageStatus(PackageStatusEnum.CTEATE.getCode())
-				.cdt(LocalDateTime.now()).expireTime(getExpireTime(DELAY_MIN)).build();
-		OrderPackage packInfo = mongoTemplate.insert(packItem);
-		redisTemplate.opsForHash().put(TEMP_DELIVERY, packInfo.getOrderPackageId(), delivery); // 将订单的配送信息先缓存起来
+		return result;
 		
-		// TODO 存入延迟队列，如果过期就执行关闭订单的动作
 
 	}
 
@@ -142,6 +166,7 @@ public class OrderBiz {
 		update.set(FieldConstants.MDT, LocalDateTime.now());
 		OrderPackage packageItem  = mongoTemplate.findAndModify(query, update,new FindAndModifyOptions().returnNew(true), OrderPackage.class);
 		List<Order> orderItemList = distributOrder(packageItem); // 分配子订单
+		
 		DeliveryInfo deliveryInfo= getDeliveryInfo(orderPackageId);
 		orderDetailService.insertBatch(orderItemList, deliveryInfo,fundTransferId); // 批量插入订单详情
 		

@@ -37,6 +37,7 @@ import com.f.a.kobe.view.UserAgent;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * <p>
@@ -46,6 +47,7 @@ import io.swagger.annotations.ApiOperation;
  * @author micezhao
  * @since 2020-05-06
  */
+@Slf4j
 @Api(tags = "client-订单功能接口")
 @RestController
 @RequestMapping("/order")
@@ -69,7 +71,7 @@ public class OrderController {
 	 * @param userAgent
 	 * @return
 	 */
-	@PostMapping("package")
+	@PostMapping("package/charge")
 	@ApiOperation("生成支付包")
 	public ResponseEntity<Object> packGoodItem(@RequestBody OrderRequset request,UserAgent userAgent) {		
 		String userAccount= userAgent.getUserAccount();
@@ -78,12 +80,8 @@ public class OrderController {
 		DeliveryInfo info = DeliveryInfo.builder().deliveryTime(request.getDeliveryTime()).
 			receiveAddr(userAddress.getAddrDetail()).
 			recevierName(userAddress.getContactName()).recevierPhone(userAddress.getContactPhone()).build();
-		JSONArray arr = new JSONArray();
-		JSONObject json = new JSONObject();
-		json.put(FieldConstants.GOODS_ID, "5ebf2e7ae6b378647fdc4a47");
-		json.put(FieldConstants.NUM, 3);
-		arr.add(json);
-		orderBiz.packItem(request.getChatId(),arr,userAccount,info);
+		JSONArray arr = request.getPackItemArr(); // 获取结算内容
+		orderBiz.packItem(request.getCartId(),arr,userAccount,info);
 		
 		return new ResponseEntity<Object>(HttpStatus.OK);
 	}
@@ -106,9 +104,33 @@ public class OrderController {
 		   
 	}
 	
+	/**
+	 * TODO 对未支付的订单进行支付的接口
+	 * @param userAgent
+	 * @param packageId
+	 * @return
+	 */
+	@ApiOperation("支付订单包")
+	@PutMapping("/package/pay/{packageId}")
+	public ResponseEntity<Object> payById(UserAgent userAgent,@PathVariable("packageId")String packageId){
+		Query query = new Query();
+		query.addCriteria(Criteria.where(FieldConstants.ORDER_PACKAGE_ID).is(packageId))
+				.addCriteria(Criteria.where(FieldConstants.PACKAGE_STATUS).is(PackageStatusEnum.CTEATE));
+		boolean existed = mongoTemplate.exists(query, OrderPackage.class);
+		
+		if(!existed) {
+			log.info("当前订单包{}不处于待支付状态",packageId);
+			return new ResponseEntity<Object>( false,HttpStatus.OK);
+		}
+		// TODO 获取当前订单，组织支付参数，调用支付接口
+		
+		return new ResponseEntity<Object>( null,HttpStatus.OK);
+	}
+	
+	
 	@ApiOperation("订单包支付成功后分发订单，后端调用的远程接口")
-	@PutMapping("/package/pay")
-	public ResponseEntity<Object> payById(UserAgent userAgent,@RequestBody OrderQueryRequst orderQueryRequst){
+	@PutMapping("/package/paySuccessed")
+	public ResponseEntity<Object> paySuccessById(UserAgent userAgent,@RequestBody OrderQueryRequst orderQueryRequst){
 		Query query = new Query();
 		query.addCriteria(Criteria.where(FieldConstants.ORDER_PACKAGE_ID).is(orderQueryRequst.getOrderPackageId()))
 				.addCriteria(Criteria.where(FieldConstants.PACKAGE_STATUS).is(PackageStatusEnum.PAID));

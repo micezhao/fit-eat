@@ -66,7 +66,7 @@ public class FieldConstants {
 	
 	public final static String CART_ITEM_LIST = "itemList";
 	
-	public final static String CART_MERCHANT = "chatMerchant";
+	public final static String CART_MERCHANT = "cartMerchant";
 	
 	/* commodity */
 	

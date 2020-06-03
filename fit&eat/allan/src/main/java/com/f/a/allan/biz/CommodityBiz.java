@@ -1,12 +1,20 @@
 package com.f.a.allan.biz;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -54,7 +62,7 @@ public class CommodityBiz {
 				, Commodity.class);
 	}
 	
-	public List<Commodity> listCommodity(GoodsItemQueryRequest request){
+	public Page<Commodity> pageListCommodity(GoodsItemQueryRequest request){
 		Query query = new Query();
 		Criteria criteria = new Criteria();
 		if(StringUtils.isNotBlank(request.getSpuName())) {
@@ -77,7 +85,13 @@ public class CommodityBiz {
 			criteria.and(FieldConstants.SPU_STATUS).in(request.getStatusList());
 		}
 		query.addCriteria(criteria);
-		return mongoTemplate.find(query, Commodity.class);
+		long total = mongoTemplate.count(query, Commodity.class);
+		
+		Sort sort = Sort.by(Sort.Direction.DESC,"_id");
+		Pageable pageable = PageRequest.of((request.getPageNum()-1),request.getPageSize(),sort);
+		query.with(pageable);
+		List<Commodity> list =  mongoTemplate.find(query, Commodity.class);
+		return new PageImpl(list, pageable, total);
 	}
 	
 	/**
@@ -184,4 +198,5 @@ public class CommodityBiz {
 				new Update().push(FieldConstants.SPU_LINK_SKU, skuId),
 				Commodity.class);
 	}
+	
 }

@@ -1,8 +1,11 @@
 package com.f.a.allan.biz;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.regex.Pattern;
 
@@ -41,8 +44,9 @@ public class GoodsBiz {
 
 	@Autowired
 	private CommodityBiz commodityBiz;
-
-	private static final String FOLDER = "stock:";
+	
+	// 剩余库存的key标识
+	private static final String FOLDER = "remain_stock:";
 
 	@Autowired
 	private RedisTemplate<String, Object> redisTemplate;
@@ -55,7 +59,12 @@ public class GoodsBiz {
 
 	@Autowired
 	MongoTemplate mongoTemplate;
-
+	
+	/**
+	 * @deprecated
+	 * @param request
+	 * @return
+	 */
 	public List<GoodsItem> listGoodsItem(GoodsItemQueryRequest request) {
 		Query query = new Query();
 		Criteria criteria = new Criteria();
@@ -193,7 +202,6 @@ public class GoodsBiz {
 		Query query = new Query();
 		query.addCriteria(new Criteria(FieldConstants.GOODS_ID).is(goodsId));
 		Update update = new Update();
-		update.set(FieldConstants.STOCK, 0);
 		update.set(FieldConstants.GOODS_STATUS, GoodsStatusEnum.LACK.getCode());
 		update.set(FieldConstants.MDT, LocalDateTime.now());
 		GoodsItem updatedRecord = mongoTemplate.findAndModify(query, update,
@@ -243,14 +251,38 @@ public class GoodsBiz {
 	 * @param spuId
 	 * @param status
 	 */
+	@SuppressWarnings("unchecked")
 	public void updateSpuStatusBySpuId(String spuId, String status) {
 		Query query = new Query().addCriteria(new Criteria(FieldConstants.SPU_ID).is(spuId));
 		Commodity commodity = mongoTemplate.findOne(query, Commodity.class);
 		mongoTemplate.updateFirst(query, Update.update(FieldConstants.SPU_STATUS, status), Commodity.class); // 更新当前的状态
 		String[] skuIdArr = commodity.getGoodsItemLink();
-		mongoTemplate.updateMulti(
-				new Query().addCriteria(new Criteria(FieldConstants.GOODS_ID).in(Arrays.asList(skuIdArr))),
-				Update.update(FieldConstants.GOODS_STATUS, status), Goods.class);
+//		UpdateResult result=mongoTemplate.updateMulti(
+//				new Query().addCriteria(new Criteria(FieldConstants.GOODS_ID).in(Arrays.asList(skuIdArr))),
+//				Update.update(FieldConstants.GOODS_STATUS, status), Goods.class);
+		List<Goods> goodsList= mongoTemplate.findAndModify(
+									new Query().addCriteria(new Criteria(FieldConstants.GOODS_ID).in(Arrays.asList(skuIdArr))),
+									Update.update(FieldConstants.GOODS_STATUS, status),
+									FindAndModifyOptions.options().returnNew(true),
+									List.class);
+		if(goodsList.isEmpty()) {
+			return;
+		}
+		String merchantId = commodity.getMerchantId();
+		if(GoodsStatusEnum.getEnumByCode(status) == GoodsStatusEnum.ON_SALE) { // 将剩余库存量批量同步到redis中
+			Map<String,Integer> map = new HashMap<String,Integer>(); 
+			for (Goods goods : goodsList) {
+				map.put(goods.getGoodsId(), goods.getStock());
+			}
+			redisTemplate.boundHashOps(FOLDER + merchantId).putAll(map);
+		}else {
+			List<String> keyList = new ArrayList<String>();
+			for (Goods goods : goodsList) {
+				keyList.add(goods.getGoodsId());
+			}
+			Object[] keys =  keyList.toArray(); // TODO 这样操作可以吗？
+			redisTemplate.boundHashOps(FOLDER + merchantId).delete(keys);
+		}
 	}
 
 	/**
@@ -285,7 +317,7 @@ public class GoodsBiz {
 	}
 
 	/**
-	 * 根据商户编号，删除该商户的全部商品
+	 * 根据商户编号，删除该商户的全部商品，同时清除库存占用
 	 * 
 	 * @param merchantId
 	 */
@@ -297,21 +329,22 @@ public class GoodsBiz {
 			log.debug("执行删除商户{}中spu:{}包含的sku", merchantId,commodity.getSpuId());
 			mongoTemplate.findAllAndRemove(
 					new Query().addCriteria(new Criteria(FieldConstants.GOODS_ID).in(Arrays.asList(commodity.getGoodsItemLink())))
-					,Goods.class);			
+					,Goods.class);
 		}
+		redisTemplate.delete(FOLDER + merchantId); 
 	}
 
 	/**
-	 * 商品扣减
+	 * 通过redis占用商品库存
 	 * 
 	 * @param goodsId
-	 * @param deduction 扣减量
+	 * @param occupancy 占用量
 	 * @return
 	 */
-	public boolean deduct(String goodsId, int deduction) {
+	public boolean occupyByGoodsId(String goodsId, int occupancy) {
+		log.info("商品{},占用库存{} ",goodsId,occupancy);
 		Query query = new Query();
 		query.addCriteria(new Criteria(FieldConstants.GOODS_ID).is(goodsId));
-//		GoodsItem item = mongoTemplate.findOne(query, GoodsItem.class);
 		GoodsItem item = goodsItemService.findBySkuId(goodsId);
 		if (GoodsStatusEnum.getEnumByCode(item.getGoodsStatus()) != GoodsStatusEnum.ON_SALE) {
 			log.error("商品:{} 未处于可售状态——>当前状态为:{}", goodsId, item.getGoodsStatus());
@@ -325,39 +358,55 @@ public class GoodsBiz {
 		} else { // 如果redis中不存在当前的商品的库存信息 就从 mongo 中获取
 			remainStock = item.getStock().intValue();
 		}
-		if (remainStock < deduction) {
-			log.error("商品:{}库存不足,库存扣减失败，当前库存{},扣减库存{}", goodsId, remainStock, deduction);
-			return false; // 如果库存小于扣减量，就直接返回扣减失败
+		if (remainStock < occupancy) {
+			log.error("商品:{}剩余库存不足,占用库存失败，当前库存{},扣减库存{}", goodsId, remainStock, occupancy);
+			return false; 
 		}
-		redisTemplate.opsForHash().put(FOLDER + item.getMerchantId(), item.getGoodsId(), remainStock);
-		log.debug("[redis] 商品：{} 库存更新成功,当前库存{},准备返回生成订单并异步扣减mongodb中的库存量", item.getGoodsId(), remainStock);
+		redisTemplate.opsForHash().put(FOLDER + item.getMerchantId(), item.getGoodsId(), remainStock-occupancy );
+		log.debug("[redis] {}占用库存成功", item.getGoodsId());
 		// 暂时 通过另起线程 处理这个业务 -> 后期从线程池中获取线程 TODO 比较在不同的请求量级下，对资源开销的情况
-		new Callable<Boolean>() {
-			@Override
-			public Boolean call() throws Exception {
-				return deductGoodsStockById(goodsId, remainStock - deduction);
-			}
-		};
+		// 2020-06-03 将扣减动作分离为两个步骤：1、生成订单包时占用商品库存【redis】/ 2、支付回调成功后，扣减商品的实际的库存量【mongodb】
+//		new Callable<Boolean>() {
+//			@Override
+//			public Boolean call() throws Exception {
+//				return deductGoodsStockById(goodsId, remainStock - deduction);
+//			}
+//		};
 		// taskExecutor.submit(new DeductGoodsStockByAsync(goodsId,remainStock - deduction,mongoTemplate,redisTemplate));
 		return true;
 	}
 
-	private boolean deductGoodsStockById(String goodsId, int remainStock) {
+	/**
+	 * 偿还到剩余库存
+	 * @param merchantId
+	 * @param goodsId
+	 * @param returnAmount
+	 */
+	public void returnBack (String merchantId,String goodsId,int returnAmount) {
+		redisTemplate.opsForHash().increment(FOLDER + merchantId, goodsId, returnAmount);
+	}
+	
+	/**
+	 * 扣减实际库存
+	 * @param goodsId
+	 * @param remainStock
+	 * @return
+	 */
+	public boolean deductGoodsStockById(String goodsId, int deduction) {
 		try {
 			Query query = new Query();
 			query.addCriteria(new Criteria(FieldConstants.GOODS_ID).is(goodsId));
-//			GoodsItem item = mongoTemplate.findOne(query, GoodsItem.class);
-			// 如果扣减后的剩余量是0 那么就像 当前商品设置为缺货
-			if (remainStock == 0) {
-				log.debug("当前商品:{}库存扣减后为:{},准备进行将当前商品设置为缺货状态的操作", goodsId, remainStock);
-				setLack(goodsId);
-				return true;
-			}
+			Goods record = mongoTemplate.findOne(query, Goods.class);
+			int remainStock = record.getStock() - deduction;
 			Update update = new Update();
 			update.set(FieldConstants.STOCK, remainStock);
 			update.set(FieldConstants.MDT, LocalDateTime.now());
 			Goods updatedRecord = mongoTemplate.findAndModify(query, update,
 					FindAndModifyOptions.options().returnNew(true), Goods.class);
+			if (remainStock == 0) {
+				log.debug("当前商品:{}库存扣减后为:{},准备进行将当前商品设置为缺货状态的操作", goodsId, remainStock);
+				setLack(goodsId);
+			}
 			log.debug("[mongodb] 商品：{} 库存更新成功,当前库存{}", updatedRecord.getGoodsId(), updatedRecord.getStock());
 			return true;
 		} catch (Exception ex) {
