@@ -92,8 +92,8 @@ public class OrderBiz {
 			for (int i = 0; i < arr.size(); i++) {
 				String goodsId = arr.getJSONObject(i).getString("goodsId");
 				int num = arr.getJSONObject(i).getIntValue("num"); 
-				//  占用库存，不直接扣减库存
-				goodsBiz.occupyByGoodsId(goodsId, num);
+				//  占用库存，不直接扣减库存 
+				goodsBiz.occupyByGoodsId(goodsId, num);  
 				executed_index ++;
 				goodsViewList.add(r2Dto(goodsId,num));
 			}
@@ -165,11 +165,12 @@ public class OrderBiz {
 		update.set(FieldConstants.PACKAGE_STATUS, PackageStatusEnum.PAID.getCode());
 		update.set(FieldConstants.MDT, LocalDateTime.now());
 		OrderPackage packageItem  = mongoTemplate.findAndModify(query, update,new FindAndModifyOptions().returnNew(true), OrderPackage.class);
+		for (OrderGoodsItemView orderGoodsItem : packageItem.getItemList()) { // 先扣减商品的库存 -> 相当于发货
+			goodsBiz.deductGoodsStockById(orderGoodsItem.getGoodsId(), orderGoodsItem.getNum()); 
+		}
 		List<Order> orderItemList = distributOrder(packageItem); // 分配子订单
-		
 		DeliveryInfo deliveryInfo= getDeliveryInfo(orderPackageId);
 		orderDetailService.insertBatch(orderItemList, deliveryInfo,fundTransferId); // 批量插入订单详情
-		
 		return packageItem;
 	}
 

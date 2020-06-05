@@ -1,15 +1,22 @@
 package allan;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.f.a.allan.AllanApplication;
 import com.f.a.allan.biz.CommodityBiz;
 import com.f.a.allan.biz.GoodsBiz;
+import com.f.a.allan.entity.constants.FieldConstants;
+import com.f.a.allan.entity.pojo.Commodity;
 import com.f.a.allan.entity.request.GoodsItemRequest;
 
 /**
@@ -45,6 +52,11 @@ public class CommodityAndGoodsBizTest {
 	public void goods_put_on() {
 		goodsBiz.putGoodsOn("5ed3bfe5710cef0697406149");
 	}
-
+	
+	@org.junit.Test
+	public void find_one() {
+		Commodity json= mongoTemplate.findOne(new Query().addCriteria(new Criteria(FieldConstants.SPU_ID).is("5ed7a33bcd4b3933e1c2cc67"))
+				, Commodity.class);
+	}
 	
 }

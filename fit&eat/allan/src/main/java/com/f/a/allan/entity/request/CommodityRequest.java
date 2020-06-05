@@ -31,7 +31,7 @@ public class CommodityRequest {
 	private List<Media> medias;   
 	
 	@ApiModelProperty(value = "商品SKU配置项")
-	private List<Map<String,String[]>> skus;
+	private List<Map<String,String[]>> skuConfigs;
 	
 	/**
 	 * 商品分类

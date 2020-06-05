@@ -5,6 +5,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,8 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 
+import com.alibaba.fastjson.JSONObject;
+import com.f.a.allan.entity.pojo.SkuConfig;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
@@ -79,9 +83,6 @@ public class MongoTransConfig {
 		mappingMongoConverter.setCustomConversions(customConversions());
 		mappingMongoConverter.afterPropertiesSet();
 		MongoTemplate mongoTemplate = new MongoTemplate(mongoDbFactory(), mappingMongoConverter);
-//		MappingMongoConverter mongoMapping = (MappingMongoConverter) mongoTemplate.getConverter(); 
-//	    mongoMapping.setCustomConversions(customConversions()); // tell mongodb to use the custom converters 
-//	    mongoMapping.afterPropertiesSet(); 
 		return mongoTemplate;
 	}
 	

@@ -3,9 +3,11 @@ package com.f.a.allan.ctrl.admin.goods;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.f.a.allan.biz.CommodityBiz;
 import com.f.a.allan.biz.GoodsBiz;
 import com.f.a.allan.ctrl.admin.BaseAdminCtrl;
@@ -34,6 +38,8 @@ import com.f.a.allan.entity.request.CommodityRequest;
 import com.f.a.allan.entity.request.GoodsItemQueryRequest;
 import com.f.a.allan.entity.request.GoodsItemQueryRequest.GoodsItemQueryRequestBuilder;
 import com.f.a.allan.entity.request.GoodsItemRequest;
+import com.f.a.allan.entity.response.ConfigView;
+import com.f.a.allan.service.SkuConfigService;
 import com.f.a.kobe.view.UserAgent;
 
 import io.swagger.annotations.Api;
@@ -43,7 +49,7 @@ import io.swagger.annotations.ApiOperation;
 
 @Api(tags = "admin-商品管理")
 @RestController
-@RequestMapping("/admin/commodity")
+@RequestMapping("/admin")
 public class AdminGoodsCtrl extends BaseAdminCtrl {
 
 	@Autowired
@@ -51,6 +57,9 @@ public class AdminGoodsCtrl extends BaseAdminCtrl {
 	
 	@Autowired
 	private CommodityBiz commodityBiz;
+	
+	@Autowired
+	private SkuConfigService skuConfigService;
 	
 	@GetMapping
 	@ApiOperation("商品查询")
@@ -108,68 +117,115 @@ public class AdminGoodsCtrl extends BaseAdminCtrl {
 	}
 	
 	
-	@PutMapping("/commodity/skuConfig/{spuId}/{index}/{value}")
+	@PutMapping("/skuConfig/{spuId}/{id}/{value}")
 	@ApiOperation("修改商品指定配置项")
 	@ApiImplicitParams({
 		@ApiImplicitParam(name="spuId",value = "商品spuId",required = true),
-//		@ApiImplicitParam(name="name",value = "配置项",required = true),
-		@ApiImplicitParam(name="index",value = "配置的下标",required = true),
+		@ApiImplicitParam(name="id",value = "配置id",required = true),
 		@ApiImplicitParam(name="value",value = "配置的值",required = true)
 	})
 	public ResponseEntity<Object> updateSkuConfigByIndex(@PathVariable("spuId") String spuId,
-										@PathVariable("index") String index,
-//										@PathVariable("name") String name,
+										@PathVariable("id") String id,
 										@PathVariable("value") String configValue,
 										UserAgent userAgent){
- 		Commodity record= commodityBiz.updateSkuConfigByIndex(spuId, index, configValue);
-		return new ResponseEntity<Object>(record, HttpStatus.OK);
+		// TODO
+		return new ResponseEntity<Object>(null, HttpStatus.OK);
 	}
 	
-	@DeleteMapping("/commodity/skuConfig/{spuId}/{index}")
+	@DeleteMapping("/spu/skuConfig/{id}")
 	@ApiOperation("删除商品指定配置项")
 	@ApiImplicitParams({
-		@ApiImplicitParam(name="spuId",value = "商品spuId",required = true),
-		@ApiImplicitParam(name="index",value = "配置的下标",required = true)
+		@ApiImplicitParam(name="id",value = "配置id",required = true)
 	})
-	public ResponseEntity<Object> deleteSkuConfigByIndex(@PathVariable("spuId") String spuId,
-										@PathVariable("index") String index,
+	public ResponseEntity<Object> deleteSkuConfigByIndex(@PathVariable("id") String id,
 										UserAgent userAgent){
- 		Commodity record= commodityBiz.deleteSkuConfigByIndex(spuId, index);
-		return new ResponseEntity<Object>(record, HttpStatus.OK);
+		skuConfigService.deleteById(id);
+ 		return new ResponseEntity<Object>(null, HttpStatus.OK);
 	}
 	
-	@PostMapping("/commodity/skuConfig")
+	@PostMapping("/spu/skuConfig")
 	@ApiOperation("向指定商品新增配置项")
 	public ResponseEntity<Object> addSkuConfig(@RequestBody CommodityRequest request,UserAgent userAgent){
 		 String spuId = request.getSpuId();
-		 List<Map<String,String[]>> list = request.getSkus();
+		 List<Map<String,String[]>> list = request.getSkuConfigs();
 		 List<SkuConfig> skus = new ArrayList<SkuConfig>();
 		 // 前端确保不会提交重复的配置项，后端只负责受理并处理数据即可
 		 for (int i = 0; i < list.size(); i++) { // 循环前台提交集合
 			Map<String,String[]> map= list.get(i);
 			for(Entry<String, String[]> element : map.entrySet()){	 // 遍历元素中的key
-//				List<SkuConfigItem> configItemList = new ArrayList<SkuConfigItem>();
-				List<Map<String,String>> itemMap = new ArrayList<Map<String,String>>();
 				String skuConfigName= element.getKey();
-				// 生成 下标前缀
-				String index = spuId.subSequence(spuId.length()-4,spuId.length())+"_"+Math.round((Math.random()+1) * 1000);
+				String suffix =String.valueOf((int)((Math.random()*9+1)*1000));
+				String code = spuId.substring(spuId.length() - 4, spuId.length())+"_"+suffix;
 				String[] skuConfigValues = element.getValue();
-				int innerIndex = 0;
 				for (String value : skuConfigValues) { // 根据 key 来逐一生成 config
-					innerIndex ++;
-					Map<String,String> item = new HashMap<String, String>();
-					item.put(index+innerIndex, value);
-//					SkuConfigItem item = SkuConfigItem.builder().index(index+innerIndex).configValue(value).build();
-//					configItemList.add(item);
-					itemMap.add(item);
+					SkuConfig sku = SkuConfig.builder().code(code).spuId(spuId).name(skuConfigName).value(value).build();
+					skus.add(sku);
 				}
-//				SkuConfig sku = SkuConfig.builder().name(skuConfigName).value(configItemList).build();
-				SkuConfig sku = SkuConfig.builder().name(skuConfigName).value(itemMap).build();
-				skus.add(sku);
 			  }
 		 }
-		 Commodity record= commodityBiz.addSkuConfig(spuId, skus);
+		 List<SkuConfig> record= skuConfigService.addSkuConfig(skus);
 		 return new ResponseEntity<Object>(record, HttpStatus.OK);
+	}
+	
+	@GetMapping("/spu/skuConfig/{spuId}")
+	@ApiOperation("获取商品配置项")
+	@ApiImplicitParam(name="spuId",value = "spuId编号",required = true)
+	public ResponseEntity<Object> getConfigNameByCode(@PathVariable("spuId")String spuId){
+		List<SkuConfig> list= skuConfigService.listBySpuId(spuId);
+		List<ConfigView> resultList = new ArrayList<ConfigView>();
+		if(list.isEmpty()) {
+			return new ResponseEntity<Object>(resultList, HttpStatus.OK);
+		}
+		Set<String> set = new HashSet<String>();
+		for (SkuConfig skuConfig : list) {
+			set.add(skuConfig.getCode());
+		}
+		ConfigView configView = null;
+		for (String code : set) {
+			List<SkuConfig> ls = skuConfigService.listByCode(code);
+			configView = new ConfigView();
+			configView.setId(code);
+			List<String> valueList = new ArrayList<String>();
+			for (SkuConfig i : ls) {
+				i.getValue();
+				valueList.add(i.getValue());
+			}
+			String[] values = valueList.toArray(new String[valueList.size()]);
+			configView.setValues(values);
+			resultList.add(configView);
+		}
+		return new ResponseEntity<Object>(resultList, HttpStatus.OK);
+	}
+	
+	@GetMapping("/spu/skuConfig/{spuId}/name/{code}")
+	@ApiOperation("获取商品配置项的值")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name="spuId",value = "spuId编号",required = true),
+		@ApiImplicitParam(name="code",value = "配置项编码",required = true)
+	})
+	public ResponseEntity<Object> getConfigValueByCode(@PathVariable("spuId")String spuId,@PathVariable("code")String code){
+		List<SkuConfig> ls = skuConfigService.listByCode(code);
+		List<ConfigView> resultList = new ArrayList<ConfigView>();
+		if(ls.isEmpty()) {
+			new ResponseEntity<Object>(resultList, HttpStatus.OK);
+		}
+		for (SkuConfig i : ls) {
+			ConfigView configView = new ConfigView();
+			configView.setId(i.getConfigId());
+			String [] values = new String[]{i.getValue()};
+			configView.setValues(values);
+			resultList.add(configView);
+		}
+		return new ResponseEntity<Object>(resultList, HttpStatus.OK);
+	}
+	
+	
+	
+	@GetMapping("/skuConfig/{spuId}")
+	@ApiOperation("获取商品配置")
+	public ResponseEntity<Object> getConfigBySpuId(@PathVariable("spuId")String spuId){
+		List<SkuConfig> list= skuConfigService.listBySpuId(spuId);
+		return new ResponseEntity<Object>(list, HttpStatus.OK);
 	}
 	
 	
@@ -207,5 +263,9 @@ public class AdminGoodsCtrl extends BaseAdminCtrl {
 		return new ResponseEntity<Object>(item, HttpStatus.OK);
 	}
 
-
+	public static void main(String[] args) {
+		int a= (int)((Math.random()*9+1)*1000);
+		System.out.println(a);
+	}
+	
 }
