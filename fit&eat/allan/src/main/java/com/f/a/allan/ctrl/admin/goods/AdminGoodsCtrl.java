@@ -43,7 +43,7 @@ import io.swagger.annotations.ApiOperation;
 
 @Api(tags = "admin-商品管理")
 @RestController
-@RequestMapping("/admin/commodity")
+@RequestMapping("/admin")
 public class AdminGoodsCtrl extends BaseAdminCtrl {
 
 	@Autowired
@@ -52,7 +52,7 @@ public class AdminGoodsCtrl extends BaseAdminCtrl {
 	@Autowired
 	private CommodityBiz commodityBiz;
 	
-	@GetMapping
+	@GetMapping("/commodity")
 	@ApiOperation("商品查询")
 	@ApiImplicitParams({
 		@ApiImplicitParam(name="merchantId",value = "商户id",required = false),
@@ -69,8 +69,8 @@ public class AdminGoodsCtrl extends BaseAdminCtrl {
 			@RequestParam(name = "name",required = false)String name,
 			@RequestParam(name = "categories",required = false)String[] categories,
 			@RequestParam(name = "statuses",required = false)String[] statuses,
-			@RequestParam(name = "pageNum",required = false) int pageNum,
-			@RequestParam(name = "pageSize",required = false) int pageSize
+			@RequestParam(name = "pageNum",required = false) String pageNum,
+			@RequestParam(name = "pageSize",required = false) String pageSize
 			,UserAgent userAgent) {
 		GoodsItemQueryRequestBuilder builder = GoodsItemQueryRequest.builder();
 		if(StringUtils.isNotBlank(merchantId)) {
@@ -90,11 +90,11 @@ public class AdminGoodsCtrl extends BaseAdminCtrl {
 			builder.statusList(Arrays.asList(statuses));
 		}
 		GoodsItemQueryRequest request=builder.build();
-		if(pageNum > 0) {
-			request.setPageNum(pageNum);
+		if(StringUtils.isNotBlank(pageNum)) {
+			request.setPageNum(Integer.valueOf(pageNum) );
 		}
-		if(pageSize > 0) {
-			request.setPageSize(pageSize);
+		if( StringUtils.isNotBlank(pageSize)) {
+			request.setPageSize(Integer.valueOf(pageSize));
 		}
 		Page<Commodity> page = commodityBiz.pageListCommodity(builder.build());
 		return new ResponseEntity<Object>(page, HttpStatus.OK);

@@ -135,6 +135,7 @@ public class GoodsBiz {
 		if (temp.getStock() == null || temp.getStock() <= 0) {
 			throw new RuntimeException("请设置当前商品的初始库存，初始库存 必须大于0");
 		}
+		temp.setMerchantId(spu.getMerchantId());
 		temp.setGoodsStatus(GoodsStatusEnum.UN_SOLD.getCode());
 		temp.setCdt(LocalDateTime.now());
 		Goods sku = mongoTemplate.insert(temp);
