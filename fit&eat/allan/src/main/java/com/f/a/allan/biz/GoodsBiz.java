@@ -258,9 +258,6 @@ public class GoodsBiz {
 		Commodity commodity = mongoTemplate.findOne(query, Commodity.class);
 		mongoTemplate.updateFirst(query, Update.update(FieldConstants.SPU_STATUS, status), Commodity.class); // 更新当前的状态
 		String[] skuIdArr = commodity.getGoodsItemLink();
-//		UpdateResult result=mongoTemplate.updateMulti(
-//				new Query().addCriteria(new Criteria(FieldConstants.GOODS_ID).in(Arrays.asList(skuIdArr))),
-//				Update.update(FieldConstants.GOODS_STATUS, status), Goods.class);
 		List<Goods> goodsList= mongoTemplate.findAndModify(
 									new Query().addCriteria(new Criteria(FieldConstants.GOODS_ID).in(Arrays.asList(skuIdArr))),
 									Update.update(FieldConstants.GOODS_STATUS, status),
@@ -365,15 +362,6 @@ public class GoodsBiz {
 		}
 		redisTemplate.opsForHash().put(FOLDER + item.getMerchantId(), item.getGoodsId(), remainStock-occupancy );
 		log.debug("[redis] {}占用库存成功", item.getGoodsId());
-		// 暂时 通过另起线程 处理这个业务 -> 后期从线程池中获取线程 TODO 比较在不同的请求量级下，对资源开销的情况
-		// 2020-06-03 将扣减动作分离为两个步骤：1、生成订单包时占用商品库存【redis】/ 2、支付回调成功后，扣减商品的实际的库存量【mongodb】
-//		new Callable<Boolean>() {
-//			@Override
-//			public Boolean call() throws Exception {
-//				return deductGoodsStockById(goodsId, remainStock - deduction);
-//			}
-//		};
-		// taskExecutor.submit(new DeductGoodsStockByAsync(goodsId,remainStock - deduction,mongoTemplate,redisTemplate));
 		return true;
 	}
 

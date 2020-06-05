@@ -4,6 +4,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
+import com.alibaba.fastjson.JSONObject;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +25,19 @@ import lombok.NoArgsConstructor;
  * @author micezhao
  *
  */
+@Document("skuConfig")
 public class SkuConfig {
+	
+	@Id
+	private String configId;
+	
+	
+	private String spuId;
+	
+	/**
+	 * 配置项的编码
+	 */
+	private String code;
 	
 	/**
 	 * 配置项名称
@@ -31,6 +47,6 @@ public class SkuConfig {
 	/**
 	 * 配置项的值
 	 */
-	private List<Map<String,String>> value;
+	private String value;
 	
 }

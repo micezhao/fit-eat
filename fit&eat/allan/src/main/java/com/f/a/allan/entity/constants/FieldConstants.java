@@ -78,10 +78,16 @@ public class FieldConstants {
 
 	public final static String SKU_CONFIG = "configs";
 	
-		
-	public final static String SKU_CONFIG_VALUE = "skus.value";
+	public final static String SKU_CONFIG_VALUE = "configs.value";
 	
 	public final static String SPU_LINK_SKU = "goodsItemLink";
+	
+	/* skuConfig */
+	public final static String SKU_CONFIG_ID = "_Id";
+	
+	public final static String SKU_CONFIG_SPU_ID = "spuId";
+	
+	public final static String SKU_CONFIG_CODE = "code";
 	
 	
 	/*  common  */
