@@ -61,7 +61,7 @@ public class AdminGoodsCtrl extends BaseAdminCtrl {
 	@Autowired
 	private SkuConfigService skuConfigService;
 	
-	@GetMapping
+	@GetMapping("/commodity")
 	@ApiOperation("商品查询")
 	@ApiImplicitParams({
 		@ApiImplicitParam(name="merchantId",value = "商户id",required = false),
@@ -185,6 +185,7 @@ public class AdminGoodsCtrl extends BaseAdminCtrl {
 			List<SkuConfig> ls = skuConfigService.listByCode(code);
 			configView = new ConfigView();
 			configView.setId(code);
+			configView.setName(ls.get(0).getName());
 			List<String> valueList = new ArrayList<String>();
 			for (SkuConfig i : ls) {
 				i.getValue();
@@ -228,6 +229,12 @@ public class AdminGoodsCtrl extends BaseAdminCtrl {
 		return new ResponseEntity<Object>(list, HttpStatus.OK);
 	}
 	
+	@DeleteMapping("/sku/byspu/{spuId}")
+	@ApiOperation("清除spu下的所有货品")
+	public ResponseEntity<Object> deleteSkuBySpuId(@PathVariable("spuId") String spuId,UserAgent userAgent) {
+		boolean result= goodBiz.cleanGoodsBySpuId(spuId);
+		return new ResponseEntity<Object>(result, HttpStatus.OK);
+	}
 	
 	@PostMapping("/sku")
 	@ApiOperation("新增货品")
@@ -235,6 +242,21 @@ public class AdminGoodsCtrl extends BaseAdminCtrl {
 		Goods item = goodBiz.insertSku(request);
 		return new ResponseEntity<Object>(item, HttpStatus.OK);
 	}
+	
+	@GetMapping("/sku/{spuId}")
+	@ApiOperation("通过spuId获得货品列表")
+	public ResponseEntity<Object> getGoodsItem(@PathVariable("spuId") String spuId,UserAgent userAgent) {
+		List<Goods> goodsList = goodBiz.listGoodsBySpuId(spuId);
+		return new ResponseEntity<Object>(goodsList, HttpStatus.OK);
+	}
+	
+	@DeleteMapping("/sku/{id}")
+	@ApiOperation("删除货品")
+	public ResponseEntity<Object> deleteSkuById(@PathVariable("id") String id,UserAgent userAgent) {
+		boolean result= goodBiz.removeGoodsById(id);
+		return new ResponseEntity<Object>(result, HttpStatus.OK);
+	}
+	
 
 	@PutMapping("/sku/{id}/puton")
 	@ApiOperation("sku上架")

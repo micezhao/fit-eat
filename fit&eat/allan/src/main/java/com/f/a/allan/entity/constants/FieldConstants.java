@@ -25,6 +25,9 @@ public class FieldConstants {
 	/*  goods_item */
 	public final static String GOODS_ID = "_id";
 	
+	public final static String GOODS_SPU_ID = "spuId";
+	
+	
 	public final static String GOODS_NAME = "goodsName";
 	
 	public final static String GOODS_ITEM_OUTLINE = "itemOutline";

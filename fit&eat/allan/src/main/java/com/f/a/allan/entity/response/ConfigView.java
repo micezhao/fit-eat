@@ -11,6 +11,8 @@ public class ConfigView {
 	
 	private String id;
 	
+	private String name;
+	
 	private String[] values; 
 	
 }

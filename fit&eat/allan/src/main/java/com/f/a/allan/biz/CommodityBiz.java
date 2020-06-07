@@ -73,6 +73,9 @@ public class CommodityBiz {
 		if(StringUtils.isNotBlank(request.getMerchantId())) {
 			criteria.and(FieldConstants.MERCHANT_ID).is(request.getMerchantId());
 		}
+		if(StringUtils.isNotBlank(request.getSpuId())) {
+			criteria.and(FieldConstants.SPU_ID).is(request.getSpuId());
+		}
 		
 		if(StringUtils.isNotBlank(request.getCategory())) {
 			criteria.and(FieldConstants.CATEGORY).is(request.getCategory());
