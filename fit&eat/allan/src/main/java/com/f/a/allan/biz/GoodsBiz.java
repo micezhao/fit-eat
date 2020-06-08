@@ -20,6 +20,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.f.a.allan.entity.constants.FieldConstants;
 import com.f.a.allan.entity.pojo.Commodity;
 import com.f.a.allan.entity.pojo.Goods;
@@ -28,8 +30,10 @@ import com.f.a.allan.entity.request.GoodsItemQueryRequest;
 import com.f.a.allan.entity.request.GoodsItemRequest;
 import com.f.a.allan.enums.GoodsStatusEnum;
 import com.f.a.allan.service.GoodsItemService;
+import com.f.a.allan.service.SkuConfigService;
 import com.f.a.allan.utils.ObjectUtils;
 import com.mongodb.client.result.DeleteResult;
+import com.netflix.discovery.converters.Auto;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -54,6 +58,9 @@ public class GoodsBiz {
 
 	@Autowired
 	private GoodsItemService goodsItemService;
+	
+	@Autowired
+	private SkuConfigService skuConfigService;
 
 	@Autowired
 	ThreadPoolTaskExecutor taskExecutor;
@@ -143,6 +150,42 @@ public class GoodsBiz {
 		String skuId = sku.getGoodsId();
 		commodityBiz.updateGoodsLink(spu.getSpuId(), skuId);
 		return sku;
+	}
+	
+	/**
+	 * 批量生成sku
+	 * @param request
+	 * @return
+	 */
+	public List<Goods> insertBatchSku(GoodsItemRequest request){
+		Commodity spu = commodityBiz.findById(request.getSpuId());
+		List<Goods> skuList = new  ArrayList<Goods>();
+		List<JSONObject> list = skuConfigService.queryConfigBySpuId(spu.getSpuId());
+		
+		for (JSONObject obj : list) {
+			
+			String configCode=(String)obj.get(SkuConfigService.CODE);
+			JSONArray arr= (JSONArray)obj.get(SkuConfigService.VALUES);
+			for (Object jsonObject : arr) {
+				 JSONObject sub= (JSONObject) JSONObject.toJSON(jsonObject);
+				 String configId= (String)sub.get(SkuConfigService.CONFIG_ID);
+			}
+//				 Goods temp = new Goods();
+//				 temp.setGoodsStatus(GoodsStatusEnum.UN_SOLD.getCode());
+//				 temp.setMerchantId(spu.getMerchantId());
+//				 temp.setGoodsName(spu.getName());
+//				 temp.setSpuId(spu.getSpuId());
+//				 temp.setItemOutline(configId);
+//				 temp.setCdt(LocalDateTime.now());
+			
+		}
+		List<Goods>  goodsList= (List<Goods>) mongoTemplate.insertAll(skuList);
+		List<String> skuId = new ArrayList<String>();
+		for (Goods goods : goodsList) {
+			skuId.add(goods.getGoodsId());
+		}
+		 commodityBiz.updateGoodsLink(spu.getSpuId(), skuId.toArray(new String[goodsList.size()]));
+		 return goodsList;
 	}
 
 	public List<Goods> listGoodsBySpuId(String spuId){

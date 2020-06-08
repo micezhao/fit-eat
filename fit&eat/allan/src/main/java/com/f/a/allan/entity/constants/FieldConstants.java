@@ -77,11 +77,13 @@ public class FieldConstants {
 	
 	public final static String SPU_NAME = "name";
 	
-	public final static String SPU_STATUS = "status";
-
-	public final static String SKU_CONFIG = "configs";
+	public final static String SPU_INTRODUCE = "introduce";
 	
-	public final static String SKU_CONFIG_VALUE = "configs.value";
+	public final static String SPU_STATUS = "status";
+	
+	public final static String SPU_DETAIL = "detail";
+	
+	public final static String SKU_CONFIG = "configs";
 	
 	public final static String SPU_LINK_SKU = "goodsItemLink";
 	
@@ -91,6 +93,10 @@ public class FieldConstants {
 	public final static String SKU_CONFIG_SPU_ID = "spuId";
 	
 	public final static String SKU_CONFIG_CODE = "code";
+	
+	public final static String SKU_CONFIG_NAME = "name";
+	
+	public final static String SKU_CONFIG_VALUE = "value";
 	
 	
 	/*  common  */
