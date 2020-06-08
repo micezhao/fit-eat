@@ -17,7 +17,9 @@ import com.f.a.allan.biz.CommodityBiz;
 import com.f.a.allan.biz.GoodsBiz;
 import com.f.a.allan.entity.constants.FieldConstants;
 import com.f.a.allan.entity.pojo.Commodity;
+import com.f.a.allan.entity.pojo.GoodsItem;
 import com.f.a.allan.entity.request.GoodsItemRequest;
+import com.f.a.allan.service.GoodsItemService;
 
 /**
  * Unit test for simple App.
@@ -33,6 +35,9 @@ public class CommodityAndGoodsBizTest {
 	
 	@Autowired
 	GoodsBiz goodsBiz;
+	
+	@Autowired
+	GoodsItemService goodsItemService;
 	
 	@Autowired
 	MongoTemplate mongoTemplate;
@@ -55,8 +60,8 @@ public class CommodityAndGoodsBizTest {
 	
 	@org.junit.Test
 	public void find_one() {
-		Commodity json= mongoTemplate.findOne(new Query().addCriteria(new Criteria(FieldConstants.SPU_ID).is("5ed7a33bcd4b3933e1c2cc67"))
-				, Commodity.class);
+		GoodsItem item= goodsItemService.findBySkuId("5edbb3c25bcf0c3241656b70");
+		System.out.println("result："+item);
 	}
 	
 }

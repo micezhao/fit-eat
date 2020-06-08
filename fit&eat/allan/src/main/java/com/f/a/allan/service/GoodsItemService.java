@@ -1,5 +1,6 @@
 package com.f.a.allan.service;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -8,10 +9,12 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import com.f.a.allan.entity.constants.FieldConstants;
 import com.f.a.allan.entity.pojo.GoodsItem;
+import com.f.a.allan.entity.pojo.SkuConfig;
 import com.f.a.allan.entity.request.GoodsItemQueryRequest;
 import com.f.a.allan.utils.MongoAggrerationUtils;
 
@@ -49,7 +52,23 @@ public class GoodsItemService {
 		criteria.and(FieldConstants.GOODS_ID).is(goodsId);
 		
 		AggregationResults<GoodsItem> result =mongoTemplate.aggregate(aggregation(criteria),"goods" , GoodsItem.class);
-		return result.getUniqueMappedResult();
+		GoodsItem item= result.getUniqueMappedResult();
+		
+		// TODO itemOutline 字段要修改 -》 Arr
+//		String[] skuConfigIdArr= item.getItemOutline().split(",");
+//		
+//		Query query = new Query().addCriteria(new Criteria(FieldConstants.SKU_CONFIG_ID).in(Arrays.asList(skuConfigIdArr)));
+//		List<SkuConfig> configList=mongoTemplate.find(query, SkuConfig.class);
+//		
+//		
+//		
+//		StringBuilder builder = new StringBuilder();
+//		for (SkuConfig config : configList) {
+//			builder.append(config.getValue());
+//		}
+//		item.setItemOutline(builder.toString());
+		
+		return item;
 	}
 	
 	private Aggregation aggregation(Criteria criteria){
