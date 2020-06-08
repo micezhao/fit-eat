@@ -62,9 +62,10 @@ public class CommodityAndGoodsBizTest {
 	}
 	
 	@org.junit.Test
-	public void find_one() {
-		GoodsItem item= goodsItemService.findBySkuId("5edbb3c25bcf0c3241656b70");
-		System.out.println("result："+item);
+	public void insert_batch() {
+		GoodsItemRequest request = new GoodsItemRequest();
+		request.setSpuId("5edb6296bcd8b94afd380c10");
+		goodsBiz.insertBatchSku(request);
 	}
 	
 	@org.junit.Test

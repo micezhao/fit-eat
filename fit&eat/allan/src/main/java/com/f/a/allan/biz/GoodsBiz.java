@@ -161,15 +161,29 @@ public class GoodsBiz {
 		Commodity spu = commodityBiz.findById(request.getSpuId());
 		List<Goods> skuList = new  ArrayList<Goods>();
 		List<JSONObject> list = skuConfigService.queryConfigBySpuId(spu.getSpuId());
+		List<String> codeList = new ArrayList<String>();
+		List<String> configIdList = new ArrayList<String>();
+		List<String> itemOutlineList = new ArrayList<String>();
 		
 		for (JSONObject obj : list) {
-			
 			String configCode=(String)obj.get(SkuConfigService.CODE);
-			JSONArray arr= (JSONArray)obj.get(SkuConfigService.VALUES);
+			codeList.add(configCode);
+			JSONArray arr= (JSONArray)obj.get(SkuConfigService.VALUES); // 当前code的值
 			for (Object jsonObject : arr) {
 				 JSONObject sub= (JSONObject) JSONObject.toJSON(jsonObject);
 				 String configId= (String)sub.get(SkuConfigService.CONFIG_ID);
+				 configIdList.add(configId);
 			}
+		}
+		String[] codeArr = codeList.toArray(new String[codeList.size()]);
+		String[] configIdArr = configIdList.toArray(new String[configIdList.size()]);
+		String [][] arr = {codeArr,configIdArr};
+		for (int i = 0; i < arr[0].length; i++) {
+			for (int j = 0; j < arr[1].length; j++) {
+				
+			}
+		}
+		
 //				 Goods temp = new Goods();
 //				 temp.setGoodsStatus(GoodsStatusEnum.UN_SOLD.getCode());
 //				 temp.setMerchantId(spu.getMerchantId());
@@ -177,8 +191,6 @@ public class GoodsBiz {
 //				 temp.setSpuId(spu.getSpuId());
 //				 temp.setItemOutline(configId);
 //				 temp.setCdt(LocalDateTime.now());
-			
-		}
 		List<Goods>  goodsList= (List<Goods>) mongoTemplate.insertAll(skuList);
 		List<String> skuId = new ArrayList<String>();
 		for (Goods goods : goodsList) {
