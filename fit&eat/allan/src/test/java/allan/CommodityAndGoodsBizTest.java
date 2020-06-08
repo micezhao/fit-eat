@@ -1,6 +1,8 @@
 package allan;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.runner.RunWith;
@@ -12,12 +14,14 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import com.alibaba.fastjson.JSONObject;
 import com.f.a.allan.AllanApplication;
 import com.f.a.allan.biz.CommodityBiz;
 import com.f.a.allan.biz.GoodsBiz;
 import com.f.a.allan.entity.constants.FieldConstants;
 import com.f.a.allan.entity.pojo.Commodity;
 import com.f.a.allan.entity.request.GoodsItemRequest;
+import com.f.a.allan.service.SkuConfigService;
 
 /**
  * Unit test for simple App.
@@ -33,6 +37,9 @@ public class CommodityAndGoodsBizTest {
 	
 	@Autowired
 	GoodsBiz goodsBiz;
+	
+	@Autowired
+	SkuConfigService skuConfigService;
 	
 	@Autowired
 	MongoTemplate mongoTemplate;
@@ -59,4 +66,11 @@ public class CommodityAndGoodsBizTest {
 				, Commodity.class);
 	}
 	
+	@org.junit.Test
+	public void config_find_by_spuId() {
+		List<JSONObject> json= skuConfigService.queryConfigBySpuId("5edb6296bcd8b94afd380c10");
+		for (JSONObject jsonObject : json) {
+			System.out.println("result-a:"+jsonObject);
+		}
+	}
 }

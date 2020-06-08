@@ -116,19 +116,46 @@ public class AdminGoodsCtrl extends BaseAdminCtrl {
 		return new ResponseEntity<Object>(record, HttpStatus.OK);
 	}
 	
+	@GetMapping("/commodity/spu/config/{spuId}")
+	@ApiOperation("查询当前商品的配置")
+	@ApiImplicitParam(name="spuId",value = "spuId",required = true)
+	public ResponseEntity<Object> getSpuConfigBySpuId(@PathVariable("spuId")String spuId,UserAgent userAgent){
+		List<JSONObject> list= skuConfigService.queryConfigBySpuId(spuId);
+		return new ResponseEntity<Object>(list, HttpStatus.OK);
+	}
 	
-	@PutMapping("/skuConfig/{spuId}/{id}/{value}")
+	// TODO 编辑商品基本信息
+	@PutMapping("/commodity")
+	@ApiOperation("编辑商品基本信息")
+	public ResponseEntity<Object> updateCommodity(@RequestBody CommodityRequest request,UserAgent userAgent){
+		if(StringUtils.isBlank(request.getSpuId())) {
+			new ResponseEntity<Object>("请输入", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		Commodity record= commodityBiz.updateCommodity(request);
+		return new ResponseEntity<Object>(record, HttpStatus.OK);
+	}
+	
+	// TODO 编辑配置项
+	@PutMapping("/skuConfig/name/{code}/{name}")
 	@ApiOperation("修改商品指定配置项")
 	@ApiImplicitParams({
-		@ApiImplicitParam(name="spuId",value = "商品spuId",required = true),
-		@ApiImplicitParam(name="id",value = "配置id",required = true),
-		@ApiImplicitParam(name="value",value = "配置的值",required = true)
+		@ApiImplicitParam(name="code",value = "配置项编码",required = true),
+		@ApiImplicitParam(name="name",value = "配置项",required = true)
 	})
-	public ResponseEntity<Object> updateSkuConfigByIndex(@PathVariable("spuId") String spuId,
-										@PathVariable("id") String id,
-										@PathVariable("value") String configValue,
+	public ResponseEntity<Object> updateSkuConfigName(@PathVariable("code") String code,
+										@PathVariable("name") String name,
 										UserAgent userAgent){
-		// TODO
+		boolean result= skuConfigService.updateConfigNameByCode(code, name);
+		return new ResponseEntity<Object>(result, HttpStatus.OK);
+	}
+	
+	@PutMapping("/skuConfig/value/{configId}/{value}")
+	@ApiOperation("修改商品指定配置项")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "configId", value = "配置id", required = true),
+			@ApiImplicitParam(name = "value", value = "配置项的值", required = true) })
+	public ResponseEntity<Object> updateSkuConfigValue(@PathVariable("spuId") String spuId,
+			@PathVariable("configId") String id, @PathVariable("value") String value, UserAgent userAgent) {
+		skuConfigService.updateConfigValueById(id, value);
 		return new ResponseEntity<Object>(null, HttpStatus.OK);
 	}
 	
