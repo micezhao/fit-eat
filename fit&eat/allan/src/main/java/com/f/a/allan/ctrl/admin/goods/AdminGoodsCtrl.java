@@ -150,7 +150,7 @@ public class AdminGoodsCtrl extends BaseAdminCtrl {
 	}
 	
 	@PutMapping("/skuConfig/value/{configId}/{value}")
-	@ApiOperation("修改商品指定配置项")
+	@ApiOperation("修改商品指定配置项的值")
 	@ApiImplicitParams({ @ApiImplicitParam(name = "configId", value = "配置id", required = true),
 			@ApiImplicitParam(name = "value", value = "配置项的值", required = true) })
 	public ResponseEntity<Object> updateSkuConfigValue(@PathVariable("spuId") String spuId,
