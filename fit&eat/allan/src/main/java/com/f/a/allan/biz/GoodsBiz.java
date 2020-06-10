@@ -224,6 +224,32 @@ public class GoodsBiz {
 				Goods.class);
 		return updatedRecord;
 	}
+	
+	public Goods updateGoods(GoodsItemRequest request) {
+		Query query = new Query();
+		query.addCriteria(new Criteria(FieldConstants.GOODS_ID).is(request.getGoodsId()));
+		Goods record = mongoTemplate.findOne(query,Goods.class);
+		if (GoodsStatusEnum.getEnumByCode( record.getGoodsStatus()) == GoodsStatusEnum.ON_SALE) {
+			throw new RuntimeException("当前商品处于可售状态,无法进行编辑操作");
+		}
+		Update update = new Update();
+		if(StringUtils.isNotEmpty(request.getGoodsName())) {
+			update.set(FieldConstants.GOODS_NAME, request.getGoodsName());
+		}
+		if(request.getDiscountPrice() !=null && request.getDiscountPrice()!=0) {
+			update.set(FieldConstants.DISCOUNT_PRICE, request.getDiscountPrice());
+		}
+		if(request.getPrice() !=null && request.getPrice()!=0) {
+			update.set(FieldConstants.PRICE, request.getPrice());
+		}
+		if(request.getStock() !=null && request.getStock()!=0) {
+			update.set(FieldConstants.STOCK, request.getPrice());
+		}
+		update.set(FieldConstants.MDT, LocalDateTime.now());
+		Goods updatedRecord = mongoTemplate.findAndModify(query, update, FindAndModifyOptions.options().returnNew(true),
+				Goods.class);
+		return updatedRecord;
+	}
 
 	/**
 	 * 设置为缺货
@@ -397,15 +423,6 @@ public class GoodsBiz {
 		}
 		redisTemplate.opsForHash().put(FOLDER + item.getMerchantId(), item.getGoodsId(), remainStock-occupancy );
 		log.debug("[redis] {}占用库存成功", item.getGoodsId());
-		// 暂时 通过另起线程 处理这个业务 -> 后期从线程池中获取线程 TODO 比较在不同的请求量级下，对资源开销的情况
-		// 2020-06-03 将扣减动作分离为两个步骤：1、生成订单包时占用商品库存【redis】/ 2、支付回调成功后，扣减商品的实际的库存量【mongodb】
-//		new Callable<Boolean>() {
-//			@Override
-//			public Boolean call() throws Exception {
-//				return deductGoodsStockById(goodsId, remainStock - deduction);
-//			}
-//		};
-		// taskExecutor.submit(new DeductGoodsStockByAsync(goodsId,remainStock - deduction,mongoTemplate,redisTemplate));
 		return true;
 	}
 
@@ -418,6 +435,7 @@ public class GoodsBiz {
 	public void returnBack (String merchantId,String goodsId,int returnAmount) {
 		redisTemplate.opsForHash().increment(FOLDER + merchantId, goodsId, returnAmount);
 	}
+	
 	
 	/**
 	 * 扣减实际库存

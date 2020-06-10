@@ -311,6 +311,15 @@ public class AdminGoodsCtrl extends BaseAdminCtrl {
 		Goods item = goodBiz.replenish(goodsId, replenishment);
 		return new ResponseEntity<Object>(item, HttpStatus.OK);
 	}
+	
+	@PutMapping("/sku")
+	@ApiOperation("修改sku的信息")
+	public ResponseEntity<Object> updateSku(@RequestBody GoodsItemRequest request,UserAgent userAgent) {
+		Goods item = goodBiz.updateGoods(request);
+		return new ResponseEntity<Object>(item, HttpStatus.OK);
+	}
+	
+	
 
 	public static void main(String[] args) {
 		int a= (int)((Math.random()*9+1)*1000);
