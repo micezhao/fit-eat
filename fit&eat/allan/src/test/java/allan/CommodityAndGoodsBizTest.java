@@ -62,12 +62,9 @@ public class CommodityAndGoodsBizTest {
 	}
 	
 	@org.junit.Test
-	public void insert_batch() {
-		GoodsItemRequest request = new GoodsItemRequest();
-		request.setSpuId("5edb6296bcd8b94afd380c10");
-		goodsBiz.insertBatchSku(request);
+	public void insert_single() {
+		commodityBiz.updateGoodsLink("5ee0b0019a4b35707fbf9c38", "5edb89075bcf0c3241656b48");
 	}
-	
 	@org.junit.Test
 	public void config_find_by_spuId() {
 		List<JSONObject> json= skuConfigService.queryConfigBySpuId("5edb6296bcd8b94afd380c10");
