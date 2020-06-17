@@ -88,7 +88,7 @@ public class FieldConstants {
 	public final static String SPU_LINK_SKU = "goodsItemLink";
 	
 	/* skuConfig */
-	public final static String SKU_CONFIG_ID = "_Id";
+	public final static String SKU_CONFIG_ID = "configId";
 	
 	public final static String SKU_CONFIG_SPU_ID = "spuId";
 	
