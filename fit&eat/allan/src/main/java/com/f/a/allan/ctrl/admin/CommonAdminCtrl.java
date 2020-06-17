@@ -1,9 +1,7 @@
 package com.f.a.allan.ctrl.admin;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +22,9 @@ import io.swagger.annotations.ApiOperation;
 public class CommonAdminCtrl {
 	
 	protected final static String SYMBOL_AND = "-";
+	
+	@Autowired
+	private RedisTemplate<String, Object> redisTemplate;
 	
 	@ApiOperation("获取多媒体类型选项列表")
 	@GetMapping("/mediaType")
@@ -47,4 +48,5 @@ public class CommonAdminCtrl {
 		}
 		return new ResponseEntity<Object>(arr, HttpStatus.OK);
 	}
+	
 }
