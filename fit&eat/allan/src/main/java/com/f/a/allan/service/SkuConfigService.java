@@ -69,9 +69,9 @@ public class SkuConfigService {
 		return result.wasAcknowledged();
 	}
 
-	public SkuConfig updateConfigValueById(String configId, String value) {
+	public SkuConfig updateConfigValueById(String id, String value) {
 		SkuConfig result = mongoTemplate.findAndModify(
-				new Query().addCriteria(new Criteria(FieldConstants.SKU_CONFIG_ID).is(configId)),
+				new Query().addCriteria(new Criteria(FieldConstants.SKU_CONFIG_ID).is(id)),
 				Update.update(FieldConstants.SKU_CONFIG_VALUE, value), FindAndModifyOptions.options().returnNew(true),
 				SkuConfig.class);
 		return result;

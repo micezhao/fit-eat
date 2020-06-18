@@ -153,10 +153,10 @@ public class AdminGoodsCtrl extends BaseAdminCtrl {
 	@ApiOperation("修改商品指定配置项的值")
 	@ApiImplicitParams({ @ApiImplicitParam(name = "configId", value = "配置id", required = true),
 			@ApiImplicitParam(name = "value", value = "配置项的值", required = true) })
-	public ResponseEntity<Object> updateSkuConfigValue(
-			@PathVariable("configId") String configId, @PathVariable("value") String value, UserAgent userAgent) {
-		SkuConfig updateRecord=skuConfigService.updateConfigValueById(configId, value);
-		return new ResponseEntity<Object>(updateRecord, HttpStatus.OK);
+	public ResponseEntity<Object> updateSkuConfigValue(@PathVariable("spuId") String spuId,
+			@PathVariable("configId") String id, @PathVariable("value") String value, UserAgent userAgent) {
+		skuConfigService.updateConfigValueById(id, value);
+		return new ResponseEntity<Object>(null, HttpStatus.OK);
 	}
 	
 	@DeleteMapping("/spu/skuConfig/{id}")
@@ -318,6 +318,7 @@ public class AdminGoodsCtrl extends BaseAdminCtrl {
 		Goods item = goodBiz.updateGoods(request);
 		return new ResponseEntity<Object>(item, HttpStatus.OK);
 	}
+	
 	
 
 	public static void main(String[] args) {
