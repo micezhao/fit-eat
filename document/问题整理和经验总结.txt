@@ -626,6 +626,31 @@
 
 【关于too many connections error的解决方案：https://www.jianshu.com/p/fc40067c4dc9 /
      springboot 数据库连接池的配置 https://www.cnblogs.com/hugb/p/10493101.html】
+
+2020-06-18 jenkins 学习
+持续集成：让代码可以持续的获得新的功能
+持续交付：让工程能够持续的面向用户交付
+
+jenkins的执行过程：
+    开发人员：提交代码 -> 提交/推送到 代码仓库 -> [触发钩子程序] -> 通知Jenkins 
+    jenkins: 调用git/svn插件 -> 获取代码 -> 调用 maven插件 进行构建 -> 调用 deploy to web container 插件 -> 部署与发布
+
+jenkins的安装：
+    1、下载jenkins 程序
+    2、将其部署到tomcat中进行启动，注意：修改tomcat的 uriencoding = "utf-8"
+    3、启动应用，访问并根据页面提示流程进行初始化配置，选择推荐安装的插件
+    4、（git）需要安装git程序
+
+jenkins的配置：
+    0、配置用户发布项目的tomcat -> 需要配置使用tomcat的用户名密码，在部署过程中需要使用
+    1、在当前环境中安装maven和JDK
+    2、安装插件：【deploy container to web】 和 【git 或 svn 】
+    3、需要配置git
+    4、在github上配置webhook
+
+jenkins的使用：
+
+
     
         
 

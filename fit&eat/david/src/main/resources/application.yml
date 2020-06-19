@@ -14,8 +14,10 @@ spring:
          username: micezhao                                           # git仓库的账号
          password: micezhao1017                                       # git仓库的密码
   rabbitmq:
-    host: 118.190.53.214
-    port: 5682
+    #host: 118.190.53.214
+    #port: 5682
+    host: 39.100.131.79
+    port: 5672
     #username: micezhao
     #password: micezhao1017
     virtual-host: /
