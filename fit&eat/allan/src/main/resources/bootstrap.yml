@@ -2,7 +2,8 @@
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://118.190.53.214:8761/eureka/   ## 注册中心eurka地址
+      #defaultZone: http://118.190.53.214:8761/eureka/   ## 注册中心eurka地址
+      defaultZone: http://39.100.131.79:8761/eureka/   ## 注册中心eurka地址
   instance:
     lease-expiration-duration-in-seconds: 5 #设置心跳的周期间隔(默认90s)[如果5s没响应默认服务宕机]
     lease-renewal-interval-in-seconds: 2  #设置心跳时间间隔(默认30s)
