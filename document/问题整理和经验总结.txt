@@ -647,10 +647,26 @@ jenkins的配置：
     2、安装插件：【deploy container to web】：使jenkins可以将war部署到指定位置的容器中
                【git-plugin 或 svn-plugin 】：连接代码仓库
                【maven-Integration】：构建maven工程
-    3、需要配置git
+               【publish over ssh 】：执行远程部署的插件 -> 在【系统配置】菜单下配置对 ssh 进行配置
     4、在github上配置webhook
 
 jenkins的使用：
+    1、新建任务： 选择构建maven项目（前置条件：在jenkins中安装了maven插件）
+    2、配置： 
+        【通用】中的信息，这些信息是对工程（job）的描述
+        【源码管理】：选择git，并填写需要被构建的git仓库与指定分支
+        【构建触发器】：定义在自动触发构建操作的条件
+        【构建环境】：构建过程中的环境配置：Delete workspace before build starts：在构建之前清空工作空间
+                                      Abort the build if it's stuck：如果构建出现问题则终止构建
+                                      Add timestamps to the Console Output：给控制台输出增加时间戳
+                                      Use secret text(s) or file(s)：使用加密文件或者文本
+        【构建】：正式进入打包环节
+                【pre steps】：构建之前需要执行的任务
+                【build】：构建配置:构建完成后包地址默认：/var/lib/jenkins/workspace/${job_name}/target/ 
+                          可以在高级选项中自定义包存放地址：例如：/home/jenkins_archive
+                【post steps】：构建完成需要指定的任务
+                            例如：1、构建完成后执行脚本，部署和启动本地项目
+                                 2、通过SSH插件，将包文件推送到指定远程服务器并执行部署与启动任务
 
 
     
