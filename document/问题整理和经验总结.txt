@@ -644,7 +644,9 @@ jenkins的安装：
 jenkins的配置：
     0、配置用户发布项目的tomcat -> 需要配置使用tomcat的用户名密码，在部署过程中需要使用
     1、在当前环境中安装maven和JDK
-    2、安装插件：【deploy container to web】 和 【git 或 svn 】
+    2、安装插件：【deploy container to web】：使jenkins可以将war部署到指定位置的容器中
+               【git-plugin 或 svn-plugin 】：连接代码仓库
+               【maven-Integration】：构建maven工程
     3、需要配置git
     4、在github上配置webhook
 
