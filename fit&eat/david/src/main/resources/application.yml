@@ -25,16 +25,15 @@ spring:
 eureka:
   client:
     serviceUrl:
-      #defaultZone: http://118.190.53.214:8761/eureka/   ## 注册中心eurka地址
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://39.100.131.79:8761/eureka/
   instance:
-    hostname: imac-david ## 通过hostname注册到eureka
+    #hostname: imac-david ## 通过hostname注册到eureka
     lease-expiration-duration-in-seconds: 5 #设置心跳的周期间隔(默认90s)[如果5s没响应默认服务宕机]
     lease-renewal-interval-in-seconds: 3  #设置心跳时间间隔(默认30s)
-    #prefer-ip-address: true       #访问路径变为IP地址
-    # 通过主机名是，注释掉下面的配置
-    #instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${server.port}
-    #instance-id: ${spring.application.name}:${server.port}
+    prefer-ip-address: true       #访问路径变为IP地址
+    #通过主机名是，注释掉下面的配置
+    instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${server.port}
+    instance-id: ${spring.application.name}:${server.port}
     
 management:
   security:
