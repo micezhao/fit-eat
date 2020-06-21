@@ -33,7 +33,6 @@ eureka:
     prefer-ip-address: true       #访问路径变为IP地址
     #通过主机名是，注释掉下面的配置
     instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${server.port}
-    instance-id: ${spring.application.name}:${server.port}
     
 management:
   security:
