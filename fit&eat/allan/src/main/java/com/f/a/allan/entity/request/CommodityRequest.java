@@ -33,6 +33,14 @@ public class CommodityRequest {
 	@ApiModelProperty(value = "商品SKU配置项")
 	private List<Map<String,String[]>> skuConfigs;
 	
+	@ApiModelProperty(value = "sku配置项的编码")
+	private String configCode;
+	
+	
+	@ApiModelProperty(value = "sku配置项的值")
+	private String configValue;
+	
+	
 	/**
 	 * 商品分类
 	 */
