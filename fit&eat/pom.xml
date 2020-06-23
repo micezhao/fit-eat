@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.f.a</groupId>
-	<artifactId>parent</artifactId>
+	<artifactId>parent</artifactId> 
 	<version>0.0.1-SNAPSHOT</version>
 	<name>parent-pom</name>
 	<description>父pom</description>
@@ -117,14 +117,14 @@
 		</dependencies>
 	</dependencyManagement>
 
-	<build>
+	<!-- <build>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
-	</build>
+	</build> -->
 
 	<repositories>
 		<repository>
