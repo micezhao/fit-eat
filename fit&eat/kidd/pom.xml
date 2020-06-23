@@ -4,8 +4,8 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>com.f.a</groupId>
-		<artifactId>parent</artifactId>
+		<groupId>com.cork</groupId>
+		<artifactId>fit_eat</artifactId> 
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
@@ -15,7 +15,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.f.a</groupId>
+			<groupId>com.cork</groupId>
 			<artifactId>kobe-core</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<!-- <exclusions>

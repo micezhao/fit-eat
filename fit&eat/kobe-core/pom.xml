@@ -6,14 +6,13 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>com.f.a</groupId>
-		<artifactId>parent</artifactId>
+		<groupId>com.cork</groupId>
+		<artifactId>fit_eat</artifactId> 
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>kobe-core</artifactId>
 	<name>kobe-core</name>
-	<url>http://maven.apache.org</url>
 	<description>用户系统核心组件</description>
 
 	<dependencies>
