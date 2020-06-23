@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.cork</groupId>
-	<artifactId>fit_eat</artifactId> 
+	<artifactId>fit_eat</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>parent-pom</name>
 	<description>父pom</description>
@@ -84,12 +84,17 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				 <groupId>org.springframework.cloud</groupId>
-   				 <artifactId>spring-cloud-dependencies</artifactId>
-   				 <!-- <version>Hoxton.M3</version> -->
-   				 <version>Hoxton.SR5</version>
-   				 <type>pom</type>
-   				 <scope>import</scope>
+				<groupId>org.mybatis.spring.boot</groupId>
+				<artifactId>mybatis-spring-boot-starter</artifactId>
+				<version>2.0.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<!-- <version>Hoxton.M3</version> -->
+				<version>Hoxton.SR5</version>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 
 			<dependency>
@@ -118,22 +123,12 @@
 		</dependencies>
 	</dependencyManagement>
 
-	<!-- <build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build> -->
+	<!-- <build> <plugins> <plugin> <groupId>org.springframework.boot</groupId> 
+		<artifactId>spring-boot-maven-plugin</artifactId> </plugin> </plugins> </build> -->
 
-	<!--  <repositories>
-		<repository>
-			<id>spring-milestones</id>
-			<name>Spring Milestones</name>
-			<url>https://repo.spring.io/milestone</url>
-		</repository>
-	</repositories> -->
+	<!-- <repositories> <repository> <id>spring-milestones</id> <name>Spring 
+		Milestones</name> <url>https://repo.spring.io/milestone</url> </repository> 
+		</repositories> -->
 
 	<modules>
 		<module>jordan</module>
