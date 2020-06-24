@@ -54,10 +54,10 @@ public class CommonAdminCtrl {
 		return new ResponseEntity<Object>(arr, HttpStatus.OK);
 	}
 	
-	@PostMapping("file/upload")
+	@PostMapping("/file/upload")
 	public ResponseEntity<Object> downloadFile(@RequestParam("subPath") String subPath,@RequestParam("file") MultipartFile file){
-		
 		fileUtils.checkFileSize(file.getSize());
-		fileUtils.upload(subPath, file);
+		String filePath = fileUtils.upload(subPath, file);
+		return new ResponseEntity<Object>(filePath, HttpStatus.OK);
 	}
 }
