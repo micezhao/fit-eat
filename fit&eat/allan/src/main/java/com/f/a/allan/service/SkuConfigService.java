@@ -41,7 +41,17 @@ public class SkuConfigService {
 		List<SkuConfig> list = (List<SkuConfig>) mongoTemplate.insertAll(configs);
 		return list;
 	}
-
+	
+	public SkuConfig addSkuConfigByCode(String code,String configValue) {
+		 List<SkuConfig> list= listByCode(code);
+		 if(list==null || list.isEmpty()) {
+			 throw new RuntimeException("当前spuId对应的配置项不存在");
+		 }
+		 SkuConfig baseItem = list.get(0);
+		 SkuConfig appendConfig = SkuConfig.builder().code(baseItem.getCode()).name(baseItem.getName()).spuId(baseItem.getSpuId()).value(configValue).build();
+		 return mongoTemplate.insert(appendConfig);
+	}
+	
 	public List<SkuConfig> listBySpuId(String spuId) {
 		return mongoTemplate.find(new Query().addCriteria(new Criteria(FieldConstants.SKU_CONFIG_SPU_ID).is(spuId)),
 				SkuConfig.class);

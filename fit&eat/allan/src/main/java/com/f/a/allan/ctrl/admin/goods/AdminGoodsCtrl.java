@@ -124,7 +124,7 @@ public class AdminGoodsCtrl extends BaseAdminCtrl {
 		return new ResponseEntity<Object>(list, HttpStatus.OK);
 	}
 	
-	// TODO 编辑商品基本信息
+	// 编辑商品基本信息
 	@PutMapping("/commodity")
 	@ApiOperation("编辑商品基本信息")
 	public ResponseEntity<Object> updateCommodity(@RequestBody CommodityRequest request,UserAgent userAgent){
@@ -135,7 +135,7 @@ public class AdminGoodsCtrl extends BaseAdminCtrl {
 		return new ResponseEntity<Object>(record, HttpStatus.OK);
 	}
 	
-	// TODO 编辑配置项
+	//  编辑配置项
 	@PutMapping("/skuConfig/name/{code}/{name}")
 	@ApiOperation("修改商品指定配置项")
 	@ApiImplicitParams({
@@ -157,6 +157,13 @@ public class AdminGoodsCtrl extends BaseAdminCtrl {
 			@PathVariable("configId") String id, @PathVariable("value") String value, UserAgent userAgent) {
 		skuConfigService.updateConfigValueById(id, value);
 		return new ResponseEntity<Object>(null, HttpStatus.OK);
+	}
+	
+	@PostMapping("/spu/skuConfig/code")
+	@ApiOperation("向spu的配置项中新增配置的值")
+	public ResponseEntity<Object> addSkuConfigValue(@RequestBody CommodityRequest request, UserAgent userAgent) {
+		SkuConfig appendSkuConfig =skuConfigService.addSkuConfigByCode(request.getConfigCode(), request.getConfigValue());
+		return new ResponseEntity<Object>(appendSkuConfig, HttpStatus.OK);
 	}
 	
 	@DeleteMapping("/spu/skuConfig/{id}")

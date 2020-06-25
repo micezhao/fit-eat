@@ -3,18 +3,19 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>parent</artifactId>
-        <groupId>com.f.a</groupId>
+        <groupId>com.cork</groupId>
+		<artifactId>fit_eat</artifactId> 
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
+    <!--     <relativePath>../pom.xml</relativePath> -->
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>kater</artifactId>
+    <name>kater</name>
 
     <dependencies>
         <dependency>
-            <groupId>com.f.a</groupId>
+            <groupId>com.cork</groupId>
             <artifactId>kobe-core</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
@@ -80,4 +81,14 @@
             <artifactId>spring-session-data-redis</artifactId>
         </dependency>
     </dependencies>
+    
+    <build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build> 
+	
 </project>

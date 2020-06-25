@@ -46,4 +46,6 @@ public class BaseAdminCtrl {
 		}
 		return list;
 	}
+	
+	
 }
