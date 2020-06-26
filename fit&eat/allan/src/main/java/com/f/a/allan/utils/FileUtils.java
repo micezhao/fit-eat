@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -62,11 +63,11 @@ public class FileUtils {
 		}
 	};
 	
-	@Value("${storage.file.path}")
-	private String storagePath;
+//	@Value("${storage.file.path}")
+	private String storagePath = "/Users/micezhao/Downloads";
 	
-	@Value("${storage.file.max_size}")
-	private String max_size;
+//	@Value("${storage.file.max_size}")
+	private String max_size = "16M";
 	
 	private static final String [] FILE_CLASS_IMG = {".jpg",".png",".svg"};
 	
@@ -78,12 +79,12 @@ public class FileUtils {
 		File targetFile = null;
 		String fileName = file.getOriginalFilename();
 		String rootPath = getRootPath(fileName);
-		File file1 = new File(rootPath + subPath + "/" + fileName);
-		if (!file1.exists() && !file1.isDirectory()) {
-			file1.mkdir();
+		File folder = new File(rootPath + subPath + "/");
+		if (!folder.exists() && !folder.isDirectory()) {
+			folder.mkdirs();
 		}
 		// 将图片存入文件夹
-		targetFile = new File(file1, fileName);
+		targetFile = new File(folder, fileName);
 		try {
 			// 将上传的文件写到服务器上指定的文件。
 			file.transferTo(targetFile);
@@ -93,9 +94,11 @@ public class FileUtils {
 		return targetFile.getAbsolutePath();
 	}
 	
+	
+	// 将MB转为byte
 	public void checkFileSize(long fileSize) {
 		String maxSize = max_size.substring(0, max_size.length()-1);
-		long limitSize = new BigDecimal(maxSize).multiply(new BigDecimal(1024)).longValue();
+		long limitSize = new BigDecimal(maxSize).multiply(new BigDecimal(1024)).multiply(new BigDecimal(1024)).longValue();
 		if(fileSize > limitSize ) {
 			throw new RuntimeException("对不起,您上传的文件不得超过"+max_size);
 		}
@@ -103,10 +106,18 @@ public class FileUtils {
 	}
 	
 	public void checkAllowFile(String fileClass) {
-		 String [] fileClassArr = (String[]) ArrayUtils.addAll(FILE_CLASS_IMG, FILE_CLASS_GIF,FILE_CLASS_VIDEO);
-		 boolean contains = ArrayUtils.contains(fileClassArr, fileClass);
-		 if(!contains) {
-			 throw new RuntimeException("对不起,系统不支持当前文件类型");
+		boolean contains = false;
+		if(ArrayUtils.contains(FILE_CLASS_IMG, fileClass)) {
+			contains = true;
+		}
+		if(ArrayUtils.contains(FILE_CLASS_GIF, fileClass)) {
+			contains = true;
+		}
+		if(ArrayUtils.contains(FILE_CLASS_VIDEO, fileClass)) {
+			contains = true;
+		}
+		if(!contains) {
+			throw new RuntimeException("对不起,系统不支持当前文件类型");
 		 }
 		 return;
 		

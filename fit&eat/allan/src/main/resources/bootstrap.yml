@@ -20,4 +20,8 @@ spring:
          name: allan
          profile: dev
          label: master
-            
+
+storage:
+   file:
+      path: /Users/micezhao/Downloads
+      max_size: 16M

@@ -1,9 +1,7 @@
 package com.f.a.allan.ctrl.admin;
 
-import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +27,7 @@ public class CommonAdminCtrl {
 	
 	protected final static String SYMBOL_AND = "-";
 	
+	@Autowired
 	private FileUtils fileUtils;
 	
 	@ApiOperation("获取多媒体类型选项列表")
@@ -56,8 +55,9 @@ public class CommonAdminCtrl {
 	
 	@PostMapping("/file/upload")
 	public ResponseEntity<Object> downloadFile(@RequestParam("subPath") String subPath,@RequestParam("file") MultipartFile file){
+		
 		fileUtils.checkFileSize(file.getSize());
-		String filePath = fileUtils.upload(subPath, file);
+		String filePath = fileUtils.upload(subPath,file);
 		return new ResponseEntity<Object>(filePath, HttpStatus.OK);
 	}
 }
