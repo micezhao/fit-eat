@@ -67,7 +67,7 @@ public class CartBiz {
 	
 	/**
 	 * 从购物车中减去 某个商品
-	 * @param chatId
+	 * @param cartId
 	 * @param chatItem [goodsId:商品id，num：当前商品的数量]
 	 */
 	public void subItemFromChat(String cartId,CartItem chatItem) {
@@ -106,11 +106,11 @@ public class CartBiz {
 		query.addCriteria(new Criteria(FieldConstants.CART_ID).is(cartId));
 		return mongoTemplate.findOne(query, Cart.class);
 	}
-	
-	
+
+
 	/**
 	 * 从购物车中移除指定产品
-	 * @param userAccount
+	 * @param cartId
 	 * @param goodsId
 	 */
 	public void removeChatItem(String cartId,String goodsId) {
@@ -140,7 +140,7 @@ public class CartBiz {
 	
 	/**
 	 * 当商品购买成功后，清空购物车的服务
-	 * @param chatId 购物车编号
+	 * @param cartId 购物车编号
 	 * @param goodsIdList 需要被清除的商品列表
 	 */
 	public void clearChatByGoodsIdList(String cartId,List<String> goodsIdList) {
