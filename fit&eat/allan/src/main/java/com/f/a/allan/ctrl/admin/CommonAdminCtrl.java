@@ -41,6 +41,7 @@ public class CommonAdminCtrl {
 		}
 		return new ResponseEntity<Object>(arr, HttpStatus.OK);
 	}
+
 	@ApiOperation("获取多媒体展示范围选项列表")
 	@GetMapping("/mediaScope")
 	public ResponseEntity<Object> getMediaScope(){

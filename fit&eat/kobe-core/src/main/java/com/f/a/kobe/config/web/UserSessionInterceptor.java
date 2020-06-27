@@ -23,7 +23,7 @@ public class UserSessionInterceptor implements HandlerInterceptor {
 		Object object = request.getSession().getAttribute(Contants.USER_AGENT);
 		UserAgent userAgent = JSONObject.parseObject(JSONObject.toJSONString(object), UserAgent.class);
 		String name = ((HandlerMethod)handler).getMethod().getName();
-		if(!("binding".equals(name)||"logout".equals(name))) {
+		if(!("binding".equals(name)||"logout".equals(name)||name.indexOf("getAuthCode")>=0)) {
 			if(StringUtils.isEmpty(userAgent.getMobile())) {
 				response.setStatus(HttpStatus.SC_NOT_ACCEPTABLE);
 				PrintWriter writer = response.getWriter();

@@ -127,7 +127,7 @@ public class WxCustomerServiceImpl extends CredentialServiceImpl {
         }
 
         httpSession.setAttribute(Contants.USER_AGENT,userAgent);
-
+        wxAuthResult.setAuthToken(httpSession.getId());
         return wxAuthResult;
     }
 
