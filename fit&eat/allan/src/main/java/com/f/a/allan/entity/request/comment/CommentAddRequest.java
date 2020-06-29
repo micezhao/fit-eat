@@ -26,7 +26,7 @@ public class CommentAddRequest {
 	@ApiModelProperty(value = "sku编码",required = true)
 	private String goodsId;
 	
-	@ApiModelProperty(value = "商品评分" ,required = true,allowableValues ="range(1,10)")
+	@ApiModelProperty(value = "商品评分" ,required = true,allowableValues ="range(1-5)")
 	private String stars;
 	
 	@ApiModelProperty(value = "商品评价",required = true)

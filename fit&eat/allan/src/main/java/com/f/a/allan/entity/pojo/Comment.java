@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.f.a.allan.entity.bo.CommentReply;
 import com.f.a.allan.entity.bo.MediaAttachment;
 
 import lombok.AllArgsConstructor;
@@ -19,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Document("Comment")
+@Document("comment")
 /**
  * 评价
  * @author micezhao
@@ -30,8 +31,15 @@ public class Comment {
 	@Id
 	private String commentId;
 	
+	private String userAccount;
+	
+	private String spuId;
+	
 	private String goodsId;
 	
+	/**
+	 * 评价等级
+	 */
 	private String stars;
 	
 	private String content;
@@ -40,7 +48,10 @@ public class Comment {
 	
 	private List<MediaAttachment> attachments; 
 	
-	private String reply;
+	/**
+	 * 商户回评
+	 */
+	private CommentReply reply;
 	
 	private LocalDateTime cdt;
 	

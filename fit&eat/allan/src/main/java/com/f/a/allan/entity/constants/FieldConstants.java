@@ -99,6 +99,18 @@ public class FieldConstants {
 	public final static String SKU_CONFIG_VALUE = "value";
 	
 	
+	/* comment */
+	public final static String COMMENT_ID = "commentId";
+	
+	public final static String COMMENT_SPU_ID = "spuId";
+	
+	public final static String COMMENT_GOODS_ID = "goodsId";
+	
+	public final static String COMMENT_STATES = "states";
+	
+	public final static String COMMENT_REPLY = "reply";
+		
+	
 	/*  common  */
 	
 	public final static String NUM = "num";
