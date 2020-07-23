@@ -1,5 +1,10 @@
 # Recipe-client-api doc
 
+## 通用约定
+ * 请求协议：http
+ * 请求风格：restfulApi
+ * 响应结果:【success：200】 其他均为失败 
+
 ## 用户登录
 - - -
 #### 获取用户授权码 
@@ -123,7 +128,7 @@
   |:----|:----|:----|:----|:----|
   |分类编号|categoryId|String|Y||
   |当前页码|pageNum|String|N|默认10条|
-  |当前页码|pageNum|String|N|默认第一页|
+  |每页条数|pageSize|String|N|默认第一页|
   |排序|sort|String|N|排序条件,默认创建时间|
   |排序方式|orderBy|String|desc / asc|
 
@@ -131,12 +136,10 @@
 
   | 字段 |参数名|参数类型|是否必填|备注|
   |:----|:----|:----|:----|:----|
-  |菜谱编号|recipeId|String|Y|
-  |菜谱名称|recipeName|String|Y|
-  |分类编号|categoryId|String|Y||
-  |概述|desc|String|N|
-  |热度|hot|String|N|
-  |展示图|imageUrl|String|N|相对路径|
+  |菜谱信息|info|List|Y|{recipeId:菜谱编号/recipeName:菜谱名称/ categoryId: 分类编号 / summary: 概述/hot: 热度/imageUrl:展示图   }|
+  |当前页码|pageNum|String|N|默认10条|
+  |每页条数|pageSize|String|N|默认第一页|
+  |总条数|pageTotal|String|
 --- 
 ### 查看菜谱详情
 > request uri： 
@@ -156,7 +159,8 @@
   |菜谱编号|recipeId|String|Y|
   |菜谱名称|recipeName|String|Y|
   |分类编号|categoryId|String|Y||
-  |概述|desc|String|N|
+  |分类名称|categoryName|String|Y||
+  |概述|summary|String|N|
   |热度|hot|String|N|
   |关联多媒体列表|media|List|N||
   |配料|ingredient|String|N|json|
@@ -252,11 +256,80 @@
 * 查看商品评价
 
 ## 购买功能
+
 #### 查看购物车
+> request uri： 
+> request method: get
+> request header: x-auth-token
+
+ **request params**
+  |字段|参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+ **response params**
+  | 字段 |参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |购物车编码|cartId|String|Y|
+  |购物车内项目数|cartItemCount|String|Y|
+  |商品内容|cartItem|List|Y|{spuId: \ skuId: \ name: \ num: \ amount: } |
+  |当前页码|pageNum|String|Y|
+  |显示条数|pageSize|String|Y|
+  |总页数|pageTotal|String|Y|
+---
 #### 加入购物车
+> request uri： 
+> request method: post
+> request header: x-auth-token
+
+ **request params**
+  |字段|参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+ **response params**
+  | 字段 |参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |商品内容|item|Array|Y|{skuId: \ num: } |
+---
 #### 修改购物车中项目的数量
+> request uri： 
+> request method: put
+> request header: x-auth-token
+
+ **request params**
+  |字段|参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |商品Id|skuId|String|Y||
+  |当前数量|num|String|Y||
+ **response params**
+  | 字段 |参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |商品内容|cartItem|List|Y|{spuId: \ skuId: \ name: \ num: \ amount: } |
+---
 #### 从购物车中移除项目
+> request uri： 
+> request method: delete
+> request header: x-auth-token
+
+ **request params**
+  |字段|参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |商品Id|skuId|String|Y||
+ **response params**
+  | 字段 |参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |操作结果|result|boolean|Y|httpstatus.code = 200|
+--- 
 #### 清空购物车
+> request uri： 
+> request method: delete
+> request header: x-auth-token
+
+ **request params**
+  |字段|参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |购物车编号|cartId|String|Y||
+ **response params**
+  | 字段 |参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |操作结果|result|boolean|Y|httpstatus.code = 200|
 
 #### 查询收货地址信息
 > request uri： 
@@ -272,7 +345,7 @@
   | 字段 |参数名|参数类型|是否必填|备注|
   |:----|:----|:----|:----|:----|
   |地址列表|userAddressList|List|Y|userAddress|
-
+---
 #### 查看配送方式
 > request uri： 
 > request method: get
@@ -287,7 +360,7 @@
   |配送方式|deliveryType|String|Y||
   |配送费|deliveryFee|String|N||
   |排序码|sort|String|Y||
-
+---
 
 #### 查看可配送日期【deliveryType = standar 】
 > request uri： 
@@ -304,7 +377,7 @@
   | 字段 |参数名|参数类型|是否必填|备注|
   |:----|:----|:----|:----|:----|
   |可选配送日期|option|List|Y|String|
-
+---
 #### 查看可配送时间【deliveryType = sonic 】
 > request uri： 
 > request method: get
@@ -320,7 +393,7 @@
   | 字段 |参数名|参数类型|是否必填|备注|
   |:----|:----|:----|:----|:----|
   |可选配送时间|option|List|Y|String|
-
+---
 #### 查看可自提地点【deliveryType = self 】
 > request uri： 
 > request method: get
@@ -336,7 +409,7 @@
   | 字段 |参数名|参数类型|是否必填|备注|
   |:----|:----|:----|:----|:----|
   |可选配送时间|option|List|Y|json|
-
+---
 #### 提交配送信息
 > request uri： 
 > request method: post
@@ -349,8 +422,7 @@
   |收货地址编码|userAddressId|String|Y||
   |配送方式|deliveryType|String|Y|standard/sonic/self|
   |送货时间|deliveryTime|String|N|deliveryType=self 时不填写|
-
-
+---
 #### 获取优惠券信息
 > request uri： 
 > request method: get
@@ -367,12 +439,80 @@
   |可用优惠券编码|couponId|String|Y||
   |可用优惠券类型|couponType|String|Y||
   |优惠金额|discount|String|Y|单位:分|
+---
+#### 提交购物车并生成订单
+> request uri： 
+> request method: post
+> request header: x-auth-token
 
-#### 提交订单
+ **request params**
 
+  |字段|参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |结算内容|packItemArr|jsonArr|Y|[{"goodsId":"12345"，"num"："4"}]|
+  |配送方式|deliveryType|String|Y|standard/sonic/self|
+  |收货地址方式|userAddressId|String|N|deliveryType ！= self|
+  |提/收货人姓名|consignee|String|Y|
+  |提/收货人联系方式|consigneeContact|Y|
+  |提/收货人地址|consigneeAddress|Y|
+  |优惠券编码|couponId|String|Y|
+  |配送费|deliveryFee|Y|
+  |提/收货时间|deliveryTime|String|N|deliveryType=self 时不填写|
+  
+**response**
+  | 字段 |参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |订单编号|orderId|String|Y||
+  |订单概况|summary|String|Y|订单内容简介|
+  |提/收货人姓名|consignee|String|Y|
+  |提/收货人联系方式|consigneeContact|Y|
+  |提/收货人地址|consigneeAddress|Y|
+  |优惠金额|discount|String|Y|
+  |运费|deliveryFee|String|Y|
+  |订单金额|amount|String|Y|单位:分|
+  |订单状态|state|String|Y|state:unpay|
+  |订单过期时间|expire|datetime|y|
+---
 #### 取消订单
+> request uri： 
+> request method: put
+> request header: x-auth-token
 
+ **request params**
+
+  |字段|参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+   |订单编号|orderId|String|Y||
+  
+**response**
+  | 字段 |参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |订单编号|orderId|String|Y||
+  |订单概况|summary|String|Y|订单内容简介|
+  |提/收货人姓名|consignee|String|Y|
+  |提/收货人联系方式|consigneeContact|Y|
+  |提/收货人地址|consigneeAddress|Y|
+  |优惠金额|discount|String|Y|
+  |运费|deliveryFee|String|Y|
+  |订单金额|amount|String|Y|单位:分|
+  |订单状态|state|String|Y|state:cancel|
+  |订单过期时间|expire|datetime|y|
+---
 #### 支付订单
+> request uri： 
+> request method: put
+> request header: x-auth-token
 
+ **request params**
+
+  |字段|参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |订单编号|orderId|String|Y||
+  
+**response**
+  | 字段 |参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |支付参数|param|String|Y|字段待定|
+---
 ## 个人中心
 * 
