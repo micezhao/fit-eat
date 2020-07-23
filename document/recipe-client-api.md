@@ -258,7 +258,7 @@
 #### 从购物车中移除项目
 #### 清空购物车
 
-#### 查询收货信息
+#### 查询收货地址信息
 > request uri： 
 > request method: get
 > request header: x-auth-token
@@ -273,6 +273,70 @@
   |:----|:----|:----|:----|:----|
   |地址列表|userAddressList|List|Y|userAddress|
 
+#### 查看配送方式
+> request uri： 
+> request method: get
+> request header: x-auth-token
+
+ **request params**
+  |字段|参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+ **response params**
+  | 字段 |参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |配送方式|deliveryType|String|Y||
+  |配送费|deliveryFee|String|N||
+  |排序码|sort|String|Y||
+
+
+#### 查看可配送日期【deliveryType = standar 】
+> request uri： 
+> request method: get
+> request header: x-auth-token
+
+ **request params**
+
+  |字段|参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |配送方式|deliveryType|String||standar|
+ **response params**
+
+  | 字段 |参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |可选配送日期|option|List|Y|String|
+
+#### 查看可配送时间【deliveryType = sonic 】
+> request uri： 
+> request method: get
+> request header: x-auth-token
+
+ **request params**
+
+  |字段|参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |配送方式|deliveryType|String||sonic|
+ **response params**
+
+  | 字段 |参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |可选配送时间|option|List|Y|String|
+
+#### 查看可自提地点【deliveryType = self 】
+> request uri： 
+> request method: get
+> request header: x-auth-token
+
+ **request params**
+
+  |字段|参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |配送方式|deliveryType|String||self|
+ **response params**
+
+  | 字段 |参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |可选配送时间|option|List|Y|json|
+
 #### 提交配送信息
 > request uri： 
 > request method: post
@@ -282,17 +346,32 @@
 
   |字段|参数名|参数类型|是否必填|备注|
   |:----|:----|:----|:----|:----|
-  |收货地址编码|userAddressId|String|||
-  |配送标准|standard|String||standard/supersonic|
-  |配送时间|
- **response params**
+  |收货地址编码|userAddressId|String|Y||
+  |配送方式|deliveryType|String|Y|standard/sonic/self|
+  |送货时间|deliveryTime|String|N|deliveryType=self 时不填写|
 
+
+#### 获取优惠券信息
+> request uri： 
+> request method: get
+> request header: x-auth-token
+
+ **request params**
+
+  |字段|参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  
+**response params >> list**
   | 字段 |参数名|参数类型|是否必填|备注|
   |:----|:----|:----|:----|:----|
-  |地址列表|userAddressList|List|Y|userAddress|
-#### 选择优惠券
-#### 取消订单
+  |可用优惠券编码|couponId|String|Y||
+  |可用优惠券类型|couponType|String|Y||
+  |优惠金额|discount|String|Y|单位:分|
+
 #### 提交订单
+
+#### 取消订单
+
 #### 支付订单
 
 ## 个人中心
