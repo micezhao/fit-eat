@@ -117,7 +117,7 @@
   |分类名称|categoryName|String|Y|
   |排序|sort|String|
 ---
-### 根据菜谱分类获得列表
+#### 根据菜谱分类获得列表
 > request uri： 
 > request method: get  
 > request header: x-auth-token
@@ -137,8 +137,8 @@
   | 字段 |参数名|参数类型|是否必填|备注|
   |:----|:----|:----|:----|:----|
   |菜谱信息|info|List|Y|{recipeId:菜谱编号/recipeName:菜谱名称/ categoryId: 分类编号 / summary: 概述/hot: 热度/imageUrl:展示图   }|
-  |当前页码|pageNum|String|N|默认10条|
-  |每页条数|pageSize|String|N|默认第一页|
+  |当前页码|pageNum|String|N|默认第一页|
+  |每页条数|pageSize|String|N|默认显示10条|
   |总条数|pageTotal|String|
 --- 
 ### 查看菜谱详情
@@ -170,55 +170,6 @@
   |详情介绍|introduction|String|
   |营养成分|nutritional|String||json|
 --- 
-
-### 查看菜谱评价
-> request uri： 
-> request method: get
-> request header: x-auth-token
-
- **request params**
-
-  |字段|参数名|参数类型|是否必填|备注|
-  |:----|:----|:----|:----|:----|
-  |菜谱编号|recipeId|String|Y|
-  |评价类型|search|Array|Y|
-
- **response params**
-
-  | 字段 |参数名|参数类型|是否必填|备注|
-  |:----|:----|:----|:----|:----|
-  |评价编号|commentId|String|Y|
-  |发布人编号|publisherId|String|Y|
-  |发布人昵称|publisherNickName|String|Y|
-  |发布时间|publishTime|String|Y||
-  |评价内容|content|String|N|
-  |评价等级|stars|String|N|
-  |多媒体列表|media|List|N||
-  |评价点赞|like|String|N|json|
---- 
-
-#### 评价菜谱
-> request uri： 
-> request method: get
-> request header: x-auth-token
-
- **request params**
-
-  |字段|参数名|参数类型|是否必填|备注|
-  |:----|:----|:----|:----|:----|
-  |菜谱编号|recipeId|String|Y|
-  |评价等级|stars|String|Y|
-  |评价内容|content|String|Y|
-  |多媒体列表|media|List|Y|
-
- **response params**
-
-  | 字段 |参数名|参数类型|是否必填|备注|
-  |:----|:----|:----|:----|:----|
-  |操作结果|result|boolean|Y|
-
-***
-
 #### 搜索食材
 
 #### 新建菜谱
@@ -245,18 +196,152 @@
   | 字段 |参数名|参数类型|是否必填|备注|
   |:----|:----|:----|:----|:----|
   |菜谱编号|recipeId|String|Y|
+---
+## 商品功能
+#### 查看商品详情
+> request uri： 
+> request method: get
+> request header: x-auth-token
 
-***
+ **request params**
+
+  |字段|参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |商品编号|spuId|String|Y|
+
+ **response params**
+  | 字段 |参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |商品编号|spuId|String|Y|
+  |商品编号|spuName|String|Y|
+  |商品分类|categoryId|String|Y||
+  |分类名称|categoryName|String|Y||
+  |热度|hot|String|N|
+  |关联多媒体列表|media|List|N||
+  |详情介绍|introduction|String|
+  |储存方式说明|storage|String|N|
+  |产地来源|origin|String|Y|
+  |使用注意事项|preparation|String|Y|
+  |营养成分|nutritional|String||json|
+
+#### 查看商品对应的sku
+> request uri： 
+> request method: get
+> request header: x-auth-token
+
+ **request params**
+  |字段|参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |商品编号|spuId|String|Y|
+
+ **response params**
+  | 字段 |参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |商品编号|spuId|String|Y|
+  |货品编号|skuId|String|Y|
+  |规格|spec|String|Y|
+  |价格|price|String|Y|
+---
+
+## 评价功能
+### 查看评价
+> request uri： 
+> request method: get
+> request header: x-auth-token
+
+ **request params**
+
+  |字段|参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |相关物编号|relativeId|String|Y|recipeId/spuId |
+  |评价类型|search|Array|Y|
+
+ **response params**
+
+  | 字段 |参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |评价编号|commentId|String|Y|
+  |相关物编号|relativeId|String|Y|
+  |相关物业务类型|relativeType|String|Y|
+  |发布人编号|publisherId|String|Y|
+  |发布人昵称|publisherNickName|String|Y|
+  |发布人头像|publisherHeaderImage|String|Y|
+  |发布时间|publishTime|String|Y||
+  |评价内容|content|String|N|
+  |评价等级|stars|String|N|
+  |多媒体列表|media|List|N||
+--- 
+
+#### 评价
+> request uri： 
+> request method: get
+> request header: x-auth-token
+
+ **request params**
+
+  |字段|参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |相关物编号|relativeId|String|Y|
+  |相关物业务类型|relativeType|String|Y|
+  |评价等级|stars|String|Y|
+  |评价内容|content|String|Y|
+  |多媒体列表|media|List|Y|
+
+ **response params**
+
+  | 字段 |参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |操作结果|result|boolean|Y|
+---
+
 
 ## 商品功能
-* 查看商品分类
-* 根据获取商品列表
-* 查看商品详情
-* 评价商品
-* 查看商品评价
+#### 查看商品分类
+> request uri： 
+> request method: get  
+> request header: x-auth-token
+
+ **request params**
+
+  |字段|参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |业务类型|bizType|String|Y|业务类型|
+
+ **response params**
+
+  | 字段 |参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |分类编号|categoryId|String|Y|
+  |分类名称|categoryName|String|Y|
+  |排序|sort|String|
+---
+#### 根据获取商品列表
+> request uri： 
+> request method: get  
+> request header: x-auth-token
+
+ **request params**
+
+  |字段|参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |分类编号|categoryId|String|Y||
+  |当前页码|pageNum|String|N|默认10条|
+  |每页条数|pageSize|String|N|默认第一页|
+  |排序|sort|String|N|排序条件,默认创建时间|
+  |排序方式|orderBy|String|desc / asc|
+
+ **response params**
+
+  | 字段 |参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |商品信息|info|List|Y|{spuId:商品编号/spuName:商品名称/ categoryId: 分类编号 / summary: 概述/hot: 热度/imageUrl:展示图}|
+  |当前页码|pageNum|String|N|默认第一页|
+  |每页条数|pageSize|String|N|默认10条|
+  |总条数|pageTotal|String|
+---
+
 
 ## 购买功能
-
 #### 查看购物车
 > request uri： 
 > request method: get
@@ -283,10 +368,11 @@
  **request params**
   |字段|参数名|参数类型|是否必填|备注|
   |:----|:----|:----|:----|:----|
+  |商品内容|item|Array|Y|{skuId: \ num: } |
  **response params**
   | 字段 |参数名|参数类型|是否必填|备注|
   |:----|:----|:----|:----|:----|
-  |商品内容|item|Array|Y|{skuId: \ num: } |
+  |操作结果|result|boolean|Y|httpstatus.code = 200|
 ---
 #### 修改购物车中项目的数量
 > request uri： 
@@ -301,7 +387,7 @@
  **response params**
   | 字段 |参数名|参数类型|是否必填|备注|
   |:----|:----|:----|:----|:----|
-  |商品内容|cartItem|List|Y|{spuId: \ skuId: \ name: \ num: \ amount: } |
+  |当前分项总价|amount|String|Y||
 ---
 #### 从购物车中移除项目
 > request uri： 
@@ -514,5 +600,6 @@
   |:----|:----|:----|:----|:----|
   |支付参数|param|String|Y|字段待定|
 ---
+
 ## 个人中心
 * 
