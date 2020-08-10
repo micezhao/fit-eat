@@ -897,3 +897,56 @@ jenkins的使用：
                     2.5） 在不去重的前提下，用 union all 代替 union
                     2.6） 如果有大的偏移，先使用limit 排除，在执行过滤
                     
+
+
+
+rxjs：结合了 观察者模式 | 迭代器模式 | 函数式编程 的优点
+是一个js 的库，适合编写 非同步，以事件为主的程序，通过 observable sequences 操作数据
+
+Reactive programming: 一种基于异步的数据流的编程
+Stream: 一系列的操作
+非同步的时序控制：请求 <-> 响应 顺序不一样是，用rxjs 比较容易控制
+主要目的：有效管理非同步环境下的事件资料
+    非同步：ajax，setTimeout，setInterval，promise
+    事 件：各种dom事件，css，html5（Geolocation,websocket,server send event）
+
+核心概念：
+observable : 可观察的事件
+observer : 观察者
+**【observable <->observe 成对出现，observe必须要订阅后observable才会执行】**
+subscription： 控制 【observe 订阅->observable】的执行整体，可以用来取消订阅 
+operations：运算符 -> 用来处理 从 observable -> observe 的数据重组 【将近100个，常用十几个】
+subject: 主题 处理一对多的关系
+schedule: 调度器，控制事件并发情况
+
+example：
+    rxjs.interval(500)                ->| 创建 observable
+        .pipe(                        ->| 创建 管道 进入 stream 操作
+            rxjs.operators.take(4)    ->| 使用 rxjs 预算符进行操作
+        ).subcirbe(console.log)       ->| 订阅 ->观察者 (观察者需要执行的函数)
+                                      ->| 以上步骤，就是创建了一个完整的创建客观察事件 -> 传递信息 -> 观察者 的过程
+                                      ->| 如果用 变量 var sub 来接受这段代码，sub就是一个 subscription 对象，在需要的是用可以调用 .unsubcribe方法来停止订阅                                   
+
+分步说明：
+创建可观察者
+var clicks$ = rxjs.fromEvent(document,'click')
+创建观察者
+var observer = { next:(x) => console.log(x)}
+让观察者观察可观察者,组成订阅对象
+var sub$ =clicks$.subcirbe(observer);
+取消订阅
+sub$.unsubscribe(); 
+
+observer 的三种属性：
+    next：正常执行的内容
+    complete：执行完成后需要执行的内容
+    error：执行发生错误以后，要执行的操作
+
+rxjs.operator ：https://rxjs.dev/guide/operators
+pipe(
+    take(n), -> 执行到几 : 如果到n，这个函数就结束了，若这个operator放在最后，就有终结pipe的能力
+    filter([expression | function]) -> 返回boolean，如果是true，留下符合条件的数据
+)
+
+
+
