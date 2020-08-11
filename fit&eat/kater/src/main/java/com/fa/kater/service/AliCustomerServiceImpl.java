@@ -6,8 +6,9 @@ import com.fa.kater.customer.pojo.Credential;
 import com.fa.kater.customer.pojo.bo.AliLoginSuccess;
 import com.fa.kater.customer.pojo.bo.AuthBo;
 import com.fa.kater.customer.pojo.bo.ParamRequest;
-import com.fa.kater.customer.pojo.enums.LoginTypeEnum;
 import com.fa.kater.customer.service.impl.CredentialServiceImpl;
+import com.fa.kater.enums.LoginTypeEnum;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;

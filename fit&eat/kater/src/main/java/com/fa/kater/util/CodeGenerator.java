@@ -20,40 +20,39 @@ public class CodeGenerator {
         AutoGenerator mpg = new AutoGenerator();
         GlobalConfig gc = new GlobalConfig();
         String projectPath = System.getProperty("user.dir");
-        gc.setOutputDir(projectPath + "/kobe/src/main/java");
-        gc.setAuthor("jxh");
+        gc.setOutputDir(projectPath + "/kater/src/main/java");
+        gc.setAuthor("micezhao");
         //生成完后不要打开资源文件夹
         gc.setOpen(false);
 
         gc.setFileOverride(false);
         gc.setServiceName("%sService");
-        gc.setIdType(IdType.ID_WORKER);
+        gc.setIdType(IdType.ASSIGN_ID);
         gc.setDateType(DateType.ONLY_DATE);
         //gc.setSwagger2(true);
 
         mpg.setGlobalConfig(gc);
 
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://118.190.53.214:3386/fa_kobe2?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8");
+        dsc.setUrl("jdbc:mysql://39.100.131.79:3306/fa_kobe2?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8");
         // dsc.setSchemaName("public");
         dsc.setDriverName("com.mysql.cj.jdbc.Driver");
         dsc.setUsername("root");
-        dsc.setPassword("891122");
+        dsc.setPassword("jxh1988");
         dsc.setDbType(DbType.MYSQL);
         mpg.setDataSource(dsc);
 
         PackageConfig pc = new PackageConfig();
-        pc.setModuleName("customer");
+        pc.setModuleName("auth");
         pc.setParent("com.fa.kater");
         pc.setEntity("pojo");
         pc.setMapper("mapper");
         pc.setService("service");
-        //pc.setController("controller");
         mpg.setPackageInfo(pc);
 
         // 策略配置
         StrategyConfig strategy = new StrategyConfig();
-        strategy.setInclude("credential","user_info","login_info");
+        strategy.setInclude("third_credential","user_info","access_log","agent_third_config","agent_info");
         strategy.setNaming(NamingStrategy.underline_to_camel);
 
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);

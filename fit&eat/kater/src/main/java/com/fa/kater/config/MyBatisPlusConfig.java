@@ -18,7 +18,7 @@ import static java.util.stream.Collectors.toList;
 
 @Configuration
 @EnableTransactionManagement
-@MapperScan("com.fa.kater.customer.mapper")
+@MapperScan("com.fa.kater.auth.mapper")
 public class MyBatisPlusConfig {
 
     @Bean
