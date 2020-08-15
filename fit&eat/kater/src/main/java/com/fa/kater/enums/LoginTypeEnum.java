@@ -9,7 +9,7 @@ public enum LoginTypeEnum {
 
     WECHAT("wx_lite","微信登陆"),
     ALI_PAY("ali_lite","支付宝"),
-    WE("web","网页登录"),
+    WEB("web","网页登录"),
     APP("app","app");
 	
     public String type;	

@@ -1,5 +1,6 @@
 package com.fa.kater;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
@@ -11,6 +12,7 @@ import org.springframework.context.annotation.ComponentScans;
 @SpringBootApplication
 @EnableFeignClients
 @ComponentScan({"com.fa","com.f.a"})
+@MapperScan("com.fa.kater.mapper")
 public class KaterApplication8764 {
     public static void main(String[] args) {
         SpringApplication.run(KaterApplication8764.class, args);

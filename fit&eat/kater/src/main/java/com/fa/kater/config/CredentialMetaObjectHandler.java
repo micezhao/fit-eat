@@ -1,13 +1,14 @@
 package com.fa.kater.config;
 
-import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.fa.kater.auth.pojo.AccessLog;
-import com.fa.kater.customer.pojo.LoginInfo;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Date;
+
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
+import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import com.fa.kater.pojo.AccessLog;
+
+import lombok.extern.slf4j.Slf4j;
 
 
 //指定时间插入字段

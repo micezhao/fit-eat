@@ -5,7 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class ErrRtn implements Serializable {
+public class ErrRtn extends Exception implements Serializable {
 
 	
 	/**

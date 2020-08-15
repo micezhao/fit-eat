@@ -1,18 +1,22 @@
 package com.f.a.kobe.view;
 
-import lombok.Data;
-import lombok.ToString;
-
 import java.io.Serializable;
 
-@Data
-@ToString
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@Builder
 public class UserAgent implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 3035675799721442471L;
+	
+	private String agentId;
 	
 	private String loginType;
 	/**
@@ -79,10 +83,11 @@ public class UserAgent implements Serializable {
 	 * 当前积分
 	 */
 	private Integer score;
-
+	
 	/**
-	 * 用户手机号
+	 * 是否绑定了手机号
 	 */
-	private String updateMobile;
+	private boolean hasbinded;
+
 
 }
