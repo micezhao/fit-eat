@@ -13,17 +13,5 @@ import com.fa.kater.pojo.UserInfo;
  */
 @Service
 public class MobileSMSAuthBiz {
-
-	@Override
-	public UserInfo existed(LoginParam param) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public UserAgent register(LoginParam param) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 }

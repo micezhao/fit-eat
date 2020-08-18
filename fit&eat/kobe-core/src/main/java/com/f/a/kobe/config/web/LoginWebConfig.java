@@ -36,9 +36,9 @@ public class LoginWebConfig implements WebMvcConfigurer  {
 	
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(new UserSessionInterceptor()).addPathPatterns("/**").
-		excludePathPatterns("/login/getAuthCode","/login/registerByThird","/login/thirdPart/**","/login/registerTest","/admin/**")
-		.excludePathPatterns("/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**");
+		registry.addInterceptor(new UserSessionInterceptor()).addPathPatterns("/**")
+			.excludePathPatterns("/login/thirdPart/**","/login/registerTest","/admin/**")
+			.excludePathPatterns("/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**");
 	}
 	
 	/**

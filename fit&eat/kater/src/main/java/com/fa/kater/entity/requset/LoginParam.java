@@ -23,6 +23,4 @@ public class LoginParam {
 	
 	public String password;
 	
-
-	
 }

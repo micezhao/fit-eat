@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import com.fa.kater.pojo.AgentThirdConfig;
 
 @Service
-public class AlipayHandler implements ThirdAuthHandlerInterface{
+public class AlipayHandler implements ThirdAuthInterface{
 
 	@Override
 	public String getOpenId(AgentThirdConfig agentConfig, String thirdAuthId) {

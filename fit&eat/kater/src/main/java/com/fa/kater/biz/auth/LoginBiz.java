@@ -1,46 +1,39 @@
 package com.fa.kater.biz.auth;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.f.a.kobe.contants.Contants;
 import com.f.a.kobe.view.UserAgent;
-import com.fa.kater.biz.UserAgentBiz;
+import com.fa.kater.annotations.AccessLogAnnot;
+import com.fa.kater.annotations.AccessLogAnnot.AccessLogType;
+import com.fa.kater.biz.UserInfoBiz;
 import com.fa.kater.entity.requset.LoginParam;
-import com.fa.kater.enums.LoginTypeEnum;
-import com.fa.kater.pojo.AccessLog;
+import com.fa.kater.enums.AuthTypeEnum;
 import com.fa.kater.pojo.UserInfo;
-import com.fa.kater.service.impl.AccessLogServiceImpl;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public abstract class LoginBiz {
 
 	@Autowired
-	private AccessLogServiceImpl accessLogServiceImpl;
-
-	@Autowired
-	private UserAgentBiz userAgentBiz;
+	private UserInfoBiz userInfoBiz;
 	
-	
+	@AccessLogAnnot(logType = AccessLogType.LOG_IN )
 	public UserAgent login(LoginParam param) {
 		UserInfo userInfo = existed(param);
 		if (userInfo != null) {
-			return userAgentBiz.generator(userInfo.getUserAccount(),param.getLoginType());
+			return userInfoBiz.generator(userInfo.getUserAccount(),param.getLoginType());
 		}
-		return register(param);
-
+		if(!StringUtils.equalsAny(param.getAuthType(), AuthTypeEnum.AUTH_PASSWORD.type,AuthTypeEnum.AUTH_SMS_VALIDATE.type) ) {
+			return null;
+		}
+		UserAgent userAgent = register(param);
+		return userAgent;
 	}
 
-	public boolean login(UserAgent userAgent) {
-		AccessLog accessLog = new AccessLog();
-		accessLog.setUserAccount(userAgent.getUserAccount());
-		accessLog.setAgentId(userAgent.getLoginType());
-		accessLog.setAuthType(accessLog.getAuthType());
-		accessLog.setEvent(Contants.LOGIN_TYPE_LOGIN);
-		return accessLogServiceImpl.save(accessLog);
-	}
-	
-	
 	public abstract UserInfo existed(LoginParam param);
 	
 	
@@ -51,16 +44,10 @@ public abstract class LoginBiz {
 	 */
 	public abstract UserAgent register(LoginParam param);
 	
-
-	public boolean logout(UserAgent userAgent) {
-		AccessLog accessLog = new AccessLog();
-		accessLog.setUserAccount(userAgent.getUserAccount());
-		accessLog.setAgentId(userAgent.getLoginType());
-		accessLog.setAuthType(accessLog.getAuthType());
-		accessLog.setEvent(Contants.LOGIN_TYPE_LOGOUT);
-		return accessLogServiceImpl.save(accessLog);
+	@AccessLogAnnot(logType = AccessLogType.LOG_OUT)
+	public void logout(UserAgent userAgent) {
+		// TODO 从缓存中删除当前userAgent
+		log.info("用户编号:{}已从系统登出",userAgent.getUserAccount());
 	}
-	
-
 	
 }

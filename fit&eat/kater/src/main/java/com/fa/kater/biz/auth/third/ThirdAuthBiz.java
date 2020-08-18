@@ -8,8 +8,10 @@ import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.f.a.kobe.view.UserAgent;
+import com.f.a.kobe.view.UserAgent.UserAgentBuilder;
 import com.fa.kater.biz.auth.LoginBiz;
 import com.fa.kater.entity.requset.LoginParam;
+import com.fa.kater.enums.AuthTypeEnum;
 import com.fa.kater.pojo.AgentThirdConfig;
 import com.fa.kater.pojo.ThirdCredential;
 import com.fa.kater.pojo.UserInfo;
@@ -31,9 +33,8 @@ public class ThirdAuthBiz extends LoginBiz{
 	private ThirdCredentialServiceImpl thirdCredentialServiceImpl;
 	
 	@Autowired
-	private Map<String , ThirdAuthHandlerInterface> handlerMap;
-	
-	
+	private Map<String , ThirdAuthInterface> handlerMap;
+		
 	
 	@Override
 	public UserAgent register(LoginParam param) {
@@ -52,14 +53,21 @@ public class ThirdAuthBiz extends LoginBiz{
 		credential.setAuthType(authType);
 		credential.setDeleted(0);
 		thirdCredentialServiceImpl.save(credential);
-		
-		return null;
+		UserAgentBuilder userAgentBuilder = UserAgent.builder().hasbinded(false)
+							.agentId(agentId).loginType(param.getLoginType())
+							.userAccount(userInfo.getUserAccount());
+		if(AuthTypeEnum.getEnumByType(authType)==AuthTypeEnum.AUTH_WX) {
+			userAgentBuilder.wxopenid(openId);
+		}else if(AuthTypeEnum.getEnumByType(authType)==AuthTypeEnum.AUTH_ALI) {
+			userAgentBuilder.aliopenid(openId);
+		}
+		return userAgentBuilder.build();
 	}
 
 	@Override
 	public UserInfo existed(LoginParam param) {
 		
-		ThirdAuthHandlerInterface thirdAuthHandler = this.getHandlerInstance(param.getAuthType());
+		ThirdAuthInterface thirdAuthHandler = this.getHandlerInstance(param.getAuthType());
 		AgentThirdConfig  agentConfig = getAgentThirdConfig(param.getAgentId());
 		String openId = thirdAuthHandler.getOpenId(agentConfig, param.getThirdAuthId());
 		
@@ -98,8 +106,12 @@ public class ThirdAuthBiz extends LoginBiz{
 	 * @param authType
 	 * @return
 	 */
-	private ThirdAuthHandlerInterface getHandlerInstance(String authType) {
-		String handlerName = authType+"handler";
+	private ThirdAuthInterface getHandlerInstance(String authType) {
+		if(authType.length() > 1) {
+			//TODO 第一个字母转大写
+			authType.replace(authType.sp, newChar) 
+		}
+		String handlerName = authType.toUpperCase()+"Handler";
 		return handlerMap.get(handlerName);
 	}
 	

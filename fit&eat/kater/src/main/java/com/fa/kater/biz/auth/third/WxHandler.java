@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-public class WxHandler implements ThirdAuthHandlerInterface{
+public class WxHandler implements ThirdAuthInterface{
 	
 	@Autowired
 	private RestTemplate restTemplate;
