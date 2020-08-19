@@ -22,8 +22,7 @@ public class RestfulApiExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     public Map<String, Object> exceptionHandler(HttpServletRequest request, Exception exception) throws Exception {
         Map<String, Object> error = new HashMap<String, Object>();
-        error.put("status", 500);
-        error.put("message", exception.getMessage());
+        error.put("errMsg", exception.getMessage());
         return error;
     }
 }

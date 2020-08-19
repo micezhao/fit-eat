@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.f.a.kobe.contants.Contants;
 import com.f.a.kobe.view.UserAgent;
+import com.fa.kater.annotations.AccessLogAnnot;
+import com.fa.kater.annotations.AccessLogAnnot.AccessLogType;
 import com.fa.kater.biz.auth.LoginBizInterface;
 import com.fa.kater.entity.requset.LoginParam;
 import com.fa.kater.exceptions.ErrEnum;
@@ -54,6 +56,16 @@ public class LoginCtrl {
 		return new ResponseEntity<Object>(resultMap, HttpStatus.OK);
 	}
 
+	
+	@GetMapping("logout")
+	@AccessLogAnnot(logType = AccessLogType.LOG_OUT)
+	public ResponseEntity<Object> logout(HttpSession session,UserAgent userAgent){
+		logger.info("用户:{}登出",userAgent.getUserAccount());
+		session.setAttribute(Contants.USER_AGENT,null);
+		session.invalidate();
+		return new ResponseEntity<Object>(true,HttpStatus.OK);
+	}
+	
 	@GetMapping("/test")
 	public String test(UserAgent userAgent) {
 		if (userAgent == null) {
