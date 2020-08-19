@@ -14,14 +14,11 @@ import lombok.extern.slf4j.Slf4j;
 //指定时间插入字段
 @Slf4j
 @Component
-public class CredentialMetaObjectHandler  implements MetaObjectHandler {
+public class SQLMetaObjectHandler  implements MetaObjectHandler {
 
     @Override
     public void insertFill(MetaObject metaObject) {
         log.info("插入时间插入");
-        if(metaObject.getOriginalObject() instanceof AccessLog){
-            this.setFieldValByName("createTime",new Date(),metaObject);
-        }
         this.setFieldValByName("gmtCreate",new Date(),metaObject);
         this.setFieldValByName("gmtModified",new Date(),metaObject);
     }

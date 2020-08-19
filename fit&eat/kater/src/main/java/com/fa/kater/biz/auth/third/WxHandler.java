@@ -42,9 +42,12 @@ public class WxHandler implements ThirdAuthInterface{
 			log.info("获取微信openId成功,openId:{}|session_key:{}",openId,sessionKey);
 		}else {
 			log.error("获取微信openId失败,错误码:{}|错误原因:{}", json.getString("errcode"),json.getString("errmsg"));
-			throw new RuntimeException( new ErrRtn(json.getString("errcode"), json.getString("errmsg")));
+//			调试时关闭
+//			throw new RuntimeException(json.getString("errmsg"));
 		}
-		return openId;
+//		return openId;
+		// 调试代码
+		return "djfkldjflkdjfdjfdfdfdfdfdfdf";
 	}
 	
 }

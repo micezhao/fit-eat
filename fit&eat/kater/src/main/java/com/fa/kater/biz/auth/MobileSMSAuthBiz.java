@@ -12,6 +12,18 @@ import com.fa.kater.pojo.UserInfo;
  *
  */
 @Service
-public class MobileSMSAuthBiz {
+public class MobileSMSAuthBiz implements LoginBizInterface {
+
+	@Override
+	public UserAgent login(LoginParam param) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void logout(UserAgent userAgent) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

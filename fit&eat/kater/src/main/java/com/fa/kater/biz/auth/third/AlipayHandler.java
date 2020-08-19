@@ -10,7 +10,7 @@ public class AlipayHandler implements ThirdAuthInterface{
 	@Override
 	public String getOpenId(AgentThirdConfig agentConfig, String thirdAuthId) {
 		// TODO Auto-generated method stub
-		return null;
+		return "8dfaedffdkjkjf";
 	}
 	
 }
