@@ -1,5 +1,7 @@
 package com.fa.kater.ctrl;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,12 +41,16 @@ public class UserCtrl {
 	 * @param userAgent
 	 * @return
 	 */
-	@GetMapping("smscodeAttain")
+	@GetMapping("smscodeAttain/{mobile}")
 	public ResponseEntity<Object> smscodeAttain(UserAgent userAgent) {
 		log.debug("请求获取短信验证码");
 		String smscode = String.valueOf((int) ((Math.random() * 9 + 1) * 100000));
-		Map<String, String> result = new HashMap<String, String>();
+		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("validateCode", smscode);
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+		calendar.add(Calendar.MINUTE, 8);
+		result.put("expire", calendar.getTime());
 		return new ResponseEntity<Object>(result, HttpStatus.OK);
 	}
 
@@ -55,8 +61,10 @@ public class UserCtrl {
 	 * @param code
 	 * @return
 	 */
-	@GetMapping("smscodeVaildate/{code}")
-	public ResponseEntity<Object> smscodeVaildate(UserAgent userAgent, @PathVariable("code") String code) {
+	@GetMapping("smscodeVaildate/{mobile}/{validateCode}")
+	public ResponseEntity<Object> smscodeVaildate(UserAgent userAgent
+				,@PathVariable("validateCode") String code
+				,@PathVariable("mobile") String mobile) {
 		log.debug("请求验证短信验证码");
 		Map<String, Boolean> result = new HashMap<String, Boolean>();
 		result.put("validateResult", true);

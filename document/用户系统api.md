@@ -64,7 +64,7 @@
   | 字段 |参数名|参数类型|是否必填|备注|
   |:----|:----|:----|:----|:----|
   |验证码|validateCode|String|Y|用于校验接口|
-  |过期时间|expire|date|Y||
+  |过期时间|expire|date|Y|用于页面倒数计时|
 ---
 
 * 校验验证码
@@ -72,6 +72,7 @@
 > uri： /user/smscodeVaildate/{mobile}/{validateCode}
 > method: get
 > header: X-AUTH-TOKEN
+
 **request**
   |字段|参数名|参数类型|是否必填|备注|
   |:----|:----|:----|:----|:----|
