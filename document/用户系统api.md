@@ -11,9 +11,9 @@
 ## 用户登录
 * 使用第三方账号登录
 > 接口说明：用于用户通过业务系统客户端请求登录，如果用户是首次访问系统，系统会自动完成注册<br>
-> uri： /login/logout
-> method: get
-> header: 无
+> uri： /login/logout<br>
+> method: get<br>
+> header: 无<br>
 
  **request**
   |字段|参数名|参数类型|是否必填|备注|
@@ -35,9 +35,9 @@
 ---
 
 * 用户登出
-> 接口说明：用于用户通过业务系统客户端请求登录，如果用户是首次访问系统，系统会自动完成注册
-> uri： /login/thirdPart/{agentId}/{loginType}/{thirdAuthId}/{authType}
-> method: get
+> 接口说明：用于用户通过业务系统客户端请求登录，如果用户是首次访问系统，系统会自动完成注册<br>
+> uri： /login/thirdPart/{agentId}/{loginType}/{thirdAuthId}/{authType}<br>
+> method: get<br>
 > header: X-AUTH-TOKEN
   
 **response**
@@ -50,9 +50,9 @@
 ## 用户信息相关接口
 
 * 获取验证码
-> 接口说明：通过手机号对用户信息进行绑定，绑定成功后，用户信息将会合并
-> uri： /user/smscodeAttain/{mobile}
-> method: get
+> 接口说明：通过手机号对用户信息进行绑定，绑定成功后，用户信息将会合并<br>
+> uri： /user/smscodeAttain/{mobile}<br>
+> method: get<br>
 > header: X-AUTH-TOKEN
 
 **request**
@@ -68,10 +68,10 @@
 ---
 
 * 校验验证码
-> 接口说明：通过手机号对用户信息进行绑定，绑定成功后，用户信息将会合并
-> uri： /user/smscodeVaildate/{mobile}/{validateCode}
-> method: get
-> header: X-AUTH-TOKEN
+> 接口说明：通过手机号对用户信息进行绑定，绑定成功后，用户信息将会合并<br>
+> uri： /user/smscodeVaildate/{mobile}/{validateCode}<br>
+> method: get<br>
+> header: X-AUTH-TOKEN<br>
 
 **request**
   |字段|参数名|参数类型|是否必填|备注|
@@ -86,9 +86,9 @@
 ---
 
 * 用户通过手机号绑定
-> 接口说明：通过手机号对用户信息进行绑定，绑定成功后，用户信息将会合并
-> uri： /user/mobileBind/{mobile}
-> method: put
+> 接口说明：通过手机号对用户信息进行绑定，绑定成功后，用户信息将会合并<br>
+> uri： /user/mobileBind/{mobile}<br>
+> method: put<br>
 > header: X-AUTH-TOKEN
 
  **request**
@@ -103,9 +103,9 @@
 ---
 
 * 用户(更新)完善个人信息
-> 接口说明：用户完善个人信息
-> uri： /user/fillup
-> method: put
+> 接口说明：用户完善个人信息<br>
+> uri： /user/fillup<br>
+> method: put<br>
 > header: X-AUTH-TOKEN
 
  **request**
