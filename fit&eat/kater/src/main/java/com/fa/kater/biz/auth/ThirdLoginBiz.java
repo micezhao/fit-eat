@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.f.a.kobe.view.UserAgent;
@@ -30,10 +31,7 @@ public class ThirdLoginBiz implements LoginBizInterface{
 
 	@Autowired
 	private UserInfoBiz userInfoBiz;
-	
-	@Autowired
-	private UserInfoServiceImpl userInfoServiceImpl;
-	
+		
 	@Autowired
 	private ThirdCredentialServiceImpl thirdCredentialServiceImpl;
 	
@@ -55,7 +53,7 @@ public class ThirdLoginBiz implements LoginBizInterface{
 		ThirdAuthInterface thirdAuthHandler = this.getHandlerInstance(param.getAuthType());
 		AgentThirdConfig  agentConfig = getAgentThirdConfig(param.getAgentId());
 		String openId = thirdAuthHandler.getOpenId(agentConfig, param.getThirdAuthId());
-		
+		param.setOpenId(openId);
 		QueryWrapper<ThirdCredential> queryWrapper = new QueryWrapper<ThirdCredential>();
 		ThirdCredential entity = new ThirdCredential();
 		entity.setAgentId(param.getAgentId());
@@ -79,16 +77,15 @@ public class ThirdLoginBiz implements LoginBizInterface{
 	 * @param param
 	 * @return
 	 */
+	@Transactional
 	public  UserAgent register(LoginParam param) {
 		String agentId = param.getAgentId();
 		String authType = param.getAuthType();
-		UserInfo userInfo = new UserInfo();
-		userInfo.setAgentId(agentId);
-		userInfo.setUserAccount(UUID.randomUUID().toString());
-		userInfoServiceImpl.save(userInfo); // 生成一个编号
+		UserInfo userInfo = userInfoBiz.initializeUserInfo(agentId);
 		
-		//TODO 请求第三方接口，并获取第三方的凭证信息
-		String openId = getHandlerInstance(authType).getOpenId(getAgentThirdConfig(agentId), param.getThirdAuthId());
+		//请求第三方接口，并获取第三方的凭证信息
+		String openId = param.getOpenId(); // 由于authcode 只能用一次，因此，从请求参数回去
+//				getHandlerInstance(authType).getOpenId(getAgentThirdConfig(agentId), param.getThirdAuthId());
 		
 		ThirdCredential credential = new ThirdCredential();
 		credential.setAgentId(agentId);

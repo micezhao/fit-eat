@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +29,31 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class UserInfoBiz {
-
+	
+	private final static String DEFAULT_AVATAR_URI = "/headimgs/avatar.png";
+	
 	@Autowired
 	private UserInfoServiceImpl userInfoService;
 
 	@Autowired
 	private ThirdCredentialServiceImpl thirdCredentialService;
-
+	
+	
+	public UserInfo initializeUserInfo(String agentId) {
+		Date date = new Date();
+		Long timeStamp = date.getTime();
+		String timeStampStr = String.valueOf(timeStamp);
+		String nameSuffix = timeStampStr.substring(timeStampStr.length() - 8, timeStampStr.length());
+		UserInfo userInfo = new UserInfo();
+		String userAccount = UUID.randomUUID().toString();
+		userInfo.setAgentId(agentId);
+		userInfo.setHeadimgUrl(DEFAULT_AVATAR_URI);
+		userInfo.setNickname("anonymous"+nameSuffix);
+		userInfo.setUserAccount(userAccount);
+		userInfoService.save(userInfo); 
+		return userInfo;
+	}
+	
 	/**
 	 * 用户代理对象生成器，返回登录用户视图
 	 * 

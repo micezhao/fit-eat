@@ -16,10 +16,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.f.a.kobe.contants.Contants;
+import com.f.a.kobe.utils.FileUtils;
 import com.f.a.kobe.view.UserAgent;
 import com.fa.kater.biz.UserInfoBiz;
 import com.fa.kater.entity.requset.UserInfoRequest;
@@ -34,6 +37,9 @@ public class UserCtrl {
 
 	@Autowired
 	private UserInfoBiz userBiz;
+	
+	@Autowired
+	private FileUtils fileUtils;
 
 	/**
 	 * TODO 以后迁移到消息中心 获取手机号验证码
@@ -92,6 +98,17 @@ public class UserCtrl {
 		UserInfo userInfo = new UserInfo();
 		userInfo = userInfo.selectOne(new QueryWrapper<UserInfo>(userInfo.setUserAccount(userAccount).setAgentId(agentId)));
 		return new ResponseEntity<Object>(userInfo, HttpStatus.OK);
+	}
+	
+	
+	@PostMapping("/uploadImg")
+	public ResponseEntity<Object> downloadFile(@RequestParam("userAccount") String userAccount ,@RequestParam("headerImg") MultipartFile file){
+		String subPath = userAccount;
+		fileUtils.checkFileSize(file.getSize());
+		String filePath = fileUtils.upload(subPath,file);
+		Map<String,String> resultMap = new HashMap<String, String>();
+		resultMap.put("filePath", filePath);
+		return new ResponseEntity<Object>(resultMap, HttpStatus.OK);
 	}
 
 }

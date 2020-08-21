@@ -102,6 +102,24 @@
   |||||httpstatuscode = 200 |
 ---
 
+* 用户上传用户头像
+> 接口说明：上传用户头像<br>
+> uri： /user/headerImg/<br>
+> method: put<br>
+> header: 无
+
+ **request**
+  |字段|参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |头像文件|headerImg|multipartFile|Y||
+  |用户账号|userAccount|String|Y||
+  
+**response**
+  | 字段 |参数名|参数类型|是否必填|备注|
+  |:----|:----|:----|:----|:----|
+  |文件保持路径|filePath|String|Y|相对路径|
+---
+
 * 用户(更新)完善个人信息
 > 接口说明：用户完善个人信息<br>
 > uri： /user/fillup<br>

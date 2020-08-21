@@ -51,6 +51,7 @@ public class LoginCtrl {
 		session.setAttribute(Contants.USER_AGENT, userAgent);
 		logger.debug("当前sessionId:{}", session.getId());
 		resultMap.put("X-AUTH-TOKEN", session.getId());
+		resultMap.put("userAgent", userAgent);
 		// TODO 是否绑定了手机号 的实现逻辑
 		resultMap.put("hasBinded", userAgent.getMobile() == null ? false : true);
 		return new ResponseEntity<Object>(resultMap, HttpStatus.OK);

@@ -8,6 +8,8 @@ eureka:
     lease-renewal-interval-in-seconds: 2  #设置心跳时间间隔(默认30s)
     prefer-ip-address: true       #访问路径变为IP地址
     instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${server.port}
+    #hostname: aliyun-jxh
+    #instance-id: ${spring.application.name}:${eureka.instance.hostname}:${server.port}
 
 spring:
    cloud:

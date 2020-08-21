@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 
+import com.alibaba.fastjson.JSONObject;
 import com.f.a.kidd.config.CustomizeZuulProperties;
+import com.f.a.kidd.entity.ErrRtn;
 import com.f.a.kobe.contants.Contants;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
@@ -46,7 +48,8 @@ public class UserSessionFilter extends ZuulFilter {
 		}
 		if (request.getSession().getAttribute(Contants.USER_AGENT) == null) {
 			currentContext.setSendZuulResponse(false); // 如果未找到用户信息就直接返回，不在转发请求
-			currentContext.setResponseBody("Non Authoritative Information");
+			String resBody = JSONObject.toJSONString(new ErrRtn("Non Authoritative Information In Request Header "));
+			currentContext.setResponseBody(resBody);
 			currentContext.setResponseStatusCode(HttpStatus.SC_NON_AUTHORITATIVE_INFORMATION);
 			return null;
 		}

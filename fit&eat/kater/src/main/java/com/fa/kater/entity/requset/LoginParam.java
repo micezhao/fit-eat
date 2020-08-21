@@ -15,6 +15,8 @@ public class LoginParam {
 	
 	public String thirdAuthId;
 	
+	public String openId;
+	
 	public String mobile;
 	
 	public String smscode;

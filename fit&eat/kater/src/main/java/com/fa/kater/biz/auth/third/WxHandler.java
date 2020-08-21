@@ -36,18 +36,16 @@ public class WxHandler implements ThirdAuthInterface{
 		String openId = null;
 		String result=restTemplate.getForObject(AUTH_URL+"?appid={appid}&secret={secret}&js_code={js_code}&grant_type={grant_type}", String.class, requestMap);
 		JSONObject json = JSONObject.parseObject(result);
-		if(StringUtils.equals(json.getString("errcode"), SUCCESS_CODE) ) {
+		if(StringUtils.isBlank(json.getString("errcode")) ) {
 			openId = json.getString("openid");
 			String sessionKey = json.getString("session_key");
 			log.info("获取微信openId成功,openId:{}|session_key:{}",openId,sessionKey);
 		}else {
 			log.error("获取微信openId失败,错误码:{}|错误原因:{}", json.getString("errcode"),json.getString("errmsg"));
 //			调试时关闭
-//			throw new RuntimeException(json.getString("errmsg"));
+			throw new RuntimeException(json.getString("errmsg"));
 		}
-//		return openId;
-		// 调试代码
-		return "djfkldjflkdjfdjfdfdfdfdfdfdf";
+		return openId;
 	}
 	
 }
