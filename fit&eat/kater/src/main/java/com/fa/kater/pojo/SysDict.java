@@ -5,7 +5,6 @@ import java.util.Date;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
 import lombok.Data;
@@ -18,35 +17,60 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author micezhao
- * @since 2020-08-10
+ * @since 2020-08-25
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class AccessLog  extends Model<AccessLog>   implements Serializable {
+public class SysDict implements Serializable {
 
     private static final long serialVersionUID=1L;
 
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
+    @TableId(value = "id")
     private Long id;
 
-    private String userAccount;
+    private Long pid;
 
     /**
-     * 认证类型
+     * 数据类别
      */
-    private String authType;
+    @TableField(value = "`group`" )
+    private String group;
 
-    private String loginType;
+    /**
+     * 数据类型
+     */
+    @TableField(value = "`key`" )
+    private String key;
 
-    private String merchantId;
+    /**
+     * 数据类型名称
+     */
+    private String keyName;
 
-    private String event;
+    /**
+     * 数据类型对应的值
+     */
+    private String value;
 
-    private String token;
+    /**
+     * 数据类型值名称
+     */
+    private String valueName;
 
-    private Date expireTime;
+    /**
+     * 排序字段
+     */
+    private Integer sort;
 
+    /**
+     * 0：可用 / 1：不可用
+     */
+    private String dr;
+
+    /**
+     * 0：未删除 / 1:已删除
+     */
     @TableLogic
     private Integer deleted;
 

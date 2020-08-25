@@ -77,7 +77,7 @@ public class AccessLogAspect {
 		AccessLog accessLog = new AccessLog();
 		accessLog.setUserAccount(userAgent.getUserAccount());
 		accessLog.setLoginType(userAgent.getLoginType());
-		accessLog.setAgentId(userAgent.getAgentId());
+		accessLog.setMerchantId(userAgent.getMerchantId());
 		accessLog.setAuthType(userAgent.getAuthType());
 		accessLog.setEvent(accessType);
 		accessLogService.save(accessLog); // 记录日志

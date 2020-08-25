@@ -26,6 +26,8 @@ import lombok.experimental.Accessors;
 
 public class MerchantRequest {
 	
+	private String agentId;
+	
 	private String agentName;
 	
 	private String territory;

@@ -52,7 +52,7 @@ public class CodeGenerator {
 
         // 策略配置
         StrategyConfig strategy = new StrategyConfig();
-        strategy.setInclude("merchant_info");
+        strategy.setInclude("sys_dict");
         strategy.setNaming(NamingStrategy.underline_to_camel);
 
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);

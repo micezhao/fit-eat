@@ -74,7 +74,9 @@ public class FileUtils {
 	
 	public String upload(String subPath, MultipartFile file) {
 		File targetFile = null;
-		String fileName = file.getOriginalFilename();
+		int i= (int)((Math.random()+1) * 1000);
+		String randomTail = String.valueOf(i);
+		String fileName = file.getOriginalFilename()+"_"+randomTail;
 		String typePath = getTypePath(fileName);
 		String rootPath = storagePath+typePath;
 		File folder = new File(rootPath + subPath + "/");
@@ -139,5 +141,10 @@ public class FileUtils {
 		String path  = FileTypePathEnum.getPathByType(fileType).getRelativePath();
 		return path;
 	}
-
+	
+	public static void main(String[] args) {
+		int i= (int)((Math.random()+1) * 1000);
+		System.out.println(i);
+	}
+	
 }
