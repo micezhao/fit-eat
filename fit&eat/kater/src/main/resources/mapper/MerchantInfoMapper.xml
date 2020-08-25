@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fa.kater.mapper.MerchantInfoMapper">
+
+	<select id="getMerchantBoByMerId"
+		parameterType="java.lang.String" 
+		resultType="com.fa.kater.entity.bo.MerchantBo">
+		select
+		t1.id,
+		t2.agent_id,
+		t2.agent_name,
+		t2.territory,
+		t2.holder_name as agent_name,
+		t2.holder_contact as agent_contact,
+		t2.agent_addr,
+		t1.merchant_id,
+		t1.merchant_name,
+		t1.holder_name as merchant_holder_name,
+		t1.holder_contact as merchant_holder_contact,
+		t1.introduce as merchant_introduce,
+		t1.logo_img_url as merchant_logo_img_url,
+		t1.`type` as merchant_type,
+		t1.scope,
+		t1.state
+		from `merchant_info` t1
+		join `agent_info` t2
+		on t1.agent_id = t2.agent_id
+		where t1.merchant_id = #{merchantId}
+	</select>
+	
+	<select id="getMerchantBoByMerAgentId"
+		parameterType="java.lang.String" 
+		resultType="java.util.List">
+		select
+		t1.id,
+		t2.agent_id,
+		t2.agent_name,
+		t2.territory,
+		t2.holder_name as agent_name,
+		t2.holder_contact as agent_contact,
+		t2.agent_addr,
+		t1.merchant_id,
+		t1.merchant_name,
+		t1.holder_name as merchant_holder_name,
+		t1.holder_contact as merchant_holder_contact,
+		t1.introduce as merchant_introduce,
+		t1.logo_img_url as merchant_logo_img_url,
+		t1.`type` as merchant_type,
+		t1.scope,
+		t1.state
+		from `merchant_info` t1
+		join `agent_info` t2
+		on t1.agent_id = t2.agent_id
+		where t1.agent_id = #{agentId}
+	</select>
+
+
+
+
+</mapper>

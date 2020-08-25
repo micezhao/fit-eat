@@ -34,16 +34,18 @@ public class LoginCtrl {
 	private static final Logger logger = LoggerFactory.getLogger(LoginCtrl.class);
 
 	// 第三方登录
-	@GetMapping("thirdPart/{agentId}/{loginType}/{thirdAuthId}/{authType}")
-	public ResponseEntity<Object> login(@PathVariable(value = "agentId") String agentId,
+	@GetMapping("thirdPart/{merchantId}/{loginType}/{thirdAuthId}/{authType}")
+	public ResponseEntity<Object> login(@PathVariable(value = "merchantId") String merchantId,
 			@PathVariable(value = "loginType") String loginType,
 			@PathVariable(value = "thirdAuthId") String thirdAuthId, @PathVariable(value = "authType") String authType,
 			HttpSession session) {
 		UserAgent userAgent = null;
 		Map<String, Object> resultMap = new HashMap<String, Object>();
+		
+		
 		// 生成UserAgent
 		LoginParam param = LoginParam.builder().loginType(loginType).authType(authType).thirdAuthId(thirdAuthId)
-				.agentId(agentId).build();
+				.merchantId(merchantId).build();
 
 		LoginBizInterface loginBiz = loginBizMap.get("thirdLoginBiz");
 		userAgent = loginBiz.login(param);

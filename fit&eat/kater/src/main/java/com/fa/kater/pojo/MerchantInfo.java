@@ -3,8 +3,8 @@ package com.fa.kater.pojo;
 import com.baomidou.mybatisplus.annotation.IdType;
 import java.util.Date;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
 import lombok.Data;
@@ -17,35 +17,40 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author micezhao
- * @since 2020-08-10
+ * @since 2020-08-24
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class AgentThirdConfig extends Model<AgentThirdConfig>  implements Serializable {
+public class MerchantInfo implements Serializable {
 
     private static final long serialVersionUID=1L;
 
     @TableId(value = "id", type = IdType.ASSIGN_ID)
-    private String id;
+    private Long id;
 
     private String agentId;
 
-    /**
-     * 第三方渠道标识
+    private String merchantId;
 
-     */
-    private String thirdpart;
+    private String merchantName;
+    
+    private String holderName;
+    
+    private String holderContact;
 
-    private String appId;
+    private String introduce;
 
-    private String appSecretkey;
+    private String logoImgUrl;
+    
+    private String type;
+    
+    private String scope;
 
-    private String privateKey;
+    private String state;
 
-    private String publicKey;
-
-    private String certificatePath;
+    @TableLogic
+    private Integer deleted;
 
     @TableField(fill = FieldFill.INSERT)
     private Date gmtCreate;

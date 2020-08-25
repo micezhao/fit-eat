@@ -23,6 +23,8 @@ public class UserAgent implements Serializable {
 	private String loginType;
 	
 	private String authType;
+	
+	private String merchantId;
 	/**
 	 * 用户账号
 	 */

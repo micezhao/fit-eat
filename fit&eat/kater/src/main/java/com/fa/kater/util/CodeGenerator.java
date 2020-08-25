@@ -43,7 +43,7 @@ public class CodeGenerator {
         mpg.setDataSource(dsc);
 
         PackageConfig pc = new PackageConfig();
-        pc.setModuleName("auth");
+//        pc.setModuleName("auth");
         pc.setParent("com.fa.kater");
         pc.setEntity("pojo");
         pc.setMapper("mapper");
@@ -52,7 +52,7 @@ public class CodeGenerator {
 
         // 策略配置
         StrategyConfig strategy = new StrategyConfig();
-        strategy.setInclude("third_credential","user_info","access_log","agent_third_config","agent_info");
+        strategy.setInclude("merchant_info");
         strategy.setNaming(NamingStrategy.underline_to_camel);
 
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);

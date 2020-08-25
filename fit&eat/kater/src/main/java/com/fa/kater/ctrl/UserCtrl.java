@@ -94,9 +94,9 @@ public class UserCtrl {
 
 		String userAccount = userAgent.getUserAccount();
 		String agentId = userAgent.getAgentId();
-
+		String merchantId = userAgent.getMerchantId();
 		UserInfo userInfo = new UserInfo();
-		userInfo = userInfo.selectOne(new QueryWrapper<UserInfo>(userInfo.setUserAccount(userAccount).setAgentId(agentId)));
+		userInfo = userInfo.selectOne(new QueryWrapper<UserInfo>(userInfo.setUserAccount(userAccount).setMerchantId(merchantId)));
 		return new ResponseEntity<Object>(userInfo, HttpStatus.OK);
 	}
 	

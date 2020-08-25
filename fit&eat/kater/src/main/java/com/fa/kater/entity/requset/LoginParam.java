@@ -7,7 +7,7 @@ import lombok.Data;
 @Builder
 public class LoginParam {
 	
-	public String agentId;
+	public String merchantId;
 	
 	public String loginType;
 	

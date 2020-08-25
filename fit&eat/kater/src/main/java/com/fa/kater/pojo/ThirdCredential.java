@@ -41,7 +41,7 @@ public class ThirdCredential extends Model<ThirdCredential> implements Serializa
     /**
      * 需要访问目标机构编码
      */
-    private String agentId;
+    private String merchantId;
 
     /**
      * 第三方凭证

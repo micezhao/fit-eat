@@ -8,10 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.fa.kater.exceptions.ErrRtn;
-import com.fa.kater.pojo.AgentThirdConfig;
+import com.fa.kater.pojo.MerchantThirdConfig;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,10 +22,8 @@ public class WxHandler implements ThirdAuthInterface{
 	
 	private static final String AUTH_URL = "https://api.weixin.qq.com/sns/jscode2session";
 	
-	private static final String SUCCESS_CODE = "0";
-	
 	@Override
-	public String getOpenId(AgentThirdConfig agentConfig, String thirdAuthId) {
+	public String getOpenId(MerchantThirdConfig agentConfig, String thirdAuthId) {
 		Map<String,String> requestMap = new HashMap<String,String>();
 		requestMap.put("appid", agentConfig.getAppId());
 		requestMap.put("secret",  agentConfig.getAppSecretkey());

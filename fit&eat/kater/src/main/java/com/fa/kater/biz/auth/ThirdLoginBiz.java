@@ -1,7 +1,6 @@
 package com.fa.kater.biz.auth;
 
 import java.util.Map;
-import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,15 +12,15 @@ import com.f.a.kobe.view.UserAgent;
 import com.f.a.kobe.view.UserAgent.UserAgentBuilder;
 import com.fa.kater.annotations.AccessLogAnnot;
 import com.fa.kater.annotations.AccessLogAnnot.AccessLogType;
+import com.fa.kater.biz.MerchantBiz;
 import com.fa.kater.biz.UserInfoBiz;
 import com.fa.kater.biz.auth.third.ThirdAuthInterface;
 import com.fa.kater.entity.requset.LoginParam;
 import com.fa.kater.enums.AuthTypeEnum;
-import com.fa.kater.pojo.AgentThirdConfig;
+import com.fa.kater.pojo.MerchantThirdConfig;
 import com.fa.kater.pojo.ThirdCredential;
 import com.fa.kater.pojo.UserInfo;
 import com.fa.kater.service.impl.ThirdCredentialServiceImpl;
-import com.fa.kater.service.impl.UserInfoServiceImpl;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,6 +33,9 @@ public class ThirdLoginBiz implements LoginBizInterface{
 		
 	@Autowired
 	private ThirdCredentialServiceImpl thirdCredentialServiceImpl;
+	
+	@Autowired
+	private MerchantBiz merchantBiz;
 	
 	@Autowired
 	private Map<String , ThirdAuthInterface> handlerMap;
@@ -51,12 +53,12 @@ public class ThirdLoginBiz implements LoginBizInterface{
 
 	public  UserInfo existed(LoginParam param) {
 		ThirdAuthInterface thirdAuthHandler = this.getHandlerInstance(param.getAuthType());
-		AgentThirdConfig  agentConfig = getAgentThirdConfig(param.getAgentId());
+		MerchantThirdConfig  agentConfig = merchantBiz.getMerchantThirdConfigByMerId(param.getMerchantId());
 		String openId = thirdAuthHandler.getOpenId(agentConfig, param.getThirdAuthId());
 		param.setOpenId(openId);
 		QueryWrapper<ThirdCredential> queryWrapper = new QueryWrapper<ThirdCredential>();
 		ThirdCredential entity = new ThirdCredential();
-		entity.setAgentId(param.getAgentId());
+		entity.setMerchantId(param.getMerchantId());
 		entity.setAuthType(param.getAuthType());
 		entity.setOpenId(openId);
 		queryWrapper.setEntity(entity);
@@ -79,16 +81,16 @@ public class ThirdLoginBiz implements LoginBizInterface{
 	 */
 	@Transactional
 	public  UserAgent register(LoginParam param) {
-		String agentId = param.getAgentId();
+		String merchantId = param.getMerchantId();
 		String authType = param.getAuthType();
-		UserInfo userInfo = userInfoBiz.initializeUserInfo(agentId);
+		UserInfo userInfo = userInfoBiz.initializeUserInfo(merchantId);
 		
 		//请求第三方接口，并获取第三方的凭证信息
 		String openId = param.getOpenId(); // 由于authcode 只能用一次，因此，从请求参数回去
 //				getHandlerInstance(authType).getOpenId(getAgentThirdConfig(agentId), param.getThirdAuthId());
 		
 		ThirdCredential credential = new ThirdCredential();
-		credential.setAgentId(agentId);
+		credential.setMerchantId(merchantId);
 		credential.setUserAccount(userInfo.getUserAccount());
 		credential.setOpenId(openId);
 		credential.setAuthType(authType);
@@ -96,7 +98,8 @@ public class ThirdLoginBiz implements LoginBizInterface{
 		thirdCredentialServiceImpl.save(credential);
 		UserAgentBuilder userAgentBuilder = UserAgent.builder()
 							.hasbinded(false).authType(authType)
-							.agentId(agentId).loginType(param.getLoginType())
+							.agentId(userInfo.getAgentId()).loginType(param.getLoginType())
+							.merchantId(merchantId)
 							.userAccount(userInfo.getUserAccount());
 		if(AuthTypeEnum.getEnumByType(authType)==AuthTypeEnum.AUTH_WX) {
 			userAgentBuilder.wxopenid(openId);
@@ -114,18 +117,6 @@ public class ThirdLoginBiz implements LoginBizInterface{
 		log.info("用户编号:{}已从系统登出",userAgent.getUserAccount());
 	}
 	
-
-	/**
-	 * 获取第三方配置
-	 * @param agentId
-	 * @return
-	 */
-	private  AgentThirdConfig getAgentThirdConfig(String agentId) {
-		AgentThirdConfig agentConfig = new AgentThirdConfig();
-		agentConfig.setAgentId(agentId);
-		agentConfig = agentConfig.selectOne(new QueryWrapper<AgentThirdConfig>(agentConfig));
-		return agentConfig; 
-	}
 	
 	/**
 	 * 处理类决策器

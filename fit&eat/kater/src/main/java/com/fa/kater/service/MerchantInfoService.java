@@ -1,7 +1,7 @@
 package com.fa.kater.service;
 
+import com.fa.kater.pojo.MerchantInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.fa.kater.pojo.AgentThirdConfig;
 
 /**
  * <p>
@@ -9,8 +9,9 @@ import com.fa.kater.pojo.AgentThirdConfig;
  * </p>
  *
  * @author micezhao
- * @since 2020-08-10
+ * @since 2020-08-24
  */
-public interface AgentThirdConfigService extends IService<AgentThirdConfig> {
+public interface MerchantInfoService extends IService<MerchantInfo> {
 
+	
 }

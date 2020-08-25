@@ -1,9 +1,9 @@
 package com.fa.kater.biz.auth.third;
 
-import com.fa.kater.pojo.AgentThirdConfig;
+import com.fa.kater.pojo.MerchantThirdConfig;
 
 public interface ThirdAuthInterface {
 	
-	public String getOpenId(AgentThirdConfig agentConfig,String thirdAuthId);
+	public String getOpenId(MerchantThirdConfig merchantConfig,String thirdAuthId);
 	
 }

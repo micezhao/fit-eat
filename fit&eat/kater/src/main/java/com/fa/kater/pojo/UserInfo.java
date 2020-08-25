@@ -39,8 +39,16 @@ public class UserInfo extends Model<UserInfo>  implements Serializable {
      * 用户账户
      */
     private String userAccount;
-
+    
+    /**
+     * 用户所属机构
+     */
     private String agentId;
+    
+    /**
+     * 所属商户号
+     */
+    private String merchantId;
 
     /**
      * 真实姓名

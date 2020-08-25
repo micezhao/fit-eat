@@ -1,4 +1,4 @@
-package com.fa.kater.ctrl;
+package com.f.a.kobe.config.web;
 
 import java.util.HashMap;
 import java.util.Map;

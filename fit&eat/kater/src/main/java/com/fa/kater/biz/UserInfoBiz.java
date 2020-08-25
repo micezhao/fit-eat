@@ -19,8 +19,10 @@ import com.f.a.kobe.view.UserAgent.UserAgentBuilder;
 import com.fa.kater.entity.requset.UserInfoRequest;
 import com.fa.kater.enums.AuthTypeEnum;
 import com.fa.kater.enums.LoginTypeEnum;
+import com.fa.kater.pojo.MerchantInfo;
 import com.fa.kater.pojo.ThirdCredential;
 import com.fa.kater.pojo.UserInfo;
+import com.fa.kater.service.MerchantInfoService;
 import com.fa.kater.service.impl.ThirdCredentialServiceImpl;
 import com.fa.kater.service.impl.UserInfoServiceImpl;
 
@@ -38,15 +40,20 @@ public class UserInfoBiz {
 	@Autowired
 	private ThirdCredentialServiceImpl thirdCredentialService;
 	
+	@Autowired
+	private MerchantBiz merchantBiz;
 	
-	public UserInfo initializeUserInfo(String agentId) {
+	
+	public UserInfo initializeUserInfo(String merchantId) {
 		Date date = new Date();
 		Long timeStamp = date.getTime();
 		String timeStampStr = String.valueOf(timeStamp);
 		String nameSuffix = timeStampStr.substring(timeStampStr.length() - 8, timeStampStr.length());
 		UserInfo userInfo = new UserInfo();
 		String userAccount = UUID.randomUUID().toString();
-		userInfo.setAgentId(agentId);
+		MerchantInfo merchantInfo = merchantBiz.getMerchantInfoByMerId(merchantId);
+		userInfo.setAgentId(merchantInfo.getAgentId());
+		userInfo.setMerchantId(merchantId);
 		userInfo.setHeadimgUrl(DEFAULT_AVATAR_URI);
 		userInfo.setNickname("anonymous"+nameSuffix);
 		userInfo.setUserAccount(userAccount);
@@ -95,6 +102,12 @@ public class UserInfoBiz {
 		if (StringUtils.isNotBlank(userInfo.getMobile())) {
 			builder.mobile(userInfo.getMobile());
 			builder.hasbinded(true);
+		}
+		if (StringUtils.isNotBlank(userInfo.getMerchantId())) {
+			builder.merchantId(userInfo.getMerchantId());
+		}
+		if (StringUtils.isNotBlank(userInfo.getAgentId())) {
+			builder.agentId(userInfo.getAgentId());
 		}
 		builder.loginType(loginType);
 		ThirdCredential credential = new ThirdCredential();
@@ -217,23 +230,24 @@ public class UserInfoBiz {
 	 */
 	@Transactional
 	public UserAgent bindAccountByMobile(String mobile, UserAgent userAgent) {
-		String agentId = userAgent.getAgentId();
+//		String agentId = userAgent.getAgentId();
+		String merchantId = userAgent.getMerchantId();
 		UserInfo userInfo = new UserInfo();
 		String authType = userAgent.getAuthType();
 		UpdateWrapper<UserInfo> updateWrapper = new UpdateWrapper<UserInfo>();
 		String userAccount = userAgent.getUserAccount();
 		boolean result = false;
-		if (!isBinded(agentId, mobile)) { // 没有绑定的处理逻辑：更新手机号
+		if (!isBinded(merchantId, mobile)) { // 没有绑定的处理逻辑：更新手机号
 			userInfo.setMobile(mobile);
-			updateWrapper.setEntity(new UserInfo().setUserAccount(userAccount).setAgentId(agentId));
+			updateWrapper.setEntity(new UserInfo().setUserAccount(userAccount).setMerchantId(merchantId));
 			result = userInfoService.update(userInfo, updateWrapper);
 		} else { // 已经绑定了的处理逻辑：合并账户信息，更新凭证信息
 			UserInfo sourceUserInfo = userInfoService
-					.getOne(new QueryWrapper<UserInfo>(new UserInfo().setAgentId(agentId).setUserAccount(userAccount)), true);
+					.getOne(new QueryWrapper<UserInfo>(new UserInfo().setMerchantId(merchantId).setUserAccount(userAccount)), true);
 			UserInfo targetUserInfo = userInfoService
-					.getOne(new QueryWrapper<UserInfo>(new UserInfo().setAgentId(agentId).setMobile(mobile)), true);
+					.getOne(new QueryWrapper<UserInfo>(new UserInfo().setMerchantId(merchantId).setMobile(mobile)), true);
 			
-			combineCredential(sourceUserInfo.getUserAccount(), targetUserInfo.getUserAccount(), authType, agentId);
+			combineCredential(sourceUserInfo.getUserAccount(), targetUserInfo.getUserAccount(), authType, merchantId);
 			// 将源信息设置为不可用
 			sourceUserInfo.deleteById();
 			userAgent.setUserAccount(targetUserInfo.getUserAccount());
@@ -253,9 +267,9 @@ public class UserInfoBiz {
 	 * @param mobile
 	 * @return
 	 */
-	private boolean isBinded(String agentId, String mobile) {
+	private boolean isBinded(String merchantId, String mobile) {
 		QueryWrapper<UserInfo> queryWrapper = new QueryWrapper<UserInfo>();
-		queryWrapper.setEntity(new UserInfo().setAgentId(agentId).setMobile(mobile).setDeleted(0));
+		queryWrapper.setEntity(new UserInfo().setMerchantId(merchantId).setMobile(mobile).setDeleted(0));
 		UserInfo userInfo = userInfoService.getOne(queryWrapper, true);
 		return userInfo == null ? false : true;
 	}
@@ -293,14 +307,14 @@ public class UserInfoBiz {
 		return null;
 	}
 
-	private void combineCredential(String sourceAccount, String targetAccount, String authType,String agentId) {
+	private void combineCredential(String sourceAccount, String targetAccount, String authType,String merchantId) {
 		boolean updated = false;
 		if (AuthTypeEnum.getEnumByType(authType) == AuthTypeEnum.AUTH_ALI
 				|| AuthTypeEnum.getEnumByType(authType) == AuthTypeEnum.AUTH_WX) {
 			
 			updated = thirdCredentialService.update(new ThirdCredential().setUserAccount(targetAccount),
 					new UpdateWrapper<ThirdCredential>(
-							new ThirdCredential().setAuthType(authType).setAgentId(agentId).setUserAccount(sourceAccount)
+							new ThirdCredential().setAuthType(authType).setMerchantId(merchantId).setUserAccount(sourceAccount)
 							)
 					);
 			
