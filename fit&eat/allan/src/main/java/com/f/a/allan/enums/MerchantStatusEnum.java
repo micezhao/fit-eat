@@ -2,13 +2,13 @@ package com.f.a.allan.enums;
 
 import org.apache.commons.lang3.StringUtils;
 
-public enum MerchantStatus {
+public enum MerchantStatusEnum {
 	/******** 审核状态 ******/
 	WAIT_VERIFY("wait_verify","待审核"),
 	
 	UN_VERIFIED("un_verified","审核未通过"),
 
-	VERIFIED("verified","已审核"),	
+	VERIFIED("verified","已审核"),
 	/******** 审核状态 ******/
 	
 	/******** 运营状态 ******/
@@ -42,16 +42,16 @@ public enum MerchantStatus {
 		this.description = description;
 	}
 
-	private MerchantStatus(String code, String description) {
+	private MerchantStatusEnum(String code, String description) {
 		this.code = code;
 		this.description = description;
 	}
 	
-	public static MerchantStatus getEnumByCode(String code) {
+	public static MerchantStatusEnum getEnumByCode(String code) {
 		if(StringUtils.isBlank(code)) {
 			return null;
 		}else {
-			for (MerchantStatus item : MerchantStatus.values()) {
+			for (MerchantStatusEnum item : MerchantStatusEnum.values()) {
 				if(StringUtils.equals(item.getCode(), code)) {
 					return item;
 				}
