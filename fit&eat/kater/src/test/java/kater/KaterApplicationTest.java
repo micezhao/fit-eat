@@ -41,6 +41,7 @@ import com.fa.kater.service.impl.MerchantInfoServiceImpl;
 import com.fa.kater.service.impl.MerchantThirdConfigServiceImpl;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Unit test for simple App.
@@ -49,6 +50,7 @@ import lombok.Data;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = KaterApplication8764.class)
 @WebAppConfiguration
+@Slf4j
 @AutoConfigureMockMvc // 该注解将会自动配置mockMvc的单元测试
 public class KaterApplicationTest {
 
@@ -244,8 +246,8 @@ public class KaterApplicationTest {
 	            try {  
 	                executorService.execute(() -> {
 	                  // 执行redis查询
-	                	getDataByExclusiveLock(1255431277511778306L);
-	                	
+	                	 AccessLog log = getDataByExclusiveLock(1255431277511778306L);
+	                	System.out.println(log);
 	                });
 	            } catch (Throwable e) {
 	                //TODO
@@ -278,19 +280,25 @@ public class KaterApplicationTest {
 		String lockKey = "lock_key";
 		boolean locked = redisTemplate.opsForValue().setIfAbsent(lockKey, id, Duration.ofSeconds(300L));
 		if(locked) {
-			System.out.println(Thread.currentThread().getName()+"拿到了排它锁，准备从数据库中查询数据，并写入缓存");
+			log.info(Thread.currentThread().getName()+"拿到了排它锁，准备从数据库中查询数据，并写入缓存");
 			logItem = getDataFromDb(id);
 			SetData2Reids(logItem);
 			redisTemplate.delete(lockKey);
 		}else {
 			try {
-				logItem = this.getDataFromReids(id);
-				if(logItem == null ) {
-					Thread.sleep(2L);
+				while(logItem == null ) {
 					logItem = this.getDataFromReids(id);
+					if(logItem!=null) {
+						log.info(Thread.currentThread().getName()+"虽然没有抢到锁，但是已经从redis中获得到了数据");
+						break;
+					}else {
+						log.info(Thread.currentThread().getName()+"还未从redis中获取到数据，稍等一会再尝试");
+						Thread.sleep(200L);
+						continue;
+					}
 				}
 			} catch (InterruptedException e) {
-				
+				log.error("线程被打断");
 			}
 		}
 		return logItem;
@@ -304,7 +312,7 @@ public class KaterApplicationTest {
 	AccessLog getDataFromReids(Long id){
 		Object obj = redisTemplate.opsForValue().get("accesslog:" + String.valueOf(id));
 		String jstr = JSONObject.toJSONString(obj);
-		System.out.println("read data from redis value = " + jstr);
+//		System.out.println("read data from redis value = " + jstr);
 		return JSONObject.parseObject(jstr, AccessLog.class);
 	}
 	
@@ -322,5 +330,17 @@ public class KaterApplicationTest {
 	void SetData2Reids(AccessLog logItem) {
 		redisTemplate.opsForValue().set("accesslog:" + String.valueOf(logItem.getId()), logItem, 5, TimeUnit.MINUTES);
 		System.out.println("set data from db");
+	}
+	
+	@Test
+	public void addRedisLock_1() {
+		 boolean reuslt= redisTemplate.opsForValue().setIfAbsent("lock_key_1", 1, Duration.ofMinutes(3));
+		log.info("addRedisLock_1 加锁结果：{}",reuslt);
+	}
+	
+	@Test
+	public void addRedisLock_2() {
+		 boolean reuslt= redisTemplate.opsForValue().setIfAbsent("lock_key_2", 2, Duration.ofMinutes(3));
+		log.info("addRedisLock_2 加锁结果：{}",reuslt);
 	}
 }

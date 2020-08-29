@@ -17,8 +17,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.fa.kater.pojo.AccessLog;
 import com.fa.kater.service.impl.AccessLogServiceImpl;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RestController
 @RequestMapping("admin/accessLog")
+@Slf4j
 public class AccessLogCtrl {
 
 	@Autowired
@@ -46,28 +49,31 @@ public class AccessLogCtrl {
 			resultJson.put("accessLog", logItem);
 			return resultJson;
 		}
-		String lockKey = "lock_key";
+		String lockKey = "lock_key_"+id;
 		boolean locked = redisTemplate.opsForValue().setIfAbsent(lockKey, id, Duration.ofSeconds(300L));
 		String comment = "";
 		if(locked) {
-			System.out.println(Thread.currentThread().getName()+"拿到了排它锁，准备从数据库中查询数据，并写入缓存");
+			System.out.println(Thread.currentThread().getName()+"拿到了排它锁"+lockKey+"，准备从数据库中查询数据，并写入缓存");
 			logItem = getDataFromDb(id);
 			SetData2Reids(logItem);
 			redisTemplate.delete(lockKey);
 			comment = "这是拿到锁以后从数据库返回的";
 		}else {
 			try {
-				logItem = this.getDataFromReids(id);
-				
-				if(logItem == null ) {
-					Thread.sleep(2L);
+				while(logItem == null ) {
 					logItem = this.getDataFromReids(id);
-					comment = "这是没拿到锁，歇了一会才从缓存中拿到了数据";
-				}else {
-					comment = "这是没拿到锁，不过从缓存中拿到了数据";
+					if(logItem!=null) {
+						comment = "虽然没有抢到锁，但是已经从redis中获得到了数据";
+						log.info("虽然没有抢到锁，但是已经从redis中获得到了数据");
+						break;
+					}else {
+						log.info("还未从redis中获取到数据，稍等一会再尝试");
+						Thread.sleep(200L);
+						continue;
+					}
 				}
 			} catch (InterruptedException e) {
-				
+				log.error("线程被打断");
 			}
 		}
 		resultJson.put("accessLog", logItem);
@@ -83,7 +89,7 @@ public class AccessLogCtrl {
 	AccessLog getDataFromReids(Long id){
 		Object obj = redisTemplate.opsForValue().get("accesslog:" + String.valueOf(id));
 		String jstr = JSONObject.toJSONString(obj);
-		System.out.println("read data from redis value = " + jstr);
+		log.info("read data from redis value = {}", jstr);
 		return JSONObject.parseObject(jstr, AccessLog.class);
 	}
 	
@@ -94,12 +100,12 @@ public class AccessLogCtrl {
 	 */
 	AccessLog getDataFromDb(Long id) {
 		AccessLog logItem = accessLogServiceImpl.getById(id);
-		System.out.println("read data from db");
+		log.info("read data from db");
 		return logItem;
 	}
 	
 	void SetData2Reids(AccessLog logItem) {
 		redisTemplate.opsForValue().set("accesslog:" + String.valueOf(logItem.getId()), logItem, 5, TimeUnit.MINUTES);
-		System.out.println("set data from db");
+		log.info("set data from db");
 	}
 }
