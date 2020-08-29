@@ -79,11 +79,9 @@ public class SysConfigCtrl {
 		return new ResponseEntity<Object>(resultmap,HttpStatus.OK);
 	}
 	
-	@GetMapping("dict/{group}")
-	public ResponseEntity<Object> getByGroup(@PathVariable("group") String group){
-		List<SysDict> list= sysdictService.list(new QueryWrapper<SysDict>(new SysDict().setGroup(group)));
-		return new ResponseEntity<Object>(list,HttpStatus.OK);
-	}
+
+	
+	
 	
 	
 	

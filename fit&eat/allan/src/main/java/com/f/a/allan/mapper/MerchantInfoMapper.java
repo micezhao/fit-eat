@@ -1,4 +1,4 @@
-package com.f.a.allan.dao;
+package com.f.a.allan.mapper;
 
 import java.util.List;
 
@@ -16,6 +16,7 @@ import com.f.a.allan.entity.pojo.MerchantInfo;
  * @author micezhao
  * @since 2020-08-24
  */
+
 public interface MerchantInfoMapper extends BaseMapper<MerchantInfo> {
 	
 	public MerchantBo getMerchantBoByMerId(@Param("merchantId")String merchantId);

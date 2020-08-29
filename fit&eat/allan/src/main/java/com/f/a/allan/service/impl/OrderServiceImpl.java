@@ -14,11 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.f.a.allan.dao.OrderMapper;
 import com.f.a.allan.entity.pojo.GoodsItem;
 import com.f.a.allan.entity.pojo.Order;
 import com.f.a.allan.entity.response.OrderGoodsItemView;
 import com.f.a.allan.enums.OrderEnum;
+import com.f.a.allan.mapper.OrderMapper;
 import com.f.a.allan.service.OrderService;
 import com.f.a.allan.utils.RedisSequenceUtils;
 

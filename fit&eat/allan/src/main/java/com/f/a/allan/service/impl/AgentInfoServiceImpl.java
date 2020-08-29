@@ -3,8 +3,8 @@ package com.f.a.allan.service.impl;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.f.a.allan.dao.AgentInfoMapper;
 import com.f.a.allan.entity.pojo.AgentInfo;
+import com.f.a.allan.mapper.AgentInfoMapper;
 import com.f.a.allan.service.AgentInfoService;
 
 /**

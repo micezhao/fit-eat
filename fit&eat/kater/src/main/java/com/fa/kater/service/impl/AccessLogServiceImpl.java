@@ -17,5 +17,5 @@ import com.fa.kater.service.AccessLogService;
  */
 @Service
 public class AccessLogServiceImpl extends ServiceImpl<AccessLogMapper, AccessLog> implements AccessLogService {
-
+	
 }

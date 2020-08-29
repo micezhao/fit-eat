@@ -14,7 +14,7 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableFeignClients
 //@EnableAutoConfiguration(exclude = {MultipartAutoConfiguration.class})
 @ComponentScan("com.f.a")
-@MapperScan("com.f.a.allan.dao")
+@MapperScan("com.f.a.allan.mapper")
 public class AllanApplication {
 
 	public static void main(String[] args) {

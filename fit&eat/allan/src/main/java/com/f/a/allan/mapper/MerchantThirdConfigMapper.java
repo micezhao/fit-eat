@@ -1,4 +1,4 @@
-package com.f.a.allan.dao;
+package com.f.a.allan.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.f.a.allan.entity.pojo.MerchantThirdConfig;

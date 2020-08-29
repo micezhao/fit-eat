@@ -15,7 +15,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.f.a.allan.enums.MediaScopeEnum;
 import com.f.a.allan.enums.MediaTypeEnum;
-import com.f.a.allan.utils.FileUtils;
+import com.f.a.kobe.utils.FileUtils;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
