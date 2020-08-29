@@ -60,7 +60,7 @@
 	</springProfile>
    
 	<!--默认配置 ，输出调试级别日志，上生产应改为ERROR级别日志，官方文档说明支持实时修改，修改后5分钟生效-->
-	<root level="debug">
+	<root level="INFO">
 		<appender-ref ref="CONSOLE" />
 	</root>
 	
