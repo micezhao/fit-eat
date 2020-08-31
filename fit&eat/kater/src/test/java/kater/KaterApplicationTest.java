@@ -343,4 +343,9 @@ public class KaterApplicationTest {
 		 boolean reuslt= redisTemplate.opsForValue().setIfAbsent("lock_key_2", 2, Duration.ofMinutes(3));
 		log.info("addRedisLock_2 加锁结果：{}",reuslt);
 	}
+	
+	@Test
+	public void redisPublisher() {
+		
+	}
 }
